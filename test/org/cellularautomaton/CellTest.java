@@ -75,6 +75,13 @@ public class CellTest extends TestCase {
 		assertEquals(Integer.valueOf(3), cell.getState(1));
 		assertEquals(Integer.valueOf(2), cell.getState(2));
 		assertFalse(cell.isNextStateCalculated());
+		
+		cell.setCurrentState(18);
+		assertEquals(Integer.valueOf(18), cell.getCurrentState());
+		assertEquals(Integer.valueOf(18), cell.getState(0));
+		assertEquals(Integer.valueOf(3), cell.getState(1));
+		assertEquals(Integer.valueOf(2), cell.getState(2));
+		assertFalse(cell.isNextStateCalculated());
 	}
 
 	public void testCellDimensions() {

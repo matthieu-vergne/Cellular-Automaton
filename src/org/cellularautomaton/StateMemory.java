@@ -20,7 +20,7 @@ public class StateMemory<StateType> {
 	 */
 	public StateMemory(int size, StateType initialState) {
 		assert initialState != null;
-		
+
 		for (int i = 0; i < size; i++) {
 			states.add(initialState);
 		}
@@ -33,7 +33,7 @@ public class StateMemory<StateType> {
 	 */
 	public void pushNewState(StateType state) {
 		assert state != null;
-		
+
 		states.remove(0);
 		states.add(state);
 	}
@@ -46,7 +46,7 @@ public class StateMemory<StateType> {
 	public StateType getState(int age) {
 		int size = getMemorySize();
 		assert age >= 0 && age < size : "the age must be between 0 and " + size;
-		
+
 		return states.get(size - age - 1);
 	}
 
@@ -56,5 +56,15 @@ public class StateMemory<StateType> {
 	 */
 	public int getMemorySize() {
 		return states.size();
+	}
+
+	/**
+	 * 
+	 * @param state
+	 *            the state to apply instead of the current state, the state is
+	 *            not pushed so the previous state is not kept in memory
+	 */
+	public void forceCurrentState(StateType state) {
+		states.set(states.size() - 1, state);
 	}
 }

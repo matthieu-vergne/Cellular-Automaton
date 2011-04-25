@@ -309,4 +309,12 @@ public abstract class Cell<StateType> {
 			this.coords[i] = coords[i];
 		}
 	}
+	
+	/**
+	 * 
+	 * @param state the state to apply to the cell
+	 */
+	public void setCurrentState(StateType state){
+		previousStates.forceCurrentState(state);
+	}
 }
