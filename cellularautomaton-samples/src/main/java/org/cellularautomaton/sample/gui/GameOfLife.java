@@ -39,7 +39,7 @@ public class GameOfLife {
 		jf.getContentPane().add(jautomaton);
 
 		Executors.newSingleThreadExecutor().execute(
-				new RefreshAutomatonRunnable(jautomaton));
+				new RefreshAutomatonRunnable(jautomaton, 300));
 
 		jf.pack();
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

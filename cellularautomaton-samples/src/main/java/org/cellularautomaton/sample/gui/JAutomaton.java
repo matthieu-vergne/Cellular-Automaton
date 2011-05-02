@@ -1,6 +1,7 @@
 package org.cellularautomaton.sample.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
@@ -9,7 +10,8 @@ import org.cellularautomaton.Cell;
 import org.cellularautomaton.CellularAutomaton;
 
 public class JAutomaton<T> extends JPanel {
-	
+	private int height = 10;
+	private int width = 20;
 	/**
 	 * 
 	 */
@@ -35,13 +37,24 @@ public class JAutomaton<T> extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 		Cell<? extends T> origin = automaton.getOriginCell();
-		for (int y = 10 - 1; y >= 0; y--) {
-			for (int x = 0; x < 50; x++) {
+		for (int y = height - 1; y >= 0; y--) {
+			for (int x = 0; x < width; x++) {
 				T state = origin.getRelativeNeighbor(x, y)
 						.getCurrentState();
 				g.setColor(renderer.getColor(state));
 				g.fillRect(x*10, y*10, 10, 10);
 			}
 		}
+	}
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(width*10, height*10);
+	}
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	
+	public void setWidth(int width) {
+		this.width = width;
 	}
 }
