@@ -8,5 +8,6 @@
   <description>Parent project for cellular automaton</description>
   <modules>
   	<module>cellularautomaton-core</module>
+  	<module>cellularautomaton-samples</module>
   </modules>
 </project>
