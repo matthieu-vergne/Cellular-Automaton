@@ -1,7 +1,10 @@
 package org.cellularautomaton;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * A cellular automaton is a space of evolving cells. Each cell evolves
@@ -190,21 +193,86 @@ public class CellularAutomaton<StateType> {
 	 * @return all the cells of the automaton (without specific ordering)
 	 */
 	public Collection<Cell<StateType>> getAllCells() {
-		Collection<Cell<StateType>> result = new HashSet<Cell<StateType>>();
-		Collection<Cell<StateType>> cellsToCheck = new HashSet<Cell<StateType>>();
-		cellsToCheck.add(getOriginCell());
-
-		while (!cellsToCheck.isEmpty()) {
-			Cell<StateType> cell = cellsToCheck.iterator().next();
-			cellsToCheck.remove(cell);
+		Collection<Cell<StateType>> result = new ArrayList<Cell<StateType>>();
+		for (Iterator<Cell<StateType>> iterator = iterator(); iterator
+				.hasNext();) {
+			Cell<StateType> cell = iterator.next();
 			result.add(cell);
-			for (Cell<StateType> neighbor : cell.getAllNeighbors()) {
-				if (!result.contains(neighbor)) {
-					cellsToCheck.add(neighbor);
+		}
+		return result;
+	}
+
+	/**
+	 * Give an iterator over the cells. It is strongly recommended to <b>not
+	 * modify the space of cells during iteration</b>, as the modifications can
+	 * generate unexpected behaviors.
+	 * 
+	 * @return an iterator over the cells
+	 */
+	public Iterator<Cell<StateType>> iterator() {
+		return new CellIterator();
+	}
+
+	/**
+	 * Specific iterator for the space of cells. If the space is modified during
+	 * the iteration, it is possible that the modifications are not considered :<br/>
+	 * <ul>
+	 * <li>if a modification is done "far" (not in direct neighbors) of the
+	 * cells already iterated, it should be considered,</li>
+	 * <li>if a modification is done between cells already iterated, it should
+	 * not be considered</li>
+	 * <li>if a modification is done at the limit between iterated and not
+	 * iterated cells, all is possible.</li>
+	 * </ul>
+	 * 
+	 * @author Matthieu Vergne (matthieu.vergne@gmail.com)
+	 * 
+	 */
+	private class CellIterator implements Iterator<Cell<StateType>> {
+
+		/**
+		 * The cells already returned.
+		 */
+		Collection<Cell<StateType>> cellsUsed = new HashSet<Cell<StateType>>();
+		/**
+		 * The cells to look for next iterations.
+		 */
+		Collection<Cell<StateType>> cellsToCheck = new HashSet<Cell<StateType>>();
+
+		/**
+		 * Create an iterator over the current space of cells.
+		 */
+		public CellIterator() {
+			cellsToCheck.add(getOriginCell());
+		}
+
+		public boolean hasNext() {
+			return !cellsToCheck.isEmpty();
+		}
+
+		public Cell<StateType> next() {
+
+			if (hasNext()) {
+				Cell<StateType> cell = cellsToCheck.iterator().next();
+				cellsToCheck.remove(cell);
+				cellsUsed.add(cell);
+				for (Cell<StateType> neighbor : cell.getAllNeighbors()) {
+					if (!cellsUsed.contains(neighbor)) {
+						cellsToCheck.add(neighbor);
+					}
 				}
+				return cell;
+			} else {
+				throw new NoSuchElementException();
 			}
 		}
 
-		return result;
+		/**
+		 * This method do nothing.
+		 */
+		public void remove() {
+			// do nothing
+		}
+
 	}
 }

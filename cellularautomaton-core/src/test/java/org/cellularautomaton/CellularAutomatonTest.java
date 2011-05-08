@@ -4,13 +4,14 @@ import static org.junit.Assert.assertArrayEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 public class CellularAutomatonTest extends TestCase {
 
-	public void testCellsIterator() {
+	public void testGetAllCells() {
 		// generate cells
 		int dimensions = 2;
 		Cell<String> cell00 = new Cell<String>("00", dimensions) {
@@ -339,6 +340,284 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(intruderFullyAccessible));
 		assertTrue(list.contains(intruderPartiallyAccessible));
 		assertFalse(list.contains(intruderNotAccessible));
+	}
+	
+	public void testCellsIterator() {
+		// generate cells
+		int dimensions = 2;
+		Cell<String> cell00 = new Cell<String>("00", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell01 = new Cell<String>("01", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell02 = new Cell<String>("02", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell03 = new Cell<String>("03", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell10 = new Cell<String>("10", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell11 = new Cell<String>("11", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell12 = new Cell<String>("12", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell13 = new Cell<String>("13", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell20 = new Cell<String>("20", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell21 = new Cell<String>("21", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell22 = new Cell<String>("22", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell23 = new Cell<String>("23", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell30 = new Cell<String>("30", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell31 = new Cell<String>("31", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell32 = new Cell<String>("32", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		Cell<String> cell33 = new Cell<String>("33", dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+
+		// link cells
+		cell00.setPreviousCellOnDimension(0, cell03);
+		cell00.setNextCellOnDimension(0, cell01);
+		cell00.setPreviousCellOnDimension(1, cell30);
+		cell00.setNextCellOnDimension(1, cell10);
+
+		cell01.setPreviousCellOnDimension(0, cell00);
+		cell01.setNextCellOnDimension(0, cell02);
+		cell01.setPreviousCellOnDimension(1, cell31);
+		cell01.setNextCellOnDimension(1, cell11);
+
+		cell02.setPreviousCellOnDimension(0, cell01);
+		cell02.setNextCellOnDimension(0, cell03);
+		cell02.setPreviousCellOnDimension(1, cell32);
+		cell02.setNextCellOnDimension(1, cell12);
+
+		cell03.setPreviousCellOnDimension(0, cell02);
+		cell03.setNextCellOnDimension(0, cell00);
+		cell03.setPreviousCellOnDimension(1, cell33);
+		cell03.setNextCellOnDimension(1, cell13);
+		//
+		cell10.setPreviousCellOnDimension(0, cell13);
+		cell10.setNextCellOnDimension(0, cell11);
+		cell10.setPreviousCellOnDimension(1, cell00);
+		cell10.setNextCellOnDimension(1, cell20);
+
+		cell11.setPreviousCellOnDimension(0, cell10);
+		cell11.setNextCellOnDimension(0, cell12);
+		cell11.setPreviousCellOnDimension(1, cell01);
+		cell11.setNextCellOnDimension(1, cell21);
+
+		cell12.setPreviousCellOnDimension(0, cell11);
+		cell12.setNextCellOnDimension(0, cell13);
+		cell12.setPreviousCellOnDimension(1, cell02);
+		cell12.setNextCellOnDimension(1, cell22);
+
+		cell13.setPreviousCellOnDimension(0, cell12);
+		cell13.setNextCellOnDimension(0, cell10);
+		cell13.setPreviousCellOnDimension(1, cell03);
+		cell13.setNextCellOnDimension(1, cell23);
+		//
+		cell20.setPreviousCellOnDimension(0, cell23);
+		cell20.setNextCellOnDimension(0, cell21);
+		cell20.setPreviousCellOnDimension(1, cell10);
+		cell20.setNextCellOnDimension(1, cell30);
+
+		cell21.setPreviousCellOnDimension(0, cell20);
+		cell21.setNextCellOnDimension(0, cell22);
+		cell21.setPreviousCellOnDimension(1, cell11);
+		cell21.setNextCellOnDimension(1, cell31);
+
+		cell22.setPreviousCellOnDimension(0, cell21);
+		cell22.setNextCellOnDimension(0, cell23);
+		cell22.setPreviousCellOnDimension(1, cell12);
+		cell22.setNextCellOnDimension(1, cell32);
+
+		cell23.setPreviousCellOnDimension(0, cell22);
+		cell23.setNextCellOnDimension(0, cell20);
+		cell23.setPreviousCellOnDimension(1, cell13);
+		cell23.setNextCellOnDimension(1, cell33);
+		//
+		cell30.setPreviousCellOnDimension(0, cell33);
+		cell30.setNextCellOnDimension(0, cell31);
+		cell30.setPreviousCellOnDimension(1, cell20);
+		cell30.setNextCellOnDimension(1, cell00);
+
+		cell31.setPreviousCellOnDimension(0, cell30);
+		cell31.setNextCellOnDimension(0, cell32);
+		cell31.setPreviousCellOnDimension(1, cell21);
+		cell31.setNextCellOnDimension(1, cell01);
+
+		cell32.setPreviousCellOnDimension(0, cell31);
+		cell32.setNextCellOnDimension(0, cell33);
+		cell32.setPreviousCellOnDimension(1, cell22);
+		cell32.setNextCellOnDimension(1, cell02);
+
+		cell33.setPreviousCellOnDimension(0, cell32);
+		cell33.setNextCellOnDimension(0, cell30);
+		cell33.setPreviousCellOnDimension(1, cell23);
+		cell33.setNextCellOnDimension(1, cell03);
+
+		// generate automaton
+		CellularAutomaton<String> automaton2D = new CellularAutomaton<String>(
+				cell00);
+
+		// test init
+		Collection<Cell<String>> cellsToView = automaton2D.getAllCells();
+		Iterator<Cell<String>> iterator = automaton2D.iterator();
+		while(iterator.hasNext()) {
+			Cell<String> cell = iterator.next();
+			assertTrue(cellsToView.contains(cell));
+			cellsToView.remove(cell);
+		}
+		assertTrue(cellsToView.isEmpty());
+
+		// test invariability (no ordering is considered)
+		automaton2D.doStep();
+		cellsToView = automaton2D.getAllCells();
+		iterator = automaton2D.iterator();
+		while(iterator.hasNext()) {
+			Cell<String> cell = iterator.next();
+			assertTrue(cellsToView.contains(cell));
+			cellsToView.remove(cell);
+		}
+		assertTrue(cellsToView.isEmpty());
+
+		automaton2D.doStep();
+		cellsToView = automaton2D.getAllCells();
+		iterator = automaton2D.iterator();
+		while(iterator.hasNext()) {
+			Cell<String> cell = iterator.next();
+			assertTrue(cellsToView.contains(cell));
+			cellsToView.remove(cell);
+		}
+		assertTrue(cellsToView.isEmpty());
+
+		automaton2D.doStep();
+		cellsToView = automaton2D.getAllCells();
+		iterator = automaton2D.iterator();
+		while(iterator.hasNext()) {
+			Cell<String> cell = iterator.next();
+			assertTrue(cellsToView.contains(cell));
+			cellsToView.remove(cell);
+		}
+		assertTrue(cellsToView.isEmpty());
+
+		// test accessibility
+		Cell<String> intruderFullyAccessible = new Cell<String>("intruder",
+				dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		intruderFullyAccessible.setPreviousCellOnDimension(0, cell20);
+		intruderFullyAccessible.setNextCellOnDimension(0, cell12);
+		intruderFullyAccessible.setPreviousCellOnDimension(1, cell11);
+		intruderFullyAccessible.setNextCellOnDimension(1, cell21);
+		cell20.setNextCellOnDimension(0, intruderFullyAccessible);
+		cell12.setPreviousCellOnDimension(0, intruderFullyAccessible);
+		cell11.setNextCellOnDimension(1, intruderFullyAccessible);
+		cell21.setPreviousCellOnDimension(1, intruderFullyAccessible);
+
+		Cell<String> intruderPartiallyAccessible = new Cell<String>("intruder",
+				dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		intruderPartiallyAccessible.setPreviousCellOnDimension(0, cell32);
+		intruderPartiallyAccessible.setNextCellOnDimension(0, cell20);
+		intruderPartiallyAccessible.setPreviousCellOnDimension(1, cell23);
+		intruderPartiallyAccessible.setNextCellOnDimension(1, cell33);
+		cell23.setNextCellOnDimension(1, intruderPartiallyAccessible);
+
+		Cell<String> intruderNotAccessible = new Cell<String>("intruder",
+				dimensions) {
+			@Override
+			protected String calculateState() {
+				return "";
+			}
+		};
+		intruderNotAccessible.setPreviousCellOnDimension(0, cell12);
+		intruderNotAccessible.setNextCellOnDimension(0, cell00);
+		intruderNotAccessible.setPreviousCellOnDimension(1, cell03);
+		intruderNotAccessible.setNextCellOnDimension(1, cell13);
+
+		cellsToView = automaton2D.getAllCells();
+		iterator = automaton2D.iterator();
+		while(iterator.hasNext()) {
+			Cell<String> cell = iterator.next();
+			assertTrue(cellsToView.contains(cell));
+			cellsToView.remove(cell);
+		}
+		assertTrue(cellsToView.isEmpty());
 	}
 
 	public void testOrigineCell() {
