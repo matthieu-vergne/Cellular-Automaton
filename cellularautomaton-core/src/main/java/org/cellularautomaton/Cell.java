@@ -4,11 +4,40 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A cell is an element storing a state. This cell evolves in a space of cells
+ * considering other cells (the neighbors), changing its state consequently.
+ * 
+ * @author Matthieu Vergne (matthieu.vergne@gmail.com)
+ * 
+ * @param <StateType>
+ *            the type of data used by the cell, it can be {@link Boolean} for a
+ *            simple "On/Off" state, a numeral state like {@link Integer} or
+ *            {@link Float} for arithmetical states, or any specific type of
+ *            data for particular uses.
+ */
 public abstract class Cell<StateType> {
 
+	/**
+	 * The previous states of the cell. This memory is used in the case several
+	 * generations are needed to calculate the new states.
+	 */
 	private final StateMemory<StateType> previousStates;
+	/**
+	 * The next state to apply to this cell.
+	 * 
+	 * @see #calculateNextState()
+	 */
 	private StateType nextState;
+	/**
+	 * The cells around this one. <b>They are not the (logical) neighbors
+	 * considered by the rule</b> which change the state of the cell, they are
+	 * the (physical) neighbors in the space of cells.
+	 */
 	private final Cell<StateType>[][] neighbors;
+	/**
+	 * The coordinates of the cell in the space of cells.
+	 */
 	private final int[] coords;
 
 	/**
@@ -271,7 +300,8 @@ public abstract class Cell<StateType> {
 
 	@Override
 	public String toString() {
-		return "cell(" + getCurrentState().toString() + ") " + Arrays.toString(coords);
+		return "cell(" + getCurrentState().toString() + ") "
+				+ Arrays.toString(coords);
 	}
 
 	/**
@@ -309,12 +339,13 @@ public abstract class Cell<StateType> {
 			this.coords[i] = coords[i];
 		}
 	}
-	
+
 	/**
 	 * 
-	 * @param state the state to apply to the cell
+	 * @param state
+	 *            the state to apply to the cell
 	 */
-	public void setCurrentState(StateType state){
+	public void setCurrentState(StateType state) {
 		previousStates.forceCurrentState(state);
 	}
 }

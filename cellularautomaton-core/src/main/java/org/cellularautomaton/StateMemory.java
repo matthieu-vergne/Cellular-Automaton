@@ -9,6 +9,9 @@ import java.util.ArrayList;
  * @author Matthieu Vergne (matthieu.vergne@gmail.com)
  */
 public class StateMemory<StateType> {
+	/**
+	 * The states memorized.
+	 */
 	private final ArrayList<StateType> states = new ArrayList<StateType>();
 
 	/**

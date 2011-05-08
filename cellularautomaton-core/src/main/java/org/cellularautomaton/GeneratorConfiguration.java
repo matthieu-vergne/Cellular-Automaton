@@ -21,11 +21,36 @@ package org.cellularautomaton;
  */
 public abstract class GeneratorConfiguration<StateType> {
 	// TODO replace members by methods where useful
+	/**
+	 * The initial state to apply to each cell.
+	 */
 	public StateType initialState = null;
+	/**
+	 * The size of the memory of each cell.
+	 */
 	public int memorySize = 1;
+	/**
+	 * Tell if the space of cells must be cyclic or not. For example, a 2D space
+	 * is :<br/>
+	 * <ul>
+	 * <li>a square (not cyclic)</li>
+	 * <li>a tore (cyclic)</li>
+	 * </ul>
+	 */
 	public boolean isCyclic = true;
+	/**
+	 * The length (number of cells) of each dimension of the space of cells.
+	 */
 	public int[] dimensionSizes = null;
 
+	/**
+	 * This method must implement the calculation rule to give to each cell of
+	 * the space of cells.
+	 * 
+	 * @param cell
+	 *            the cell to consider
+	 * @return the calculated state to apply to the cell
+	 */
 	public abstract StateType calculateForCell(Cell<StateType> cell);
 
 	/**

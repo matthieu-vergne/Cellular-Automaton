@@ -5,7 +5,24 @@ import java.util.HashSet;
 
 import org.cellularautomaton.util.SetStack;
 
+/**
+ * A cellular automaton is a space of evolving cells. Each cell evolves
+ * considering its actual state and the states of other cells.
+ * 
+ * @author Matthieu Vergne (matthieu.vergne@gmail.com)
+ * 
+ * @param <StateType>
+ *            the type of data used by each cell, it can be {@link Boolean} for
+ *            a simple "On/Off" state, a numeral state like {@link Integer} or
+ *            {@link Float} for arithmetical states, or any specific type of
+ *            data for particular uses (just consider all the cells use the same
+ *            type).
+ */
 public class CellularAutomaton<StateType> {
+	/**
+	 * The cell to consider as the start of the space (all the other cells are
+	 * accessible from this one).
+	 */
 	private final Cell<StateType> originCell;
 
 	/**
@@ -55,6 +72,16 @@ public class CellularAutomaton<StateType> {
 		originCell = generateCells(config, config.getDimensions() - 1);
 	}
 
+	/**
+	 * 
+	 * @param config
+	 *            the configuration to consider
+	 * @param dimension
+	 *            the zero-based dimension to consider, basically the dimension
+	 *            in the configuration - 1
+	 * @return a cell which can be used to get all the others (looking
+	 *         neighbors)
+	 */
 	private Cell<StateType> generateCells(
 			final GeneratorConfiguration<StateType> config, int dimension) {
 		if (dimension < 0) {
@@ -82,6 +109,21 @@ public class CellularAutomaton<StateType> {
 		}
 	}
 
+	/**
+	 * 
+	 * @param config
+	 *            the configuration to consider
+	 * @param cellRef
+	 *            the cell already in the space
+	 * @param cellToInsert
+	 *            the cell to insert in the space
+	 * @param dimensionToCheck
+	 *            the zero-based dimension to consider
+	 * @param initialDimension
+	 *            the initial zero-based dimension of the check
+	 * @param coord
+	 *            the coordinate of the cell in the considered dimension
+	 */
 	private void checkLevel(final GeneratorConfiguration<StateType> config,
 			Cell<StateType> cellRef, Cell<StateType> cellToInsert,
 			int dimensionToCheck, int initialDimension, int coord) {

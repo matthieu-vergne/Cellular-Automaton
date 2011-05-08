@@ -15,8 +15,14 @@ import java.util.LinkedHashSet;
  */
 public class SetStack<E> {
 
+	/**
+	 * The set of elements stored in this stack.
+	 */
 	private final LinkedHashSet<E> set = new LinkedHashSet<E>();
 
+	/**
+	 * Create an empty stack.
+	 */
 	public SetStack() {
 	}
 
