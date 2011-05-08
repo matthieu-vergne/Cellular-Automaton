@@ -80,8 +80,8 @@ public class CellularAutomaton<StateType> {
 	 * @param dimension
 	 *            the zero-based dimension to consider, basically the dimension
 	 *            in the configuration - 1
-	 * @return a cell which can be used to get all the others (looking
-	 *         neighbors)
+	 * @return a cell which can be used to get all the others (looking the cells
+	 *         around)
 	 */
 	private Cell<StateType> generateCells(
 			final GeneratorConfiguration<StateType> config, int dimension) {
@@ -179,8 +179,8 @@ public class CellularAutomaton<StateType> {
 	/**
 	 * 
 	 * @return the cell this automaton work from, all the others cells the
-	 *         automaton can work on are available from this one (with neighbor
-	 *         links).
+	 *         automaton can work on are available from this one (with relative
+	 *         coordinates).
 	 */
 	public Cell<StateType> getOriginCell() {
 		synchronized (originCell) {
@@ -217,7 +217,7 @@ public class CellularAutomaton<StateType> {
 	 * Specific iterator for the space of cells. If the space is modified during
 	 * the iteration, it is possible that the modifications are not considered :<br/>
 	 * <ul>
-	 * <li>if a modification is done "far" (not in direct neighbors) of the
+	 * <li>if a modification is done "far" (not in the cells around) of the
 	 * cells already iterated, it should be considered,</li>
 	 * <li>if a modification is done between cells already iterated, it should
 	 * not be considered</li>
@@ -256,9 +256,9 @@ public class CellularAutomaton<StateType> {
 				Cell<StateType> cell = cellsToCheck.iterator().next();
 				cellsToCheck.remove(cell);
 				cellsUsed.add(cell);
-				for (Cell<StateType> neighbor : cell.getAllNeighbors()) {
-					if (!cellsUsed.contains(neighbor)) {
-						cellsToCheck.add(neighbor);
+				for (Cell<StateType> cellAround : cell.getAllCellsAround()) {
+					if (!cellsUsed.contains(cellAround)) {
+						cellsToCheck.add(cellAround);
 					}
 				}
 				return cell;

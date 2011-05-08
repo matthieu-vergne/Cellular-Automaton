@@ -47,7 +47,7 @@ public class JAutomatonPanel<T> extends JPanel {
 		Cell<? extends T> origin = automaton.getOriginCell();
 		for (int y = height - 1; y >= 0; y--) {
 			for (int x = 0; x < width; x++) {
-				T state = origin.getRelativeNeighbor(x, y).getCurrentState();
+				T state = origin.getRelativeCell(x, y).getCurrentState();
 				g.setColor(renderer.getColor(state));
 				g.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 			}

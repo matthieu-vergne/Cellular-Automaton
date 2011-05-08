@@ -17,7 +17,7 @@ public class GOLAutomatonFactory {
 				for (final int[] coords : new int[][] { { -1, -1 }, { -1, 0 },
 						{ -1, 1 }, { 0, -1 }, { 0, 1 }, { +1, -1 }, { +1, 0 },
 						{ +1, 1 } }) {
-					if (cell.getRelativeNeighbor(coords).getCurrentState() == GameOfLifeState.ALIVE) {
+					if (cell.getRelativeCell(coords).getCurrentState() == GameOfLifeState.ALIVE) {
 						aliveNeighbors++;
 					}
 				}
@@ -37,7 +37,7 @@ public class GOLAutomatonFactory {
 		final Cell<GameOfLifeState> origin = automaton.getOriginCell();
 		for (final int[] coords : new int[][] { { 2, 0 }, { 2, 1 }, { 1, 2 },
 				{ 3, 1 }, { 3, 2 }, }) {
-			origin.getRelativeNeighbor(coords).setCurrentState(
+			origin.getRelativeCell(coords).setCurrentState(
 					GameOfLifeState.ALIVE);
 		}
 

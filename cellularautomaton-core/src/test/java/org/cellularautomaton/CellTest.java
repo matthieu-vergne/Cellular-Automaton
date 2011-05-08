@@ -113,7 +113,7 @@ public class CellTest extends TestCase {
 
 	}
 
-	public void testCellNeighbors() {
+	public void testCellsAround() {
 		int dimension = 2;
 		Cell<String> cell = new Cell<String>("middle", dimension) {
 			@Override
@@ -230,15 +230,15 @@ public class CellTest extends TestCase {
 		neighborRight.setPreviousCellOnDimension(1, neighborBottomRight);
 		neighborRight.setNextCellOnDimension(1, neighborTopRight);
 
-		assertEquals(neighborBottomLeft, cell.getRelativeNeighbor(-1, -1));
-		assertEquals(neighborLeft, cell.getRelativeNeighbor(-1, 0));
-		assertEquals(neighborTopLeft, cell.getRelativeNeighbor(-1, 1));
-		assertEquals(neighborBottom, cell.getRelativeNeighbor(0, -1));
-		assertEquals(cell, cell.getRelativeNeighbor(0, 0));
-		assertEquals(neighborTop, cell.getRelativeNeighbor(0, 1));
-		assertEquals(neighborBottomRight, cell.getRelativeNeighbor(1, -1));
-		assertEquals(neighborRight, cell.getRelativeNeighbor(1, 0));
-		assertEquals(neighborTopRight, cell.getRelativeNeighbor(1, 1));
+		assertEquals(neighborBottomLeft, cell.getRelativeCell(-1, -1));
+		assertEquals(neighborLeft, cell.getRelativeCell(-1, 0));
+		assertEquals(neighborTopLeft, cell.getRelativeCell(-1, 1));
+		assertEquals(neighborBottom, cell.getRelativeCell(0, -1));
+		assertEquals(cell, cell.getRelativeCell(0, 0));
+		assertEquals(neighborTop, cell.getRelativeCell(0, 1));
+		assertEquals(neighborBottomRight, cell.getRelativeCell(1, -1));
+		assertEquals(neighborRight, cell.getRelativeCell(1, 0));
+		assertEquals(neighborTopRight, cell.getRelativeCell(1, 1));
 	}
 
 	public void testCoords() {

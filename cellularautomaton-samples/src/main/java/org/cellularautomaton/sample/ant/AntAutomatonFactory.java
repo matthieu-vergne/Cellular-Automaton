@@ -15,7 +15,7 @@ public class AntAutomatonFactory {
 				case BLACK:
 				case WHITE:
 					// Ant coming from left
-					AntState neighbor = cell.getRelativeNeighbor(-1, 0)
+					AntState neighbor = cell.getRelativeCell(-1, 0)
 							.getCurrentState();
 					if (neighbor == AntState.ANT_BLACK_RIGHT
 							|| neighbor == AntState.ANT_WHITE_RIGHT) {
@@ -26,7 +26,7 @@ public class AntAutomatonFactory {
 						}
 					}
 					// Ant coming from right
-					neighbor = cell.getRelativeNeighbor(1, 0).getCurrentState();
+					neighbor = cell.getRelativeCell(1, 0).getCurrentState();
 					if (neighbor == AntState.ANT_BLACK_LEFT
 							|| neighbor == AntState.ANT_WHITE_LEFT) {
 						if (cell.getCurrentState() == AntState.BLACK) {
@@ -37,7 +37,7 @@ public class AntAutomatonFactory {
 					}
 
 					// Ant coming from up
-					neighbor = cell.getRelativeNeighbor(0, -1)
+					neighbor = cell.getRelativeCell(0, -1)
 							.getCurrentState();
 					if (neighbor == AntState.ANT_BLACK_DOWN
 							|| neighbor == AntState.ANT_WHITE_DOWN) {
@@ -48,7 +48,7 @@ public class AntAutomatonFactory {
 						}
 					}
 					// Ant coming from down
-					neighbor = cell.getRelativeNeighbor(0, 1).getCurrentState();
+					neighbor = cell.getRelativeCell(0, 1).getCurrentState();
 					if (neighbor == AntState.ANT_BLACK_UP
 							|| neighbor == AntState.ANT_WHITE_UP) {
 						if (cell.getCurrentState() == AntState.BLACK) {
@@ -84,7 +84,7 @@ public class AntAutomatonFactory {
 				config);
 
 		final Cell<AntState> origin = automaton.getOriginCell();
-		origin.getRelativeNeighbor(30, 30).setCurrentState(
+		origin.getRelativeCell(30, 30).setCurrentState(
 				AntState.ANT_WHITE_UP);
 
 		return automaton;

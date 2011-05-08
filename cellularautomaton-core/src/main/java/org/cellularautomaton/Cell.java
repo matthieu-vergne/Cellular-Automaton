@@ -193,10 +193,14 @@ public abstract class Cell<StateType> {
 	}
 
 	/**
+	 * This method allows to get all the cells linked to this one. The linked
+	 * cells are the ones accessible from
+	 * {@link #getPreviousCellOnDimension(int)} and
+	 * {@link #getNextCellOnDimension(int)} for each dimension.
 	 * 
-	 * @return the neighbors of this cell
+	 * @return all the cells near of the current cell.
 	 */
-	public Set<Cell<StateType>> getAllNeighbors() {
+	public Set<Cell<StateType>> getAllCellsAround() {
 		Set<Cell<StateType>> neighbors = new HashSet<Cell<StateType>>();
 		for (int dimension = 0; dimension < getDimensions(); dimension++) {
 			neighbors.add(getPreviousCellOnDimension(dimension));
@@ -204,15 +208,14 @@ public abstract class Cell<StateType> {
 		}
 		return neighbors;
 	}
-	
 
 	/**
 	 * <p>
-	 * Give the cell which is at the given coords, starting from the current
-	 * cell.
+	 * Give the cell which is at the given coordinates, starting from the
+	 * current cell.
 	 * </p>
 	 * <p>
-	 * <b>Be careful :</b> the behavior of this method is ensured for orthogonal
+	 * <b>Be careful :</b> the behavior of this method is ensured for regular
 	 * spaces only, with constant size on each dimension (see
 	 * {@link CellularAutomaton#CellularAutomaton(Object, org.cellularautomaton.CellularAutomaton.CalculationWrapper, int, boolean, int...)}
 	 * for more details about these spaces). It means that any customized space
@@ -223,11 +226,11 @@ public abstract class Cell<StateType> {
 	 * </p>
 	 * 
 	 * @param coords
-	 *            the relative coords of the cell, where (0, 0, ..., 0)
+	 *            the relative coordinates of the cell, where (0, 0, ..., 0)
 	 *            corresponds to the current cell.
-	 * @return the cell found at the given coords
+	 * @return the cell found at the given coordinates
 	 */
-	public Cell<StateType> getRelativeNeighbor(int... coords) {
+	public Cell<StateType> getRelativeCell(int... coords) {
 		Cell<StateType> cell = this;
 		for (int dimension = 0; dimension < coords.length; dimension++) {
 			boolean goNext = true;

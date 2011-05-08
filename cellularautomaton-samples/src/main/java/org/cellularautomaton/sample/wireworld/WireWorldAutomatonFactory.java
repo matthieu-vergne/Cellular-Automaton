@@ -20,7 +20,7 @@ public class WireWorldAutomatonFactory {
 					for (final int[] coords : new int[][] { { -1, -1 },
 							{ -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 },
 							{ +1, -1 }, { +1, 0 }, { +1, 1 } }) {
-						if (cell.getRelativeNeighbor(coords).getCurrentState() == WireWorldState.HEAD) {
+						if (cell.getRelativeCell(coords).getCurrentState() == WireWorldState.HEAD) {
 							heads++;
 						}
 					}
@@ -58,13 +58,13 @@ public class WireWorldAutomatonFactory {
 
 				{ 10, 6 }, { 11, 6 }, { 12, 6 }, { 13, 6 }, { 10, 8 },
 				{ 11, 8 }, { 12, 8 }, { 13, 8 }, { 14, 7 }, }) {
-			origin.getRelativeNeighbor(coords).setCurrentState(
+			origin.getRelativeCell(coords).setCurrentState(
 					WireWorldState.METAL);
 		}
-		origin.getRelativeNeighbor(14, 2).setCurrentState(WireWorldState.HEAD);
-		origin.getRelativeNeighbor(14, 7).setCurrentState(WireWorldState.HEAD);
-		origin.getRelativeNeighbor(13, 3).setCurrentState(WireWorldState.QUEUE);
-		origin.getRelativeNeighbor(13, 8).setCurrentState(WireWorldState.QUEUE);
+		origin.getRelativeCell(14, 2).setCurrentState(WireWorldState.HEAD);
+		origin.getRelativeCell(14, 7).setCurrentState(WireWorldState.HEAD);
+		origin.getRelativeCell(13, 3).setCurrentState(WireWorldState.QUEUE);
+		origin.getRelativeCell(13, 8).setCurrentState(WireWorldState.QUEUE);
 
 		return automaton;
 	}

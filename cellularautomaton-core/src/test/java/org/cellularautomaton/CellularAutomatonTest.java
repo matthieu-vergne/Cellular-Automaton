@@ -681,8 +681,8 @@ public class CellularAutomatonTest extends TestCase {
 		final GeneratorConfiguration<String> calculation = new GeneratorConfiguration<String>() {
 			@Override
 			public String calculateForCell(Cell<String> cell) {
-				return cell.getRelativeNeighbor(-1).getCurrentState()
-						+ cell.getRelativeNeighbor(+1).getCurrentState();
+				return cell.getRelativeCell(-1).getCurrentState()
+						+ cell.getRelativeCell(+1).getCurrentState();
 			}
 		};
 
@@ -754,15 +754,15 @@ public class CellularAutomatonTest extends TestCase {
 		final GeneratorConfiguration<String> calculation = new GeneratorConfiguration<String>() {
 			@Override
 			public String calculateForCell(Cell<String> cell) {
-				return cell.getRelativeNeighbor(-1, -1).getCurrentState()
-						+ cell.getRelativeNeighbor(+0, -1).getCurrentState()
-						+ cell.getRelativeNeighbor(+1, -1).getCurrentState()
-						+ cell.getRelativeNeighbor(-1, +0).getCurrentState()
-						+ cell.getRelativeNeighbor(+0, +0).getCurrentState() // current
-						+ cell.getRelativeNeighbor(+1, +0).getCurrentState()
-						+ cell.getRelativeNeighbor(-1, +1).getCurrentState()
-						+ cell.getRelativeNeighbor(+0, +1).getCurrentState()
-						+ cell.getRelativeNeighbor(+1, +1).getCurrentState();
+				return cell.getRelativeCell(-1, -1).getCurrentState()
+						+ cell.getRelativeCell(+0, -1).getCurrentState()
+						+ cell.getRelativeCell(+1, -1).getCurrentState()
+						+ cell.getRelativeCell(-1, +0).getCurrentState()
+						+ cell.getRelativeCell(+0, +0).getCurrentState() // current
+						+ cell.getRelativeCell(+1, +0).getCurrentState()
+						+ cell.getRelativeCell(-1, +1).getCurrentState()
+						+ cell.getRelativeCell(+0, +1).getCurrentState()
+						+ cell.getRelativeCell(+1, +1).getCurrentState();
 			}
 		};
 
