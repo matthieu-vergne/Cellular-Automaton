@@ -3,8 +3,6 @@ package org.cellularautomaton;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.cellularautomaton.util.SetStack;
-
 /**
  * A cellular automaton is a space of evolving cells. Each cell evolves
  * considering its actual state and the states of other cells.
@@ -193,20 +191,20 @@ public class CellularAutomaton<StateType> {
 	 */
 	public Collection<Cell<StateType>> getAllCells() {
 		Collection<Cell<StateType>> result = new HashSet<Cell<StateType>>();
-		SetStack<Cell<StateType>> cellsToCheck = new SetStack<Cell<StateType>>();
-		cellsToCheck.push(getOriginCell());
+		Collection<Cell<StateType>> cellsToCheck = new HashSet<Cell<StateType>>();
+		cellsToCheck.add(getOriginCell());
 
 		while (!cellsToCheck.isEmpty()) {
-			Cell<StateType> cell = cellsToCheck.pop();
+			Cell<StateType> cell = cellsToCheck.iterator().next();
+			cellsToCheck.remove(cell);
 			result.add(cell);
 			for (Cell<StateType> neighbor : cell.getAllNeighbors()) {
 				if (!result.contains(neighbor)) {
-					cellsToCheck.push(neighbor);
+					cellsToCheck.add(neighbor);
 				}
 			}
 		}
 
 		return result;
 	}
-
 }
