@@ -470,7 +470,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertEquals("1331", cell3.getCurrentState());
 	}
 
-	public void testEcolutionOnExistentSpaceOfCells2D() {
+	public void testEvolutionOnExistentSpaceOfCells2D() {
 		// calculation to apply
 		final GeneratorConfiguration<String> calculation = new GeneratorConfiguration<String>() {
 			@Override
