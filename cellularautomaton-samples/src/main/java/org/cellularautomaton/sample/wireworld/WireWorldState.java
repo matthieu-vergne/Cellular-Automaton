@@ -1,4 +1,4 @@
-package org.cellularautomaton.sample.gui;
+package org.cellularautomaton.sample.wireworld;
 
 public enum WireWorldState {
 	EMPTY,

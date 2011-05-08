@@ -1,4 +1,4 @@
-package org.cellularautomaton.sample.gui;
+package org.cellularautomaton.sample.ant;
 
 public enum AntState {
 	BLACK,

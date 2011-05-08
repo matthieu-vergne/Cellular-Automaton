@@ -1,4 +1,4 @@
-package org.cellularautomaton.sample.gui;
+package org.cellularautomaton.sample.common;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,15 +9,16 @@ import javax.swing.JPanel;
 import org.cellularautomaton.Cell;
 import org.cellularautomaton.CellularAutomaton;
 
-public class JAutomaton<T> extends JPanel {
-	private int height = 10;
-	private int width = 20;
+public class JAutomatonPanel<T> extends JPanel {
+	private static final int CELL_SIZE = 10;
+	private int height;
+	private int width;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4839521220659722820L;
 	private CellularAutomaton<? extends T> automaton;
-	
+
 	public CellularAutomaton<? extends T> getAutomaton() {
 		return automaton;
 	}
@@ -25,36 +26,36 @@ public class JAutomaton<T> extends JPanel {
 	public static interface CellularRenderer<T> {
 		Color getColor(T state);
 	}
-	
+
 	private CellularRenderer<? super T> renderer;
 
-	public JAutomaton(CellularAutomaton<? extends T> automaton, CellularRenderer<? super T> renderer) {
+	public JAutomatonPanel(CellularAutomaton<? extends T> automaton,
+			CellularRenderer<? super T> renderer) {
 		this.automaton = automaton;
 		this.renderer = renderer;
+		this.width = 0;
+		this.height = 0;
+		for (Cell<?> cell : automaton.getAllCells()) {
+			this.width = Math.max(this.width, cell.getCoords()[0]);
+			this.height = Math.max(this.height, cell.getCoords()[1]);
+		}
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		Cell<? extends T> origin = automaton.getOriginCell();
 		for (int y = height - 1; y >= 0; y--) {
 			for (int x = 0; x < width; x++) {
-				T state = origin.getRelativeNeighbor(x, y)
-						.getCurrentState();
+				T state = origin.getRelativeNeighbor(x, y).getCurrentState();
 				g.setColor(renderer.getColor(state));
-				g.fillRect(x*10, y*10, 10, 10);
+				g.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 			}
 		}
 	}
+
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(width*10, height*10);
-	}
-	public void setHeight(int height) {
-		this.height = height;
-	}
-	
-	public void setWidth(int width) {
-		this.width = width;
+		return new Dimension(width * CELL_SIZE, height * CELL_SIZE);
 	}
 }
