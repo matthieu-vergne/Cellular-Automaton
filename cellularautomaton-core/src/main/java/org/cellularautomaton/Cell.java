@@ -42,19 +42,6 @@ public abstract class Cell<StateType> {
 
 	/**
 	 * 
-	 * @param state
-	 *            the state of the cell
-	 * @param dimensions
-	 *            the number of dimensions this cell must known
-	 * @return a new frontier cell
-	 */
-	static public <StateType> Cell<StateType> generateFrontierCellInstance(
-			StateType state, int dimensions) {
-		return new FrontierCell<StateType>(state, dimensions);
-	}
-
-	/**
-	 * 
 	 * @return the dimensions this cell work on
 	 */
 	public int getDimensions() {
@@ -217,46 +204,7 @@ public abstract class Cell<StateType> {
 		}
 		return neighbors;
 	}
-
-	/**
-	 * <p>
-	 * A frontier cell is a specific cell, which cannot change its neighbors
-	 * (knowing only itself) nor state (keeping the same state). It is a simple
-	 * way to create a limit in a cellular automaton space : you cannot go
-	 * further the frontier cell as it knows itself only, and you do not need to
-	 * care about its next state as its calculation always gives the current
-	 * state.
-	 * </p>
-	 * 
-	 * @author Matthieu Vergne (matthieu.vergne@gmail.com)
-	 * 
-	 * @param <StateType>
-	 */
-	public static class FrontierCell<StateType> extends Cell<StateType> {
-		public FrontierCell(StateType state, int dimensions) {
-			super(state, dimensions, 1);
-		}
-
-		@Override
-		protected StateType calculateState() {
-			return getCurrentState();
-		}
-
-		@Override
-		public void setNextCellOnDimension(int dimension,
-				Cell<StateType> neighbor) {
-			throw new IllegalStateException(
-					"a frontier cell cannot change its neighbors");
-		}
-
-		@Override
-		public void setPreviousCellOnDimension(int dimension,
-				Cell<StateType> neighbor) {
-			throw new IllegalStateException(
-					"a frontier cell cannot change its neighbors");
-		}
-
-	}
+	
 
 	/**
 	 * <p>
