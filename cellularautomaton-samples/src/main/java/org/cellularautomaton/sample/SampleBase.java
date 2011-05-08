@@ -31,8 +31,7 @@ public abstract class SampleBase {
 				e.printStackTrace();
 			}
 
-			automaton.calculateNextStep();
-			automaton.applyNextStep();
+			automaton.doStep();
 			System.out.println("=====");
 			System.out.println(toString(automaton));
 		}

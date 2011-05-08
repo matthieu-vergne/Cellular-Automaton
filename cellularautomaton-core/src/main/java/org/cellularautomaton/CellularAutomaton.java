@@ -167,6 +167,15 @@ public class CellularAutomaton<StateType> {
 	}
 
 	/**
+	 * Execute a complete step of the automaton. After that, each cell has its
+	 * next state.
+	 */
+	public void doStep() {
+		calculateNextStep();
+		applyNextStep();
+	}
+
+	/**
 	 * 
 	 * @return the cell this automaton work from, all the others cells the
 	 *         automaton can work on are available from this one (with neighbor

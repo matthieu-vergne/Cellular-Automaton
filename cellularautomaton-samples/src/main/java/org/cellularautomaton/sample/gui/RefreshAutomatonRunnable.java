@@ -20,8 +20,7 @@ public class RefreshAutomatonRunnable implements Runnable {
 				e.printStackTrace();
 			}
 			CellularAutomaton<?> automaton = jautomaton.getAutomaton();
-			automaton.calculateNextStep();
-			automaton.applyNextStep();
+			automaton.doStep();
 
 			jautomaton.repaint();
 		}

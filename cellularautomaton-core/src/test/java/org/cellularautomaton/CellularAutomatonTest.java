@@ -216,8 +216,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell33));
 
 		// test invariability (no ordering is considered)
-		automaton2D.calculateNextStep();
-		automaton2D.applyNextStep();
+		automaton2D.doStep();
 		list = automaton2D.getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
@@ -237,8 +236,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell32));
 		assertTrue(list.contains(cell33));
 
-		automaton2D.calculateNextStep();
-		automaton2D.applyNextStep();
+		automaton2D.doStep();
 		list = automaton2D.getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
@@ -258,8 +256,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell32));
 		assertTrue(list.contains(cell33));
 
-		automaton2D.calculateNextStep();
-		automaton2D.applyNextStep();
+		automaton2D.doStep();
 		list = automaton2D.getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
@@ -390,16 +387,13 @@ public class CellularAutomatonTest extends TestCase {
 		assertEquals(cell0, automaton1D.getOriginCell());
 
 		// check invariability
-		automaton1D.calculateNextStep();
-		automaton1D.applyNextStep();
+		automaton1D.doStep();
 		assertEquals(cell0, automaton1D.getOriginCell());
 
-		automaton1D.calculateNextStep();
-		automaton1D.applyNextStep();
+		automaton1D.doStep();
 		assertEquals(cell0, automaton1D.getOriginCell());
 
-		automaton1D.calculateNextStep();
-		automaton1D.applyNextStep();
+		automaton1D.doStep();
 		assertEquals(cell0, automaton1D.getOriginCell());
 	}
 
@@ -461,16 +455,14 @@ public class CellularAutomatonTest extends TestCase {
 		assertEquals("3", cell3.getCurrentState());
 
 		// test automaton
-		automaton1D.calculateNextStep();
-		automaton1D.applyNextStep();
+		automaton1D.doStep();
 
 		assertEquals("31", cell0.getCurrentState());
 		assertEquals("02", cell1.getCurrentState());
 		assertEquals("13", cell2.getCurrentState());
 		assertEquals("20", cell3.getCurrentState());
 
-		automaton1D.calculateNextStep();
-		automaton1D.applyNextStep();
+		automaton1D.doStep();
 
 		assertEquals("2002", cell0.getCurrentState());
 		assertEquals("3113", cell1.getCurrentState());
@@ -698,8 +690,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertEquals("33", cell33.getCurrentState());
 
 		// test automaton
-		automaton2D.calculateNextStep();
-		automaton2D.applyNextStep();
+		automaton2D.doStep();
 
 		assertEquals("333031030001131011", cell00.getCurrentState());
 		assertEquals("303132000102101112", cell01.getCurrentState());
