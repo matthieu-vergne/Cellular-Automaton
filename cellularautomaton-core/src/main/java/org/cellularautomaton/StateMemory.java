@@ -7,6 +7,12 @@ import java.util.ArrayList;
  * cell.
  * 
  * @author Matthieu Vergne (matthieu.vergne@gmail.com)
+ * 
+ * @param <StateType>
+ *            the type of data used by the cell, it can be {@link Boolean} for a
+ *            simple "On/Off" state, a numeral state like {@link Integer} or
+ *            {@link Float} for arithmetical states, or any specific type of
+ *            data for particular uses.
  */
 public class StateMemory<StateType> {
 	/**
