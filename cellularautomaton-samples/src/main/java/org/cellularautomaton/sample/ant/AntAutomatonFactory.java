@@ -1,16 +1,17 @@
 package org.cellularautomaton.sample.ant;
 
-import org.cellularautomaton.Cell;
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.GeneratorConfiguration;
+import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.IRule;
 
 public class AntAutomatonFactory {
 
 	public static CellularAutomaton<AntState> createAutomaton() {
-		final GeneratorConfiguration<AntState> config = new GeneratorConfiguration<AntState>() {
+		final GeneratorConfiguration<AntState> config = new GeneratorConfiguration<AntState>();
+		config.rule = new IRule<AntState>() {
 
-			@Override
-			public AntState calculateForCell(final Cell<AntState> cell) {
+			public AntState calculateNextStateOf(ICell<AntState> cell) {
 				switch (cell.getCurrentState()) {
 				case BLACK:
 				case WHITE:
@@ -37,8 +38,7 @@ public class AntAutomatonFactory {
 					}
 
 					// Ant coming from up
-					neighbor = cell.getRelativeCell(0, -1)
-							.getCurrentState();
+					neighbor = cell.getRelativeCell(0, -1).getCurrentState();
 					if (neighbor == AntState.ANT_BLACK_DOWN
 							|| neighbor == AntState.ANT_WHITE_DOWN) {
 						if (cell.getCurrentState() == AntState.BLACK) {
@@ -83,9 +83,8 @@ public class AntAutomatonFactory {
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
 				config);
 
-		final Cell<AntState> origin = automaton.getOriginCell();
-		origin.getRelativeCell(30, 30).setCurrentState(
-				AntState.ANT_WHITE_UP);
+		final ICell<AntState> origin = automaton.getOriginCell();
+		origin.getRelativeCell(30, 30).setCurrentState(AntState.ANT_WHITE_UP);
 
 		return automaton;
 	}

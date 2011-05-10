@@ -1,17 +1,18 @@
 package org.cellularautomaton.sample.gameoflife;
 
-import org.cellularautomaton.Cell;
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.GeneratorConfiguration;
+import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.IRule;
 
 public class GOLAutomatonFactory {
 
 	public static CellularAutomaton<GameOfLifeState> createAutomaton() {
-		final GeneratorConfiguration<GameOfLifeState> config = new GeneratorConfiguration<GameOfLifeState>() {
+		final GeneratorConfiguration<GameOfLifeState> config = new GeneratorConfiguration<GameOfLifeState>();
+		config.rule = new IRule<GameOfLifeState>() {
 
-			@Override
-			public GameOfLifeState calculateForCell(
-					final Cell<GameOfLifeState> cell) {
+			public GameOfLifeState calculateNextStateOf(
+					ICell<GameOfLifeState> cell) {
 				final boolean isAlive = cell.getCurrentState() == GameOfLifeState.ALIVE;
 				int aliveNeighbors = 0;
 				for (final int[] coords : new int[][] { { -1, -1 }, { -1, 0 },
@@ -34,7 +35,7 @@ public class GOLAutomatonFactory {
 		CellularAutomaton<GameOfLifeState> automaton = new CellularAutomaton<GameOfLifeState>(
 				config);
 
-		final Cell<GameOfLifeState> origin = automaton.getOriginCell();
+		final ICell<GameOfLifeState> origin = automaton.getOriginCell();
 		for (final int[] coords : new int[][] { { 2, 0 }, { 2, 1 }, { 1, 2 },
 				{ 3, 1 }, { 3, 2 }, }) {
 			origin.getRelativeCell(coords).setCurrentState(

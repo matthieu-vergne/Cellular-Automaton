@@ -1,19 +1,26 @@
 package org.cellularautomaton;
 
-import org.junit.Assert;
-
 import junit.framework.TestCase;
+
+import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.factory.RuleFactory;
+import org.cellularautomaton.impl.GenericCell;
+import org.junit.Assert;
 
 public class CellTest extends TestCase {
 
+	private RuleFactory<String> ruleFactory = new RuleFactory<String>();
+	
 	public void testCellState() {
 		int dimension = 2;
-		Cell<Integer> cell = new Cell<Integer>(0, dimension, 3) {
-			@Override
-			protected Integer calculateState() {
-				return getCurrentState() + 1;
+		IRule<Integer> rule = new IRule<Integer>() {
+			public Integer calculateNextStateOf(ICell<Integer> cell) {
+				return cell.getCurrentState() + 1;
 			}
 		};
+		ICell<Integer> cell = new GenericCell<Integer>(0, dimension, 3);
+		cell.setRule(rule);
 		assertEquals(Integer.valueOf(0), cell.getCurrentState());
 		assertEquals(Integer.valueOf(0), cell.getState(0));
 		assertEquals(Integer.valueOf(0), cell.getState(1));
@@ -75,7 +82,7 @@ public class CellTest extends TestCase {
 		assertEquals(Integer.valueOf(3), cell.getState(1));
 		assertEquals(Integer.valueOf(2), cell.getState(2));
 		assertFalse(cell.isNextStateCalculated());
-		
+
 		cell.setCurrentState(18);
 		assertEquals(Integer.valueOf(18), cell.getCurrentState());
 		assertEquals(Integer.valueOf(18), cell.getState(0));
@@ -85,66 +92,42 @@ public class CellTest extends TestCase {
 	}
 
 	public void testCellDimensions() {
-		Cell<String> cell;
+		ICell<String> cell;
+		IRule<String> rule = ruleFactory.getStaticRuleInstance();
 
-		cell = new Cell<String>("", 1) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
+		cell = new GenericCell<String>("", 1, 1);
+		cell.setRule(rule);
 		assertEquals(1, cell.getDimensions());
 
-		cell = new Cell<String>("", 2) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
+		cell = new GenericCell<String>("", 2, 1);
+		cell.setRule(rule);
 		assertEquals(2, cell.getDimensions());
 
-		cell = new Cell<String>("", 3) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
+		cell = new GenericCell<String>("", 3, 1);
+		cell.setRule(rule);
 		assertEquals(3, cell.getDimensions());
 
 	}
 
 	public void testCellsAround() {
 		int dimension = 2;
-		Cell<String> cell = new Cell<String>("middle", dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
-		Cell<String> neighborTop = new Cell<String>("top", dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
-		Cell<String> neighborBottom = new Cell<String>("bottom", dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
-		Cell<String> neighborLeft = new Cell<String>("left", dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
-		Cell<String> neighborRight = new Cell<String>("right", dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
+		IRule<String> rule = ruleFactory.getStaticRuleInstance();
+
+		ICell<String> cell = new GenericCell<String>("middle", dimension, 1);
+		cell.setRule(rule);
+		ICell<String> neighborTop = new GenericCell<String>("top", dimension,
+				1);
+		neighborTop.setRule(rule);
+		ICell<String> neighborBottom = new GenericCell<String>("bottom",
+				dimension, 1);
+		neighborBottom.setRule(rule);
+		ICell<String> neighborLeft = new GenericCell<String>("left",
+				dimension, 1);
+		neighborLeft.setRule(rule);
+		ICell<String> neighborRight = new GenericCell<String>("right",
+				dimension, 1);
+		neighborRight.setRule(rule);
+
 		assertEquals(cell, cell.getPreviousCellOnDimension(0));
 		assertEquals(cell, cell.getNextCellOnDimension(0));
 		assertEquals(cell, cell.getPreviousCellOnDimension(1));
@@ -178,32 +161,18 @@ public class CellTest extends TestCase {
 		assertEquals(neighborBottom, cell.getPreviousCellOnDimension(1));
 		assertEquals(neighborTop, cell.getNextCellOnDimension(1));
 
-		Cell<String> neighborTopLeft = new Cell<String>("top-left", dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
-		Cell<String> neighborTopRight = new Cell<String>("top-right", dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
-		Cell<String> neighborBottomLeft = new Cell<String>("bottom-left",
-				dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
-		Cell<String> neighborBottomRight = new Cell<String>("bottom-right",
-				dimension) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
+		ICell<String> neighborTopLeft = new GenericCell<String>("top-left",
+				dimension, 1);
+		neighborTopLeft.setRule(rule);
+		ICell<String> neighborTopRight = new GenericCell<String>("top-right",
+				dimension, 1);
+		neighborTopRight.setRule(rule);
+		ICell<String> neighborBottomLeft = new GenericCell<String>(
+				"bottom-left", dimension, 1);
+		neighborBottomLeft.setRule(rule);
+		ICell<String> neighborBottomRight = new GenericCell<String>(
+				"bottom-right", dimension, 1);
+		neighborBottomRight.setRule(rule);
 		neighborTopLeft.setPreviousCellOnDimension(0, neighborTopRight);
 		neighborTopLeft.setNextCellOnDimension(0, neighborTop);
 		neighborTopLeft.setPreviousCellOnDimension(1, neighborLeft);
@@ -242,12 +211,8 @@ public class CellTest extends TestCase {
 	}
 
 	public void testCoords() {
-		Cell<String> cell = new Cell<String>("", 3) {
-			@Override
-			protected String calculateState() {
-				return getCurrentState();
-			}
-		};
+		ICell<String> cell = new GenericCell<String>("", 3, 1);
+		cell.setRule(ruleFactory.getStaticRuleInstance());
 
 		cell.setCoords(3, 5, 2);
 		Assert.assertArrayEquals(new int[] { 3, 5, 2 }, cell.getCoords());

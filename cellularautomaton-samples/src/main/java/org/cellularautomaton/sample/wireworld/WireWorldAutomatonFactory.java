@@ -1,17 +1,17 @@
 package org.cellularautomaton.sample.wireworld;
 
-import org.cellularautomaton.Cell;
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.GeneratorConfiguration;
+import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.IRule;
 
 public class WireWorldAutomatonFactory {
 
 	public static CellularAutomaton<WireWorldState> createAutomaton() {
-		final GeneratorConfiguration<WireWorldState> config = new GeneratorConfiguration<WireWorldState>() {
-
-			@Override
-			public WireWorldState calculateForCell(
-					final Cell<WireWorldState> cell) {
+		final GeneratorConfiguration<WireWorldState> config = new GeneratorConfiguration<WireWorldState>();
+		config.rule = new IRule<WireWorldState>() {
+			public WireWorldState calculateNextStateOf(
+					ICell<WireWorldState> cell) {
 				switch (cell.getCurrentState()) {
 				case EMPTY:
 					return WireWorldState.EMPTY;
@@ -44,7 +44,7 @@ public class WireWorldAutomatonFactory {
 		CellularAutomaton<WireWorldState> automaton = new CellularAutomaton<WireWorldState>(
 				config);
 
-		final Cell<WireWorldState> origin = automaton.getOriginCell();
+		final ICell<WireWorldState> origin = automaton.getOriginCell();
 		for (final int[] coords : new int[][] { { 0, 2 }, { 1, 2 }, { 2, 2 },
 				{ 3, 2 }, { 4, 2 }, { 5, 1 }, { 5, 3 }, { 6, 1 }, { 6, 2 },
 				{ 6, 3 }, { 7, 2 }, { 8, 2 }, { 9, 2 },
@@ -58,8 +58,8 @@ public class WireWorldAutomatonFactory {
 
 				{ 10, 6 }, { 11, 6 }, { 12, 6 }, { 13, 6 }, { 10, 8 },
 				{ 11, 8 }, { 12, 8 }, { 13, 8 }, { 14, 7 }, }) {
-			origin.getRelativeCell(coords).setCurrentState(
-					WireWorldState.METAL);
+			origin.getRelativeCell(coords)
+					.setCurrentState(WireWorldState.METAL);
 		}
 		origin.getRelativeCell(14, 2).setCurrentState(WireWorldState.HEAD);
 		origin.getRelativeCell(14, 7).setCurrentState(WireWorldState.HEAD);

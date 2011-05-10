@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.impl.GenericCell;
+
 /**
  * A cellular automaton is a space of evolving cells. Each cell evolves
  * considering its actual state and the states of other cells.
@@ -24,7 +27,7 @@ public class CellularAutomaton<StateType> {
 	 * The cell to consider as the start of the space (all the other cells are
 	 * accessible from this one).
 	 */
-	private final Cell<StateType> originCell;
+	private final ICell<StateType> originCell;
 
 	/**
 	 * <p>
@@ -39,7 +42,7 @@ public class CellularAutomaton<StateType> {
 	 * @param originCell
 	 *            a cell of the space of cells.
 	 */
-	public CellularAutomaton(Cell<StateType> originCell) {
+	public CellularAutomaton(ICell<StateType> originCell) {
 		this.originCell = originCell;
 	}
 
@@ -83,21 +86,19 @@ public class CellularAutomaton<StateType> {
 	 * @return a cell which can be used to get all the others (looking the cells
 	 *         around)
 	 */
-	private Cell<StateType> generateCells(
+	private ICell<StateType> generateCells(
 			final GeneratorConfiguration<StateType> config, int dimension) {
 		if (dimension < 0) {
-			return new Cell<StateType>(config.initialState,
-					config.getDimensions(), config.memorySize) {
-				@Override
-				protected StateType calculateState() {
-					return config.calculateForCell(this);
-				}
-			};
+			ICell<StateType> cell = new GenericCell<StateType>(
+					config.initialState, config.getDimensions(),
+					config.memorySize);
+			cell.setRule(config.rule);
+			return cell;
 		} else {
-			Cell<StateType> start = null;
-			Cell<StateType> ref = null;
+			ICell<StateType> start = null;
+			ICell<StateType> ref = null;
 			for (int coord = 0; coord < config.dimensionSizes[dimension]; coord++) {
-				Cell<StateType> cell = generateCells(config, dimension - 1);
+				ICell<StateType> cell = generateCells(config, dimension - 1);
 				if (start != null) {
 					checkLevel(config, ref, cell, dimension - 1, dimension,
 							coord);
@@ -126,7 +127,7 @@ public class CellularAutomaton<StateType> {
 	 *            the coordinate of the cell in the considered dimension
 	 */
 	private void checkLevel(final GeneratorConfiguration<StateType> config,
-			Cell<StateType> cellRef, Cell<StateType> cellToInsert,
+			ICell<StateType> cellRef, ICell<StateType> cellToInsert,
 			int dimensionToCheck, int initialDimension, int coord) {
 		if (dimensionToCheck < 0) {
 			cellToInsert.setPreviousCellOnDimension(initialDimension, cellRef);
@@ -152,7 +153,7 @@ public class CellularAutomaton<StateType> {
 	 * is to apply it with {@link #applyNextStep()}.
 	 */
 	public void calculateNextStep() {
-		for (Cell<StateType> cell : getAllCells()) {
+		for (ICell<StateType> cell : getAllCells()) {
 			cell.calculateNextState();
 		}
 	}
@@ -162,7 +163,7 @@ public class CellularAutomaton<StateType> {
 	 * not calculated yet, their state does not change.
 	 */
 	public void applyNextStep() {
-		for (Cell<StateType> cell : getAllCells()) {
+		for (ICell<StateType> cell : getAllCells()) {
 			cell.applyNextState();
 		}
 	}
@@ -182,7 +183,7 @@ public class CellularAutomaton<StateType> {
 	 *         automaton can work on are available from this one (with relative
 	 *         coordinates).
 	 */
-	public Cell<StateType> getOriginCell() {
+	public ICell<StateType> getOriginCell() {
 		synchronized (originCell) {
 			return originCell;
 		}
@@ -192,11 +193,11 @@ public class CellularAutomaton<StateType> {
 	 * 
 	 * @return all the cells of the automaton (without specific ordering)
 	 */
-	public Collection<Cell<StateType>> getAllCells() {
-		Collection<Cell<StateType>> result = new ArrayList<Cell<StateType>>();
-		for (Iterator<Cell<StateType>> iterator = iterator(); iterator
+	public Collection<ICell<StateType>> getAllCells() {
+		Collection<ICell<StateType>> result = new ArrayList<ICell<StateType>>();
+		for (Iterator<ICell<StateType>> iterator = iterator(); iterator
 				.hasNext();) {
-			Cell<StateType> cell = iterator.next();
+			ICell<StateType> cell = iterator.next();
 			result.add(cell);
 		}
 		return result;
@@ -209,7 +210,7 @@ public class CellularAutomaton<StateType> {
 	 * 
 	 * @return an iterator over the cells
 	 */
-	public Iterator<Cell<StateType>> iterator() {
+	public Iterator<ICell<StateType>> iterator() {
 		return new CellIterator();
 	}
 
@@ -228,16 +229,16 @@ public class CellularAutomaton<StateType> {
 	 * @author Matthieu Vergne (matthieu.vergne@gmail.com)
 	 * 
 	 */
-	private class CellIterator implements Iterator<Cell<StateType>> {
+	private class CellIterator implements Iterator<ICell<StateType>> {
 
 		/**
 		 * The cells already returned.
 		 */
-		Collection<Cell<StateType>> cellsUsed = new HashSet<Cell<StateType>>();
+		Collection<ICell<StateType>> cellsUsed = new HashSet<ICell<StateType>>();
 		/**
 		 * The cells to look for next iterations.
 		 */
-		Collection<Cell<StateType>> cellsToCheck = new HashSet<Cell<StateType>>();
+		Collection<ICell<StateType>> cellsToCheck = new HashSet<ICell<StateType>>();
 
 		/**
 		 * Create an iterator over the current space of cells.
@@ -250,13 +251,13 @@ public class CellularAutomaton<StateType> {
 			return !cellsToCheck.isEmpty();
 		}
 
-		public Cell<StateType> next() {
+		public ICell<StateType> next() {
 
 			if (hasNext()) {
-				Cell<StateType> cell = cellsToCheck.iterator().next();
+				ICell<StateType> cell = cellsToCheck.iterator().next();
 				cellsToCheck.remove(cell);
 				cellsUsed.add(cell);
-				for (Cell<StateType> cellAround : cell.getAllCellsAround()) {
+				for (ICell<StateType> cellAround : cell.getAllCellsAround()) {
 					if (!cellsUsed.contains(cellAround)) {
 						cellsToCheck.add(cellAround);
 					}

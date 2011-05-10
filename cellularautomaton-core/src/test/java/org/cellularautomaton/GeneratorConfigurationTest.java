@@ -5,12 +5,7 @@ import junit.framework.TestCase;
 public class GeneratorConfigurationTest extends TestCase {
 
 	public void testIsValid() {
-		GeneratorConfiguration<String> config = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
-				return "";
-			}
-		};
+		GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
 
 		// check init
 		assertFalse(config.isValid());
@@ -40,12 +35,7 @@ public class GeneratorConfigurationTest extends TestCase {
 	}
 
 	public void testDimensions() {
-		GeneratorConfiguration<String> config = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
-				return "";
-			}
-		};
+		GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
 
 		config.dimensionSizes = new int[] {};
 		assertEquals(0, config.getDimensions());
@@ -58,12 +48,7 @@ public class GeneratorConfigurationTest extends TestCase {
 	}
 
 	public void testCellsCount() {
-		GeneratorConfiguration<String> config = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
-				return "";
-			}
-		};
+		GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
 
 		config.dimensionSizes = new int[] { 4 };
 		assertEquals(4, config.getCellsCount());

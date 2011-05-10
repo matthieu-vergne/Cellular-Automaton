@@ -6,8 +6,8 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-import org.cellularautomaton.Cell;
 import org.cellularautomaton.CellularAutomaton;
+import org.cellularautomaton.definition.ICell;
 
 public class JAutomatonPanel<T> extends JPanel {
 	private static final int CELL_SIZE = 10;
@@ -35,7 +35,7 @@ public class JAutomatonPanel<T> extends JPanel {
 		this.renderer = renderer;
 		this.width = 0;
 		this.height = 0;
-		for (Cell<?> cell : automaton.getAllCells()) {
+		for (ICell<?> cell : automaton.getAllCells()) {
 			this.width = Math.max(this.width, cell.getCoords()[0]);
 			this.height = Math.max(this.height, cell.getCoords()[1]);
 		}
@@ -44,7 +44,7 @@ public class JAutomatonPanel<T> extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		Cell<? extends T> origin = automaton.getOriginCell();
+		ICell<? extends T> origin = automaton.getOriginCell();
 		for (int y = height - 1; y >= 0; y--) {
 			for (int x = 0; x < width; x++) {
 				T state = origin.getRelativeCell(x, y).getCurrentState();

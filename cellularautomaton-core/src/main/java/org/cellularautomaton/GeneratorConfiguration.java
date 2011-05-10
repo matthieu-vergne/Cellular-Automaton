@@ -1,5 +1,8 @@
 package org.cellularautomaton;
 
+import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.factory.RuleFactory;
+
 /**
  * Configuration allowing to generate a space of cells for a cellular automaton,
  * via the constructor
@@ -9,17 +12,15 @@ package org.cellularautomaton;
  * <li>no initial state (given manually)</li>
  * <li>a memory size of 1</li>
  * <li>a cyclic space</li>
- * <li>no dimensions (given manually)</li>
- * <li>no calculation method (given by
- * {@link GeneratorConfiguration#calculateForCell(Cell)} when generating the
- * config instance)</li>
+ * <li>2 dimensions 10 elements each</li>
+ * <li>a static rule</li>
  * </ul>
  * 
  * @author Matthieu Vergne (matthieu.vergne@gmail.com)
  * 
  * @param <StateType>
  */
-public abstract class GeneratorConfiguration<StateType> {
+public class GeneratorConfiguration<StateType> {
 	// TODO replace members by methods where useful
 	/**
 	 * The initial state to apply to each cell.
@@ -41,17 +42,13 @@ public abstract class GeneratorConfiguration<StateType> {
 	/**
 	 * The length (number of cells) of each dimension of the space of cells.
 	 */
-	public int[] dimensionSizes = null;
+	public int[] dimensionSizes = new int[] { 10, 10 };
 
 	/**
-	 * This method must implement the calculation rule to give to each cell of
-	 * the space of cells.
-	 * 
-	 * @param cell
-	 *            the cell to consider
-	 * @return the calculated state to apply to the cell
+	 * The rule of each cell.
 	 */
-	public abstract StateType calculateForCell(Cell<StateType> cell);
+	public IRule<StateType> rule = new RuleFactory<StateType>()
+			.getStaticRuleInstance();
 
 	/**
 	 * This method try to check all possible points in order to check this

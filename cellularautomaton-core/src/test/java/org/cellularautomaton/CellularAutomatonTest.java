@@ -9,107 +9,49 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.factory.CellFactory;
+
 public class CellularAutomatonTest extends TestCase {
+
+	private CellFactory<String> cellFactory = new CellFactory<String>();
 
 	public void testGetAllCells() {
 		// generate cells
-		int dimensions = 2;
-		Cell<String> cell00 = new Cell<String>("00", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell01 = new Cell<String>("01", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell02 = new Cell<String>("02", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell03 = new Cell<String>("03", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell10 = new Cell<String>("10", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell11 = new Cell<String>("11", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell12 = new Cell<String>("12", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell13 = new Cell<String>("13", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell20 = new Cell<String>("20", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell21 = new Cell<String>("21", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell22 = new Cell<String>("22", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell23 = new Cell<String>("23", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell30 = new Cell<String>("30", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell31 = new Cell<String>("31", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell32 = new Cell<String>("32", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell33 = new Cell<String>("33", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		cellFactory.setDimensions(2);
+		ICell<String> cell00 = cellFactory.setInitialState("00")
+				.createCyclicCell();
+		ICell<String> cell01 = cellFactory.setInitialState("01")
+				.createCyclicCell();
+		ICell<String> cell02 = cellFactory.setInitialState("02")
+				.createCyclicCell();
+		ICell<String> cell03 = cellFactory.setInitialState("03")
+				.createCyclicCell();
+		ICell<String> cell10 = cellFactory.setInitialState("10")
+				.createCyclicCell();
+		ICell<String> cell11 = cellFactory.setInitialState("11")
+				.createCyclicCell();
+		ICell<String> cell12 = cellFactory.setInitialState("12")
+				.createCyclicCell();
+		ICell<String> cell13 = cellFactory.setInitialState("13")
+				.createCyclicCell();
+		ICell<String> cell20 = cellFactory.setInitialState("20")
+				.createCyclicCell();
+		ICell<String> cell21 = cellFactory.setInitialState("21")
+				.createCyclicCell();
+		ICell<String> cell22 = cellFactory.setInitialState("22")
+				.createCyclicCell();
+		ICell<String> cell23 = cellFactory.setInitialState("23")
+				.createCyclicCell();
+		ICell<String> cell30 = cellFactory.setInitialState("30")
+				.createCyclicCell();
+		ICell<String> cell31 = cellFactory.setInitialState("31")
+				.createCyclicCell();
+		ICell<String> cell32 = cellFactory.setInitialState("32")
+				.createCyclicCell();
+		ICell<String> cell33 = cellFactory.setInitialState("33")
+				.createCyclicCell();
 
 		// link cells
 		cell00.setPreviousCellOnDimension(0, cell03);
@@ -197,7 +139,7 @@ public class CellularAutomatonTest extends TestCase {
 				cell00);
 
 		// test init
-		Collection<Cell<String>> list = automaton2D.getAllCells();
+		Collection<ICell<String>> list = automaton2D.getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
 		assertTrue(list.contains(cell01));
@@ -278,13 +220,8 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell33));
 
 		// test accessibility
-		Cell<String> intruderFullyAccessible = new Cell<String>("intruder",
-				dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		ICell<String> intruderFullyAccessible = cellFactory.setInitialState(
+				"total intruder").createCyclicCell();
 		intruderFullyAccessible.setPreviousCellOnDimension(0, cell20);
 		intruderFullyAccessible.setNextCellOnDimension(0, cell12);
 		intruderFullyAccessible.setPreviousCellOnDimension(1, cell11);
@@ -294,26 +231,16 @@ public class CellularAutomatonTest extends TestCase {
 		cell11.setNextCellOnDimension(1, intruderFullyAccessible);
 		cell21.setPreviousCellOnDimension(1, intruderFullyAccessible);
 
-		Cell<String> intruderPartiallyAccessible = new Cell<String>("intruder",
-				dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		ICell<String> intruderPartiallyAccessible = cellFactory
+				.setInitialState("partial intruder").createCyclicCell();
 		intruderPartiallyAccessible.setPreviousCellOnDimension(0, cell32);
 		intruderPartiallyAccessible.setNextCellOnDimension(0, cell20);
 		intruderPartiallyAccessible.setPreviousCellOnDimension(1, cell23);
 		intruderPartiallyAccessible.setNextCellOnDimension(1, cell33);
 		cell23.setNextCellOnDimension(1, intruderPartiallyAccessible);
 
-		Cell<String> intruderNotAccessible = new Cell<String>("intruder",
-				dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		ICell<String> intruderNotAccessible = cellFactory.setInitialState(
+				"invisible intruder").createCyclicCell();
 		intruderNotAccessible.setPreviousCellOnDimension(0, cell12);
 		intruderNotAccessible.setNextCellOnDimension(0, cell00);
 		intruderNotAccessible.setPreviousCellOnDimension(1, cell03);
@@ -341,106 +268,42 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(intruderPartiallyAccessible));
 		assertFalse(list.contains(intruderNotAccessible));
 	}
-	
+
 	public void testCellsIterator() {
 		// generate cells
-		int dimensions = 2;
-		Cell<String> cell00 = new Cell<String>("00", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell01 = new Cell<String>("01", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell02 = new Cell<String>("02", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell03 = new Cell<String>("03", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell10 = new Cell<String>("10", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell11 = new Cell<String>("11", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell12 = new Cell<String>("12", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell13 = new Cell<String>("13", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell20 = new Cell<String>("20", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell21 = new Cell<String>("21", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell22 = new Cell<String>("22", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell23 = new Cell<String>("23", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell30 = new Cell<String>("30", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell31 = new Cell<String>("31", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell32 = new Cell<String>("32", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell33 = new Cell<String>("33", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		cellFactory.setDimensions(2);
+		ICell<String> cell00 = cellFactory.setInitialState("00")
+				.createCyclicCell();
+		ICell<String> cell01 = cellFactory.setInitialState("01")
+				.createCyclicCell();
+		ICell<String> cell02 = cellFactory.setInitialState("02")
+				.createCyclicCell();
+		ICell<String> cell03 = cellFactory.setInitialState("03")
+				.createCyclicCell();
+		ICell<String> cell10 = cellFactory.setInitialState("10")
+				.createCyclicCell();
+		ICell<String> cell11 = cellFactory.setInitialState("11")
+				.createCyclicCell();
+		ICell<String> cell12 = cellFactory.setInitialState("12")
+				.createCyclicCell();
+		ICell<String> cell13 = cellFactory.setInitialState("13")
+				.createCyclicCell();
+		ICell<String> cell20 = cellFactory.setInitialState("20")
+				.createCyclicCell();
+		ICell<String> cell21 = cellFactory.setInitialState("21")
+				.createCyclicCell();
+		ICell<String> cell22 = cellFactory.setInitialState("22")
+				.createCyclicCell();
+		ICell<String> cell23 = cellFactory.setInitialState("23")
+				.createCyclicCell();
+		ICell<String> cell30 = cellFactory.setInitialState("30")
+				.createCyclicCell();
+		ICell<String> cell31 = cellFactory.setInitialState("31")
+				.createCyclicCell();
+		ICell<String> cell32 = cellFactory.setInitialState("32")
+				.createCyclicCell();
+		ICell<String> cell33 = cellFactory.setInitialState("33")
+				.createCyclicCell();
 
 		// link cells
 		cell00.setPreviousCellOnDimension(0, cell03);
@@ -528,10 +391,10 @@ public class CellularAutomatonTest extends TestCase {
 				cell00);
 
 		// test init
-		Collection<Cell<String>> cellsToView = automaton2D.getAllCells();
-		Iterator<Cell<String>> iterator = automaton2D.iterator();
-		while(iterator.hasNext()) {
-			Cell<String> cell = iterator.next();
+		Collection<ICell<String>> cellsToView = automaton2D.getAllCells();
+		Iterator<ICell<String>> iterator = automaton2D.iterator();
+		while (iterator.hasNext()) {
+			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
 			cellsToView.remove(cell);
 		}
@@ -541,8 +404,8 @@ public class CellularAutomatonTest extends TestCase {
 		automaton2D.doStep();
 		cellsToView = automaton2D.getAllCells();
 		iterator = automaton2D.iterator();
-		while(iterator.hasNext()) {
-			Cell<String> cell = iterator.next();
+		while (iterator.hasNext()) {
+			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
 			cellsToView.remove(cell);
 		}
@@ -551,8 +414,8 @@ public class CellularAutomatonTest extends TestCase {
 		automaton2D.doStep();
 		cellsToView = automaton2D.getAllCells();
 		iterator = automaton2D.iterator();
-		while(iterator.hasNext()) {
-			Cell<String> cell = iterator.next();
+		while (iterator.hasNext()) {
+			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
 			cellsToView.remove(cell);
 		}
@@ -561,21 +424,16 @@ public class CellularAutomatonTest extends TestCase {
 		automaton2D.doStep();
 		cellsToView = automaton2D.getAllCells();
 		iterator = automaton2D.iterator();
-		while(iterator.hasNext()) {
-			Cell<String> cell = iterator.next();
+		while (iterator.hasNext()) {
+			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
 			cellsToView.remove(cell);
 		}
 		assertTrue(cellsToView.isEmpty());
 
 		// test accessibility
-		Cell<String> intruderFullyAccessible = new Cell<String>("intruder",
-				dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		ICell<String> intruderFullyAccessible = cellFactory.setInitialState(
+				"total intruder").createCyclicCell();
 		intruderFullyAccessible.setPreviousCellOnDimension(0, cell20);
 		intruderFullyAccessible.setNextCellOnDimension(0, cell12);
 		intruderFullyAccessible.setPreviousCellOnDimension(1, cell11);
@@ -585,26 +443,16 @@ public class CellularAutomatonTest extends TestCase {
 		cell11.setNextCellOnDimension(1, intruderFullyAccessible);
 		cell21.setPreviousCellOnDimension(1, intruderFullyAccessible);
 
-		Cell<String> intruderPartiallyAccessible = new Cell<String>("intruder",
-				dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		ICell<String> intruderPartiallyAccessible = cellFactory
+				.setInitialState("partial intruder").createCyclicCell();
 		intruderPartiallyAccessible.setPreviousCellOnDimension(0, cell32);
 		intruderPartiallyAccessible.setNextCellOnDimension(0, cell20);
 		intruderPartiallyAccessible.setPreviousCellOnDimension(1, cell23);
 		intruderPartiallyAccessible.setNextCellOnDimension(1, cell33);
 		cell23.setNextCellOnDimension(1, intruderPartiallyAccessible);
 
-		Cell<String> intruderNotAccessible = new Cell<String>("intruder",
-				dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		ICell<String> intruderNotAccessible = cellFactory.setInitialState(
+				"invisible intruder").createCyclicCell();
 		intruderNotAccessible.setPreviousCellOnDimension(0, cell12);
 		intruderNotAccessible.setNextCellOnDimension(0, cell00);
 		intruderNotAccessible.setPreviousCellOnDimension(1, cell03);
@@ -612,8 +460,8 @@ public class CellularAutomatonTest extends TestCase {
 
 		cellsToView = automaton2D.getAllCells();
 		iterator = automaton2D.iterator();
-		while(iterator.hasNext()) {
-			Cell<String> cell = iterator.next();
+		while (iterator.hasNext()) {
+			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
 			cellsToView.remove(cell);
 		}
@@ -622,31 +470,15 @@ public class CellularAutomatonTest extends TestCase {
 
 	public void testOrigineCell() {
 		// generate cells
-		int dimensions = 1;
-		Cell<String> cell0 = new Cell<String>("0", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell1 = new Cell<String>("1", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell2 = new Cell<String>("2", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
-		Cell<String> cell3 = new Cell<String>("3", dimensions) {
-			@Override
-			protected String calculateState() {
-				return "";
-			}
-		};
+		cellFactory.setDimensions(1);
+		ICell<String> cell0 = cellFactory.setInitialState("0")
+				.createCyclicCell();
+		ICell<String> cell1 = cellFactory.setInitialState("1")
+				.createCyclicCell();
+		ICell<String> cell2 = cellFactory.setInitialState("2")
+				.createCyclicCell();
+		ICell<String> cell3 = cellFactory.setInitialState("3")
+				.createCyclicCell();
 
 		// link cells
 		cell0.setPreviousCellOnDimension(0, cell3);
@@ -677,41 +509,22 @@ public class CellularAutomatonTest extends TestCase {
 	}
 
 	public void testEvolutionOnExistentSpaceOfCells1D() {
-		// calculation to apply
-		final GeneratorConfiguration<String> calculation = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
+		// generate cells
+		cellFactory.setDimensions(1);
+		cellFactory.setRule(new IRule<String>() {
+			public String calculateNextStateOf(ICell<String> cell) {
 				return cell.getRelativeCell(-1).getCurrentState()
 						+ cell.getRelativeCell(+1).getCurrentState();
 			}
-		};
-
-		// generate cells
-		int dimensions = 1;
-		Cell<String> cell0 = new Cell<String>("0", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell1 = new Cell<String>("1", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell2 = new Cell<String>("2", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell3 = new Cell<String>("3", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
+		});
+		ICell<String> cell0 = cellFactory.setInitialState("0")
+				.createCyclicCell();
+		ICell<String> cell1 = cellFactory.setInitialState("1")
+				.createCyclicCell();
+		ICell<String> cell2 = cellFactory.setInitialState("2")
+				.createCyclicCell();
+		ICell<String> cell3 = cellFactory.setInitialState("3")
+				.createCyclicCell();
 
 		// link cells
 		cell0.setPreviousCellOnDimension(0, cell3);
@@ -750,10 +563,10 @@ public class CellularAutomatonTest extends TestCase {
 	}
 
 	public void testEvolutionOnExistentSpaceOfCells2D() {
-		// calculation to apply
-		final GeneratorConfiguration<String> calculation = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
+		// generate cells
+		cellFactory.setDimensions(2);
+		cellFactory.setRule(new IRule<String>() {
+			public String calculateNextStateOf(ICell<String> cell) {
 				return cell.getRelativeCell(-1, -1).getCurrentState()
 						+ cell.getRelativeCell(+0, -1).getCurrentState()
 						+ cell.getRelativeCell(+1, -1).getCurrentState()
@@ -764,106 +577,39 @@ public class CellularAutomatonTest extends TestCase {
 						+ cell.getRelativeCell(+0, +1).getCurrentState()
 						+ cell.getRelativeCell(+1, +1).getCurrentState();
 			}
-		};
-
-		// generate cells
-		int dimensions = 2;
-		Cell<String> cell00 = new Cell<String>("00", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell01 = new Cell<String>("01", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell02 = new Cell<String>("02", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell03 = new Cell<String>("03", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell10 = new Cell<String>("10", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell11 = new Cell<String>("11", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell12 = new Cell<String>("12", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell13 = new Cell<String>("13", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell20 = new Cell<String>("20", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell21 = new Cell<String>("21", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell22 = new Cell<String>("22", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell23 = new Cell<String>("23", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell30 = new Cell<String>("30", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell31 = new Cell<String>("31", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell32 = new Cell<String>("32", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
-		Cell<String> cell33 = new Cell<String>("33", dimensions) {
-			@Override
-			protected String calculateState() {
-				return calculation.calculateForCell(this);
-			}
-		};
+		});
+		ICell<String> cell00 = cellFactory.setInitialState("00")
+				.createCyclicCell();
+		ICell<String> cell01 = cellFactory.setInitialState("01")
+				.createCyclicCell();
+		ICell<String> cell02 = cellFactory.setInitialState("02")
+				.createCyclicCell();
+		ICell<String> cell03 = cellFactory.setInitialState("03")
+				.createCyclicCell();
+		ICell<String> cell10 = cellFactory.setInitialState("10")
+				.createCyclicCell();
+		ICell<String> cell11 = cellFactory.setInitialState("11")
+				.createCyclicCell();
+		ICell<String> cell12 = cellFactory.setInitialState("12")
+				.createCyclicCell();
+		ICell<String> cell13 = cellFactory.setInitialState("13")
+				.createCyclicCell();
+		ICell<String> cell20 = cellFactory.setInitialState("20")
+				.createCyclicCell();
+		ICell<String> cell21 = cellFactory.setInitialState("21")
+				.createCyclicCell();
+		ICell<String> cell22 = cellFactory.setInitialState("22")
+				.createCyclicCell();
+		ICell<String> cell23 = cellFactory.setInitialState("23")
+				.createCyclicCell();
+		ICell<String> cell30 = cellFactory.setInitialState("30")
+				.createCyclicCell();
+		ICell<String> cell31 = cellFactory.setInitialState("31")
+				.createCyclicCell();
+		ICell<String> cell32 = cellFactory.setInitialState("32")
+				.createCyclicCell();
+		ICell<String> cell33 = cellFactory.setInitialState("33")
+				.createCyclicCell();
 
 		// link cells
 		cell00.setPreviousCellOnDimension(0, cell03);
@@ -991,12 +737,7 @@ public class CellularAutomatonTest extends TestCase {
 
 	public void testGeneratedSpaceOfCells1D() {
 		// config
-		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
-				return "";
-			}
-		};
+		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
 		config.initialState = "";
 		config.dimensionSizes = new int[] { 3 };
 
@@ -1005,9 +746,9 @@ public class CellularAutomatonTest extends TestCase {
 				config);
 
 		// get cells
-		Cell<String> cell0 = automaton1D.getOriginCell();
-		Cell<String> cell1 = cell0.getNextCellOnDimension(0);
-		Cell<String> cell2 = cell1.getNextCellOnDimension(0);
+		ICell<String> cell0 = automaton1D.getOriginCell();
+		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
+		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
 
 		// check coords
 		assertArrayEquals(new int[] { 0 }, cell0.getCoords());
@@ -1028,7 +769,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertSame(cell2, cell2);
 
 		// check cells existence
-		Collection<Cell<String>> list = automaton1D.getAllCells();
+		Collection<ICell<String>> list = automaton1D.getAllCells();
 		assertEquals(3, list.size());
 		assertTrue(list.contains(cell0));
 		assertTrue(list.contains(cell1));
@@ -1047,12 +788,7 @@ public class CellularAutomatonTest extends TestCase {
 
 	public void testGeneratedSpaceOfCells2D() {
 		// config
-		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
-				return "";
-			}
-		};
+		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
 		config.initialState = "";
 		config.dimensionSizes = new int[] { 3, 3 };
 
@@ -1061,15 +797,15 @@ public class CellularAutomatonTest extends TestCase {
 				config);
 
 		// get cells
-		Cell<String> cell00 = automaton2D.getOriginCell();
-		Cell<String> cell01 = cell00.getNextCellOnDimension(0);
-		Cell<String> cell02 = cell01.getNextCellOnDimension(0);
-		Cell<String> cell10 = cell00.getNextCellOnDimension(1);
-		Cell<String> cell11 = cell10.getNextCellOnDimension(0);
-		Cell<String> cell12 = cell11.getNextCellOnDimension(0);
-		Cell<String> cell20 = cell10.getNextCellOnDimension(1);
-		Cell<String> cell21 = cell20.getNextCellOnDimension(0);
-		Cell<String> cell22 = cell21.getNextCellOnDimension(0);
+		ICell<String> cell00 = automaton2D.getOriginCell();
+		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
+		ICell<String> cell02 = cell01.getNextCellOnDimension(0);
+		ICell<String> cell10 = cell00.getNextCellOnDimension(1);
+		ICell<String> cell11 = cell10.getNextCellOnDimension(0);
+		ICell<String> cell12 = cell11.getNextCellOnDimension(0);
+		ICell<String> cell20 = cell10.getNextCellOnDimension(1);
+		ICell<String> cell21 = cell20.getNextCellOnDimension(0);
+		ICell<String> cell22 = cell21.getNextCellOnDimension(0);
 
 		// check coords
 		assertArrayEquals(new int[] { 0, 0 }, cell00.getCoords());
@@ -1174,7 +910,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertSame(cell22, cell22);
 
 		// check cells existence
-		Collection<Cell<String>> list = automaton2D.getAllCells();
+		Collection<ICell<String>> list = automaton2D.getAllCells();
 		assertEquals(9, list.size());
 		assertTrue(list.contains(cell00));
 		assertTrue(list.contains(cell01));
@@ -1235,12 +971,7 @@ public class CellularAutomatonTest extends TestCase {
 
 	public void testGeneratedSpaceOfCells3D() {
 		// config
-		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>() {
-			@Override
-			public String calculateForCell(Cell<String> cell) {
-				return "";
-			}
-		};
+		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
 		config.initialState = "";
 		config.dimensionSizes = new int[] { 3, 3, 3 };
 
@@ -1249,35 +980,35 @@ public class CellularAutomatonTest extends TestCase {
 				config);
 
 		// get cells
-		Cell<String> cell000 = automaton3D.getOriginCell();
-		Cell<String> cell001 = cell000.getNextCellOnDimension(0);
-		Cell<String> cell002 = cell001.getNextCellOnDimension(0);
-		Cell<String> cell010 = cell000.getNextCellOnDimension(1);
-		Cell<String> cell011 = cell010.getNextCellOnDimension(0);
-		Cell<String> cell012 = cell011.getNextCellOnDimension(0);
-		Cell<String> cell020 = cell010.getNextCellOnDimension(1);
-		Cell<String> cell021 = cell020.getNextCellOnDimension(0);
-		Cell<String> cell022 = cell021.getNextCellOnDimension(0);
+		ICell<String> cell000 = automaton3D.getOriginCell();
+		ICell<String> cell001 = cell000.getNextCellOnDimension(0);
+		ICell<String> cell002 = cell001.getNextCellOnDimension(0);
+		ICell<String> cell010 = cell000.getNextCellOnDimension(1);
+		ICell<String> cell011 = cell010.getNextCellOnDimension(0);
+		ICell<String> cell012 = cell011.getNextCellOnDimension(0);
+		ICell<String> cell020 = cell010.getNextCellOnDimension(1);
+		ICell<String> cell021 = cell020.getNextCellOnDimension(0);
+		ICell<String> cell022 = cell021.getNextCellOnDimension(0);
 
-		Cell<String> cell100 = cell000.getNextCellOnDimension(2);
-		Cell<String> cell101 = cell100.getNextCellOnDimension(0);
-		Cell<String> cell102 = cell101.getNextCellOnDimension(0);
-		Cell<String> cell110 = cell100.getNextCellOnDimension(1);
-		Cell<String> cell111 = cell110.getNextCellOnDimension(0);
-		Cell<String> cell112 = cell111.getNextCellOnDimension(0);
-		Cell<String> cell120 = cell110.getNextCellOnDimension(1);
-		Cell<String> cell121 = cell120.getNextCellOnDimension(0);
-		Cell<String> cell122 = cell121.getNextCellOnDimension(0);
+		ICell<String> cell100 = cell000.getNextCellOnDimension(2);
+		ICell<String> cell101 = cell100.getNextCellOnDimension(0);
+		ICell<String> cell102 = cell101.getNextCellOnDimension(0);
+		ICell<String> cell110 = cell100.getNextCellOnDimension(1);
+		ICell<String> cell111 = cell110.getNextCellOnDimension(0);
+		ICell<String> cell112 = cell111.getNextCellOnDimension(0);
+		ICell<String> cell120 = cell110.getNextCellOnDimension(1);
+		ICell<String> cell121 = cell120.getNextCellOnDimension(0);
+		ICell<String> cell122 = cell121.getNextCellOnDimension(0);
 
-		Cell<String> cell200 = cell100.getNextCellOnDimension(2);
-		Cell<String> cell201 = cell200.getNextCellOnDimension(0);
-		Cell<String> cell202 = cell201.getNextCellOnDimension(0);
-		Cell<String> cell210 = cell200.getNextCellOnDimension(1);
-		Cell<String> cell211 = cell210.getNextCellOnDimension(0);
-		Cell<String> cell212 = cell211.getNextCellOnDimension(0);
-		Cell<String> cell220 = cell210.getNextCellOnDimension(1);
-		Cell<String> cell221 = cell220.getNextCellOnDimension(0);
-		Cell<String> cell222 = cell221.getNextCellOnDimension(0);
+		ICell<String> cell200 = cell100.getNextCellOnDimension(2);
+		ICell<String> cell201 = cell200.getNextCellOnDimension(0);
+		ICell<String> cell202 = cell201.getNextCellOnDimension(0);
+		ICell<String> cell210 = cell200.getNextCellOnDimension(1);
+		ICell<String> cell211 = cell210.getNextCellOnDimension(0);
+		ICell<String> cell212 = cell211.getNextCellOnDimension(0);
+		ICell<String> cell220 = cell210.getNextCellOnDimension(1);
+		ICell<String> cell221 = cell220.getNextCellOnDimension(0);
+		ICell<String> cell222 = cell221.getNextCellOnDimension(0);
 
 		// check coords
 		assertArrayEquals(new int[] { 0, 0, 0 }, cell000.getCoords());
@@ -1309,7 +1040,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertArrayEquals(new int[] { 2, 2, 2 }, cell222.getCoords());
 
 		// check cells existence
-		Collection<Cell<String>> list = automaton3D.getAllCells();
+		Collection<ICell<String>> list = automaton3D.getAllCells();
 		assertEquals(27, list.size());
 		assertTrue(list.contains(cell000));
 		assertTrue(list.contains(cell001));
@@ -1340,11 +1071,11 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell222));
 
 		// check cells exclusivity
-		List<Cell<String>> cells = new ArrayList<Cell<String>>(list);
+		List<ICell<String>> cells = new ArrayList<ICell<String>>(list);
 		for (int i = 0; i < 27; i++) {
-			Cell<String> expected = cells.get(i);
+			ICell<String> expected = cells.get(i);
 			for (int j = 0; j < 27; j++) {
-				Cell<String> result = cells.get(j);
+				ICell<String> result = cells.get(j);
 				if (i == j) {
 					assertSame(expected, result);
 				} else {
