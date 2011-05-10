@@ -127,10 +127,10 @@ public class CellularAutomaton<StateType> {
 
 	/**
 	 * 
-	 * @param cellRef
-	 *            the cell already in the space
-	 * @param cellToInsert
-	 *            the cell to insert in the space
+	 * @param cellBefore
+	 *            the cell in the previous place
+	 * @param cellAfter
+	 *            the cell in the next place
 	 * @param dimensionToCheck
 	 *            the zero-based dimension to consider
 	 * @param initialDimension
@@ -138,24 +138,28 @@ public class CellularAutomaton<StateType> {
 	 * @param coord
 	 *            the coordinate of the cell in the considered dimension
 	 */
-	private void checkLevel(ICell<StateType> cellRef,
-			ICell<StateType> cellToInsert, int dimensionToCheck,
+	private void checkLevel(ICell<StateType> cellBefore,
+			ICell<StateType> cellAfter, int dimensionToCheck,
 			int initialDimension, int coord) {
 		if (dimensionToCheck < 0) {
-			cellToInsert.setPreviousCellOnDimension(initialDimension, cellRef);
-			cellToInsert.setNextCellOnDimension(initialDimension,
-					cellRef.getNextCellOnDimension(initialDimension));
-			cellToInsert.getCoords()[initialDimension] = coord;
-			cellRef.getNextCellOnDimension(initialDimension)
-					.setPreviousCellOnDimension(initialDimension, cellToInsert);
-			cellRef.setNextCellOnDimension(initialDimension, cellToInsert);
+			// TODO consider the isCyclic field
+			cellAfter.setPreviousCellOnDimension(initialDimension, cellBefore);
+			cellAfter.setNextCellOnDimension(initialDimension,
+					cellBefore.getNextCellOnDimension(initialDimension));
+			cellAfter.getCoords()[initialDimension] = coord;
+			ICell<StateType> tempCell = cellBefore
+					.getNextCellOnDimension(initialDimension);
+			if (tempCell != null) {
+				tempCell.setPreviousCellOnDimension(initialDimension, cellAfter);
+			}
+			cellBefore.setNextCellOnDimension(initialDimension, cellAfter);
 		} else {
 			for (int i = 0; i < dimensionSizes[dimensionToCheck]; i++) {
-				checkLevel(cellRef, cellToInsert, dimensionToCheck - 1,
+				checkLevel(cellBefore, cellAfter, dimensionToCheck - 1,
 						initialDimension, coord);
-				cellRef = cellRef.getNextCellOnDimension(dimensionToCheck);
-				cellToInsert = cellToInsert
+				cellBefore = cellBefore
 						.getNextCellOnDimension(dimensionToCheck);
+				cellAfter = cellAfter.getNextCellOnDimension(dimensionToCheck);
 			}
 		}
 	}

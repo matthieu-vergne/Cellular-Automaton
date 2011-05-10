@@ -20,8 +20,8 @@ import org.cellularautomaton.factory.RuleFactory;
  * 
  * @param <StateType>
  */
+// TODO replace progressively the use of configuration by the use of factories/builders
 public class GeneratorConfiguration<StateType> {
-	// TODO replace members by methods where useful
 	/**
 	 * The initial state to apply to each cell.
 	 */

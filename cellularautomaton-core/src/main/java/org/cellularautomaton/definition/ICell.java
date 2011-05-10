@@ -2,9 +2,6 @@ package org.cellularautomaton.definition;
 
 import java.util.Set;
 
-import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.GeneratorConfiguration;
-
 /**
  * A cell is an element storing a state. This cell evolves in a space of cells
  * considering other cells (the neighbors), changing its state consequently.
@@ -18,7 +15,7 @@ import org.cellularautomaton.GeneratorConfiguration;
  *            data for particular uses.
  */
 public interface ICell<StateType> {
-	
+
 	/**
 	 * 
 	 * @return the number of dimensions this cell work on
@@ -39,27 +36,34 @@ public interface ICell<StateType> {
 	public StateType getCurrentState();
 
 	/**
+	 * This method must give the state of the cell in a specific generation from
+	 * the current one. The age 0 corresponds to the last (current) state, the
+	 * age 1 the state before, etc. This method allows to have dependencies
+	 * through multiple generations.
 	 * 
 	 * @param age
-	 *            the age of the asked state, 0 is the actual state
+	 *            the age of the asked state, 0 is the current state
 	 * @return the state the cell had
 	 */
 	public StateType getState(int age);
 
 	/**
 	 * 
-	 * @param rule the rule to apply in order to calculate the next state of the cell
+	 * @param rule
+	 *            the rule to apply in order to calculate the next state of the
+	 *            cell
 	 */
 	public void setRule(IRule<StateType> rule);
 
 	/**
-	 * Calculate the next state. To apply it as the actual state of the cell,
-	 * use {@link #applyNextState()}.
+	 * This method must calculate the next state of the cell. The current state
+	 * is <b>not changed</b>.
 	 * 
 	 * @throws NullPointerException
 	 *             the calculation has returned a <code>null</code> value
+	 * @see #applyNextState()
 	 */
-	public void calculateNextState();
+	public void calculateNextState() throws NullPointerException;
 
 	/**
 	 * 
@@ -68,17 +72,18 @@ public interface ICell<StateType> {
 	public boolean isNextStateCalculated();
 
 	/**
-	 * Consider the next state of the cell as the new current state.
+	 * This method must change the current state in order to pass to the next
+	 * generation.
 	 * 
 	 * @throws IllegalStateException
 	 *             the next state is not calculated yet
 	 */
-	public void applyNextState();
+	public void applyNextState() throws IllegalStateException;
 
 	/**
 	 * 
 	 * @param dimension
-	 *            the dimension to consider (0 for the first dimension)
+	 *            the dimension to consider (zero-based)
 	 * @param cell
 	 *            the cell to consider as the next cell on this dimension
 	 */
@@ -99,8 +104,7 @@ public interface ICell<StateType> {
 	 * @param cell
 	 *            the cell to consider as the previous cell on this dimension
 	 */
-	public void setPreviousCellOnDimension(int dimension,
-			ICell<StateType> cell);
+	public void setPreviousCellOnDimension(int dimension, ICell<StateType> cell);
 
 	/**
 	 * 
@@ -111,62 +115,37 @@ public interface ICell<StateType> {
 	public ICell<StateType> getPreviousCellOnDimension(int dimension);
 
 	/**
-	 * This method allows to get all the cells linked to this one. The linked
-	 * cells are the ones accessible from
-	 * {@link #getPreviousCellOnDimension(int)} and
-	 * {@link #getNextCellOnDimension(int)} for each dimension.
+	 * This method must give all the cells near to this one. This is the
+	 * <i>physical</i> neighborhood (nearest cells in the space), not the
+	 * <i>logical</i> neighborhood (the cells used to calculate the next state).
 	 * 
 	 * @return all the cells near of the current cell.
+	 * @see #getPreviousCellOnDimension(int)
+	 * @see #getNextCellOnDimension(int)
 	 */
 	public Set<ICell<StateType>> getAllCellsAround();
 
 	/**
-	 * <p>
-	 * Give the cell which is at the given coordinates, starting from the
-	 * current cell.
-	 * </p>
-	 * <p>
-	 * <b>Be careful :</b> the behavior of this method is ensured for regular
-	 * spaces only, with constant size on each dimension (see
-	 * {@link CellularAutomaton#CellularAutomaton(Object, org.cellularautomaton.CellularAutomaton.CalculationWrapper, int, boolean, int...)}
-	 * for more details about these spaces). It means that any customized space
-	 * of cells has strong chances to not work well with this method. In this
-	 * case, check it works well before to use it. Otherwise prefer to use
-	 * {@link #getPreviousCellOnDimension(int)} and
-	 * {@link #getNextCellOnDimension(int)} directly.
-	 * </p>
+	 * This method must give the cell which is at the given coordinates,
+	 * starting from the current cell.
 	 * 
 	 * @param coords
-	 *            the relative coordinates of the cell, where (0, 0, ..., 0)
-	 *            corresponds to the current cell.
-	 * @return the cell found at the given coordinates
+	 *            the relative coordinates of the cell to find, where (0, 0,
+	 *            ..., 0) corresponds to the current cell.
+	 * @return the cell found at the given relative coordinates
 	 */
 	public ICell<StateType> getRelativeCell(int... coords);
 
 	/**
-	 * This method allows to give coords to the current cell. This is only a
-	 * parameter of the cell, it does not "move" the cell in the space in order
-	 * to place it at the given coords. Moreover, no check is done on the
-	 * values, so you must be sure of what you give if you want to use these
-	 * coords later correctly.
 	 * 
 	 * @param coords
-	 *            the coords of the cell
+	 *            the coordinates of the cell
 	 */
 	public void setCoords(int... coords);
 
 	/**
-	 * Gives the coords of the current cell. These coords are given manually via
-	 * the {@link #setCoords(int...)}, in particular by the automaton when it
-	 * generates the space of cells. Anyway, these coords are usable only if you
-	 * are sure they corresponds to the reality and, in general, only in the
-	 * case of an orthogonal space of cells with constant sizes for each
-	 * dimension (see
-	 * {@link CellularAutomaton#CellularAutomaton(GeneratorConfiguration)} for
-	 * more details). In any other cases, mainly if you do not know if the
-	 * coords was updated correctly, using them is not recommended.
 	 * 
-	 * @return the coords of the cell in the space
+	 * @return the coordinates of the cell in the space
 	 */
 	public int[] getCoords();
 }

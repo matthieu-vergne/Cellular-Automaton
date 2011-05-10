@@ -83,10 +83,19 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		return getState(0);
 	}
 
+	/**
+	 * This method allows to get the memorized states of the cell. The number of
+	 * states memorized (including current state) corresponds to the memory size
+	 * given to the cell.
+	 */
 	public StateType getState(int age) {
 		return previousStates.getState(age);
 	}
 
+	/**
+	 * This method calculate the next state with the rule assigned to the cell.
+	 * It does not change the current state of the cell.
+	 */
 	public void calculateNextState() {
 		nextState = rule.calculateNextStateOf(this);
 		if (nextState == null) {
@@ -95,6 +104,9 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		}
 	}
 
+	/**
+	 * The calculated next state is applied to the cell with this method.
+	 */
 	public void applyNextState() {
 		if (!isNextStateCalculated()) {
 			throw new IllegalStateException(
@@ -113,8 +125,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		surroundings[dimension][1] = cell;
 	}
 
-	public void setPreviousCellOnDimension(int dimension,
-			ICell<StateType> cell) {
+	public void setPreviousCellOnDimension(int dimension, ICell<StateType> cell) {
 		surroundings[dimension][0] = cell;
 	}
 
@@ -126,6 +137,10 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		return nextState != null;
 	}
 
+	/**
+	 * This method allows to get all the cells linked to this one : the cells
+	 * before and after this one on each dimension.
+	 */
 	public Set<ICell<StateType>> getAllCellsAround() {
 		Set<ICell<StateType>> neighbors = new HashSet<ICell<StateType>>();
 		for (int dimension = 0; dimension < getDimensions(); dimension++) {
@@ -135,6 +150,13 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		return neighbors;
 	}
 
+	/**
+	 * <b>Be careful :</b> this method browse the space with the links between
+	 * each cell. It means that if you are not sure of the values given by
+	 * {@link #getPreviousCellOnDimension(int)} and
+	 * {@link #getNextCellOnDimension(int)}, it is strongly not recommended to
+	 * use this one.
+	 */
 	public ICell<StateType> getRelativeCell(int... coords) {
 		ICell<StateType> cell = this;
 		for (int dimension = 0; dimension < coords.length; dimension++) {
@@ -160,10 +182,24 @@ public class GenericCell<StateType> implements ICell<StateType> {
 				+ Arrays.toString(coords);
 	}
 
+	/**
+	 * Gives the coordinates of the current cell. These coordinates are given
+	 * manually via the {@link #setCoords(int...)}. These coordinates are usable
+	 * only if you are sure they corresponds to the reality. Otherwise using
+	 * them is not recommended.
+	 */
 	public int[] getCoords() {
 		return coords;
 	}
 
+	/**
+	 * This method allows to give specific coordinates to the current cell. This
+	 * is only a parameter of the cell, it does not "move" the cell in the space
+	 * in order to place it at the given coordinates. Moreover, it does not
+	 * update automatically if the cell is moved. No check is done on the
+	 * values, so you must be sure of what you give if you want to use these
+	 * coordinates later correctly.
+	 */
 	public void setCoords(int... coords) {
 		assert coords != null;
 		assert coords.length == this.coords.length;
