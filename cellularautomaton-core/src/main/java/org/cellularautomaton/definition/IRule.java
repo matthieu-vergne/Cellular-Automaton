@@ -16,7 +16,8 @@ package org.cellularautomaton.definition;
 public interface IRule<StateType> {
 	/**
 	 * 
-	 * @param cell the cell to calculate the state for
+	 * @param cell
+	 *            the cell to calculate the state for
 	 * @return the next state to apply to this cell
 	 */
 	public StateType calculateNextStateOf(ICell<StateType> cell);

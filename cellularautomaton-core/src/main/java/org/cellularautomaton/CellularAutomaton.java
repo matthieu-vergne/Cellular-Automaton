@@ -22,6 +22,10 @@ import org.cellularautomaton.factory.CellFactory;
  *            data for particular uses (just consider all the cells use the same
  *            type).
  */
+/*
+ * TODO extract the creation of the space in a SpaceOfCellBuilder (constructs
+ * each dimension one at a time)
+ */
 public class CellularAutomaton<StateType> {
 	/**
 	 * The cell to consider as the start of the space (all the other cells are
@@ -106,7 +110,7 @@ public class CellularAutomaton<StateType> {
 	 */
 	private ICell<StateType> generateCells(int dimension) {
 		if (dimension < 0) {
-			// TODO consider the isCyclic field
+			// TODO consider the isCyclic field after creating test
 			ICell<StateType> cell = cellFactory.createCyclicCell();
 			return cell;
 		} else {
@@ -142,7 +146,7 @@ public class CellularAutomaton<StateType> {
 			ICell<StateType> cellAfter, int dimensionToCheck,
 			int initialDimension, int coord) {
 		if (dimensionToCheck < 0) {
-			// TODO consider the isCyclic field
+			// TODO consider the isCyclic field after creating test
 			cellAfter.setPreviousCellOnDimension(initialDimension, cellBefore);
 			cellAfter.setNextCellOnDimension(initialDimension,
 					cellBefore.getNextCellOnDimension(initialDimension));

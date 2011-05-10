@@ -1,7 +1,7 @@
 package org.cellularautomaton.factory;
 
-import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.impl.StaticRule;
 
 /**
  * A rule factory allows to create different type of rules easily.
@@ -24,11 +24,7 @@ public class RuleFactory<StateType> {
 	 */
 	public IRule<StateType> getStaticRuleInstance() {
 		if (staticRule == null) {
-			staticRule = new IRule<StateType>() {
-				public StateType calculateNextStateOf(ICell<StateType> cell) {
-					return cell.getCurrentState();
-				}
-			};
+			staticRule = new StaticRule<StateType>();
 		}
 		return staticRule;
 	}
