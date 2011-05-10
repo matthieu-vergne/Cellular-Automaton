@@ -52,6 +52,25 @@ public class CellFactory<StateType> {
 		rule = new RuleFactory<StateType>().getStaticRuleInstance();
 	}
 
+	/**
+	 * 
+	 * @return a cell with all the surrounding cells set to <code>null</code>.
+	 */
+	public ICell<StateType> createIsolatedCell() {
+		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(),
+				getDimensions(), getMemorySize());
+		cell.setRule(getRule());
+		for (int dim = 0; dim < getDimensions(); dim++) {
+			cell.setPreviousCellOnDimension(dim, null);
+			cell.setNextCellOnDimension(dim, null);
+		}
+		return cell;
+	}
+
+	/**
+	 * 
+	 * @return a cell with all the surrounding cells set to itself.
+	 */
 	public ICell<StateType> createCyclicCell() {
 		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(),
 				getDimensions(), getMemorySize());

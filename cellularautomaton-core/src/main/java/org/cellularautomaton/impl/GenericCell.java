@@ -39,7 +39,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 * considered by the rule</b> which change the state of the cell, they are
 	 * the (physical) neighbors in the space of cells.
 	 */
-	private final ICell<StateType>[][] neighbors;
+	private final ICell<StateType>[][] surroundings;
 	/**
 	 * The coordinates of the cell in the space of cells.
 	 */
@@ -51,14 +51,11 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 * @return the dimensions this cell work on
 	 */
 	public int getDimensions() {
-		return neighbors.length;
+		return surroundings.length;
 	}
 
 	/**
-	 * Create a new cell. The cell is already valid, especially it its neighbors
-	 * are defined as the cell itself (like a cyclic space of cells with only
-	 * one cell). This way, the cell can be used immediately in a cellular
-	 * automaton.
+	 * Create a new cell.
 	 * 
 	 * @param initialState
 	 *            the initial state of the cell
@@ -74,9 +71,9 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		assert memorySize >= 0;
 
 		previousStates = new StateMemory<StateType>(memorySize, initialState);
-		this.neighbors = new ICell[dimensions][2];
+		this.surroundings = new ICell[dimensions][2];
 		for (int dimension = 0; dimension < dimensions; dimension++) {
-			neighbors[dimension] = new ICell[] { this, this };
+			surroundings[dimension] = new ICell[] { this, this };
 		}
 		coords = new int[dimensions];
 		Arrays.fill(getCoords(), 0);
@@ -109,20 +106,20 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	}
 
 	public ICell<StateType> getNextCellOnDimension(int dimension) {
-		return neighbors[dimension][1];
+		return surroundings[dimension][1];
 	}
 
-	public void setNextCellOnDimension(int dimension, ICell<StateType> neighbor) {
-		neighbors[dimension][1] = neighbor;
+	public void setNextCellOnDimension(int dimension, ICell<StateType> cell) {
+		surroundings[dimension][1] = cell;
 	}
 
 	public void setPreviousCellOnDimension(int dimension,
-			ICell<StateType> neighbor) {
-		neighbors[dimension][0] = neighbor;
+			ICell<StateType> cell) {
+		surroundings[dimension][0] = cell;
 	}
 
 	public ICell<StateType> getPreviousCellOnDimension(int dimension) {
-		return neighbors[dimension][0];
+		return surroundings[dimension][0];
 	}
 
 	public boolean isNextStateCalculated() {

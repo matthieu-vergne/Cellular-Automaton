@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.impl.GenericCell;
+import org.cellularautomaton.factory.CellFactory;
 
 /**
  * A cellular automaton is a space of evolving cells. Each cell evolves
@@ -28,6 +28,18 @@ public class CellularAutomaton<StateType> {
 	 * accessible from this one).
 	 */
 	private final ICell<StateType> originCell;
+	/**
+	 * The factory used to create the space of cells.
+	 */
+	private final CellFactory<StateType> cellFactory;
+	/**
+	 * The length of each dimension of the space of cells.
+	 */
+	private int[] dimensionSizes;
+	/**
+	 * The cyclic property of the space of cells.
+	 */
+	private boolean isCyclicSpace;
 
 	/**
 	 * <p>
@@ -44,6 +56,7 @@ public class CellularAutomaton<StateType> {
 	 */
 	public CellularAutomaton(ICell<StateType> originCell) {
 		this.originCell = originCell;
+		this.cellFactory = null;
 	}
 
 	/**
@@ -71,37 +84,38 @@ public class CellularAutomaton<StateType> {
 		assert config != null;
 		assert config.isValid();
 
+		this.cellFactory = new CellFactory<StateType>();
+		cellFactory.setInitialState(config.initialState);
+		cellFactory.setDimensions(config.dimensionSizes.length);
+		cellFactory.setMemorySize(config.memorySize);
+		cellFactory.setRule(config.rule);
+		this.dimensionSizes = config.dimensionSizes;
+		this.isCyclicSpace = config.isCyclic;
+
 		/* linking cells */
-		// TODO consider the isCyclic parameter
-		originCell = generateCells(config, config.getDimensions() - 1);
+		originCell = generateCells(config.getDimensions() - 1);
 	}
 
 	/**
 	 * 
-	 * @param config
-	 *            the configuration to consider
 	 * @param dimension
 	 *            the zero-based dimension to consider, basically the dimension
 	 *            in the configuration - 1
 	 * @return a cell which can be used to get all the others (looking the cells
 	 *         around)
 	 */
-	private ICell<StateType> generateCells(
-			final GeneratorConfiguration<StateType> config, int dimension) {
+	private ICell<StateType> generateCells(int dimension) {
 		if (dimension < 0) {
-			ICell<StateType> cell = new GenericCell<StateType>(
-					config.initialState, config.getDimensions(),
-					config.memorySize);
-			cell.setRule(config.rule);
+			// TODO consider the isCyclic field
+			ICell<StateType> cell = cellFactory.createCyclicCell();
 			return cell;
 		} else {
 			ICell<StateType> start = null;
 			ICell<StateType> ref = null;
-			for (int coord = 0; coord < config.dimensionSizes[dimension]; coord++) {
-				ICell<StateType> cell = generateCells(config, dimension - 1);
+			for (int coord = 0; coord < dimensionSizes[dimension]; coord++) {
+				ICell<StateType> cell = generateCells(dimension - 1);
 				if (start != null) {
-					checkLevel(config, ref, cell, dimension - 1, dimension,
-							coord);
+					checkLevel(ref, cell, dimension - 1, dimension, coord);
 				} else {
 					start = cell;
 				}
@@ -113,8 +127,6 @@ public class CellularAutomaton<StateType> {
 
 	/**
 	 * 
-	 * @param config
-	 *            the configuration to consider
 	 * @param cellRef
 	 *            the cell already in the space
 	 * @param cellToInsert
@@ -126,9 +138,9 @@ public class CellularAutomaton<StateType> {
 	 * @param coord
 	 *            the coordinate of the cell in the considered dimension
 	 */
-	private void checkLevel(final GeneratorConfiguration<StateType> config,
-			ICell<StateType> cellRef, ICell<StateType> cellToInsert,
-			int dimensionToCheck, int initialDimension, int coord) {
+	private void checkLevel(ICell<StateType> cellRef,
+			ICell<StateType> cellToInsert, int dimensionToCheck,
+			int initialDimension, int coord) {
 		if (dimensionToCheck < 0) {
 			cellToInsert.setPreviousCellOnDimension(initialDimension, cellRef);
 			cellToInsert.setNextCellOnDimension(initialDimension,
@@ -138,8 +150,8 @@ public class CellularAutomaton<StateType> {
 					.setPreviousCellOnDimension(initialDimension, cellToInsert);
 			cellRef.setNextCellOnDimension(initialDimension, cellToInsert);
 		} else {
-			for (int i = 0; i < config.dimensionSizes[dimensionToCheck]; i++) {
-				checkLevel(config, cellRef, cellToInsert, dimensionToCheck - 1,
+			for (int i = 0; i < dimensionSizes[dimensionToCheck]; i++) {
+				checkLevel(cellRef, cellToInsert, dimensionToCheck - 1,
 						initialDimension, coord);
 				cellRef = cellRef.getNextCellOnDimension(dimensionToCheck);
 				cellToInsert = cellToInsert
