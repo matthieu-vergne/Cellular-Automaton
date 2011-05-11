@@ -14,7 +14,7 @@ import org.cellularautomaton.definition.ICellTest;
 public class GenericCellTest extends ICellTest {
 
 	public <StateType> org.cellularautomaton.definition.ICell<StateType> createCell(
-			StateType initialState, int dimensions, int memorySize) {
-		return new GenericCell<StateType>(initialState, dimensions, memorySize);
+			StateType initialState, int memorySize) {
+		return new GenericCell<StateType>(initialState, memorySize);
 	};
 }

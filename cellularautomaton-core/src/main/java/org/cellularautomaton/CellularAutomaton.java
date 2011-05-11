@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.factory.CellFactory;
 
 /**
  * A cellular automaton is a space of evolving cells. Each cell evolves
@@ -22,28 +21,12 @@ import org.cellularautomaton.factory.CellFactory;
  *            data for particular uses (just consider all the cells use the same
  *            type).
  */
-/*
- * TODO extract the creation of the space in a SpaceOfCellBuilder (constructs
- * each dimension one at a time)
- */
 public class CellularAutomaton<StateType> {
 	/**
 	 * The cell to consider as the start of the space (all the other cells are
 	 * accessible from this one).
 	 */
 	private final ICell<StateType> originCell;
-	/**
-	 * The factory used to create the space of cells.
-	 */
-	private final CellFactory<StateType> cellFactory;
-	/**
-	 * The length of each dimension of the space of cells.
-	 */
-	private int[] dimensionSizes;
-	/**
-	 * The cyclic property of the space of cells.
-	 */
-	private boolean isCyclicSpace;
 
 	/**
 	 * <p>
@@ -60,112 +43,6 @@ public class CellularAutomaton<StateType> {
 	 */
 	public CellularAutomaton(ICell<StateType> originCell) {
 		this.originCell = originCell;
-		this.cellFactory = null;
-	}
-
-	/**
-	 * Generate an orthogonal space of cells. In other words a line in 1D, a
-	 * square-based space in 2D, a cubic-based space in 3D, ...
-	 * 
-	 * @param initialState
-	 *            the initial state of each cell
-	 * @param config
-	 *            the calculation method to apply for each cell
-	 * @param memorySize
-	 *            the memory size of each cell (number of states they can
-	 *            remember)
-	 * @param isCyclic
-	 *            tell if the cell space generated must be cyclic (for each
-	 *            dimension, the next cell after the last one is the first one)
-	 *            ore not (a frontier cell is given after the last one and
-	 *            before the first one)
-	 * @param dimensionSizes
-	 *            the number of cells to put in each dimension, the number of
-	 *            sizes put in arguments give the dimension of the automaton
-	 */
-	public CellularAutomaton(final GeneratorConfiguration<StateType> config) {
-		/* check */
-		assert config != null;
-		assert config.isValid();
-
-		this.cellFactory = new CellFactory<StateType>();
-		cellFactory.setInitialState(config.initialState);
-		cellFactory.setDimensions(config.dimensionSizes.length);
-		cellFactory.setMemorySize(config.memorySize);
-		cellFactory.setRule(config.rule);
-		this.dimensionSizes = config.dimensionSizes;
-		this.isCyclicSpace = config.isCyclic;
-
-		/* linking cells */
-		originCell = generateCells(config.getDimensions() - 1);
-	}
-
-	/**
-	 * 
-	 * @param dimension
-	 *            the zero-based dimension to consider, basically the dimension
-	 *            in the configuration - 1
-	 * @return a cell which can be used to get all the others (looking the cells
-	 *         around)
-	 */
-	private ICell<StateType> generateCells(int dimension) {
-		if (dimension < 0) {
-			// TODO consider the isCyclic field after creating test
-			ICell<StateType> cell = cellFactory.createCyclicCell();
-			return cell;
-		} else {
-			ICell<StateType> start = null;
-			ICell<StateType> ref = null;
-			for (int coord = 0; coord < dimensionSizes[dimension]; coord++) {
-				ICell<StateType> cell = generateCells(dimension - 1);
-				if (start != null) {
-					checkLevel(ref, cell, dimension - 1, dimension, coord);
-				} else {
-					start = cell;
-				}
-				ref = cell;
-			}
-			return start;
-		}
-	}
-
-	/**
-	 * 
-	 * @param cellBefore
-	 *            the cell in the previous place
-	 * @param cellAfter
-	 *            the cell in the next place
-	 * @param dimensionToCheck
-	 *            the zero-based dimension to consider
-	 * @param initialDimension
-	 *            the initial zero-based dimension of the check
-	 * @param coord
-	 *            the coordinate of the cell in the considered dimension
-	 */
-	private void checkLevel(ICell<StateType> cellBefore,
-			ICell<StateType> cellAfter, int dimensionToCheck,
-			int initialDimension, int coord) {
-		if (dimensionToCheck < 0) {
-			// TODO consider the isCyclic field after creating test
-			cellAfter.setPreviousCellOnDimension(initialDimension, cellBefore);
-			cellAfter.setNextCellOnDimension(initialDimension,
-					cellBefore.getNextCellOnDimension(initialDimension));
-			cellAfter.getCoords()[initialDimension] = coord;
-			ICell<StateType> tempCell = cellBefore
-					.getNextCellOnDimension(initialDimension);
-			if (tempCell != null) {
-				tempCell.setPreviousCellOnDimension(initialDimension, cellAfter);
-			}
-			cellBefore.setNextCellOnDimension(initialDimension, cellAfter);
-		} else {
-			for (int i = 0; i < dimensionSizes[dimensionToCheck]; i++) {
-				checkLevel(cellBefore, cellAfter, dimensionToCheck - 1,
-						initialDimension, coord);
-				cellBefore = cellBefore
-						.getNextCellOnDimension(dimensionToCheck);
-				cellAfter = cellAfter.getNextCellOnDimension(dimensionToCheck);
-			}
-		}
 	}
 
 	/**

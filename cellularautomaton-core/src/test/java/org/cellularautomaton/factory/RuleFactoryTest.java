@@ -2,6 +2,7 @@ package org.cellularautomaton.factory;
 
 import junit.framework.TestCase;
 
+import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
 import org.junit.Test;
@@ -11,20 +12,12 @@ public class RuleFactoryTest extends TestCase {
 	@Test
 	public void testStaticRuleInstance() {
 		/* create 1D space */
-		CellFactory<String> cellFactory = new CellFactory<String>();
-		cellFactory.setInitialState("0");
-		ICell<String> cell0 = cellFactory.createIsolatedCell();
-		ICell<String> cell1 = cellFactory.createIsolatedCell();
-		ICell<String> cell2 = cellFactory.createIsolatedCell();
-		ICell<String> cell3 = cellFactory.createIsolatedCell();
-		cell0.setPreviousCellOnDimension(0, cell3);
-		cell1.setPreviousCellOnDimension(0, cell0);
-		cell2.setPreviousCellOnDimension(0, cell1);
-		cell3.setPreviousCellOnDimension(0, cell2);
-		cell0.setNextCellOnDimension(0, cell1);
-		cell1.setNextCellOnDimension(0, cell2);
-		cell2.setNextCellOnDimension(0, cell3);
-		cell3.setNextCellOnDimension(0, cell0);
+		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
+		builder.setInitialState("0").createNewSpace(1).addDimension(4);
+		ICell<String> cell0 = builder.getSpaceOfCellOrigin();
+		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
+		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
+		ICell<String> cell3 = cell2.getNextCellOnDimension(0);
 
 		/* get rule */
 		RuleFactory<String> factory = new RuleFactory<String>();

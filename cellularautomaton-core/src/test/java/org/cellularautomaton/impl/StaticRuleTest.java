@@ -29,6 +29,7 @@ public class StaticRuleTest extends IRuleTest {
 		 */
 		IRule<String> rule = createRule();
 
+		// TODO replace cell factory by space builder
 		CellFactory<String> factory = new CellFactory<String>();
 		factory.setInitialState("0");
 		ICell<String> cell = factory.createCyclicCell();

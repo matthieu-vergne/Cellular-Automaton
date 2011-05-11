@@ -1,15 +1,14 @@
 package org.cellularautomaton.sample.gameoflife;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.GeneratorConfiguration;
+import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
 
 public class GOLAutomatonFactory {
 
 	public static CellularAutomaton<GameOfLifeState> createAutomaton() {
-		final GeneratorConfiguration<GameOfLifeState> config = new GeneratorConfiguration<GameOfLifeState>();
-		config.rule = new IRule<GameOfLifeState>() {
+		IRule<GameOfLifeState> rule = new IRule<GameOfLifeState>() {
 
 			public GameOfLifeState calculateNextStateOf(
 					ICell<GameOfLifeState> cell) {
@@ -27,13 +26,13 @@ public class GOLAutomatonFactory {
 						: GameOfLifeState.DEAD;
 			}
 		};
-		config.dimensionSizes = new int[] { 40, 50 };
-		config.initialState = GameOfLifeState.DEAD;
-		config.isCyclic = true;
-		config.memorySize = 1;
+		
+		CellSpaceBuilder<GameOfLifeState> builder = new CellSpaceBuilder<GameOfLifeState>();
+		builder.setInitialState(GameOfLifeState.DEAD).setMemorySize(1).setRule(rule);
+		builder.createNewSpace(2).addDimension(40).addDimension(50);
 
 		CellularAutomaton<GameOfLifeState> automaton = new CellularAutomaton<GameOfLifeState>(
-				config);
+				builder.getSpaceOfCellOrigin());
 
 		final ICell<GameOfLifeState> origin = automaton.getOriginCell();
 		for (final int[] coords : new int[][] { { 2, 0 }, { 2, 1 }, { 1, 2 },

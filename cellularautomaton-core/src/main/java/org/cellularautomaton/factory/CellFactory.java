@@ -40,42 +40,38 @@ public class CellFactory<StateType> {
 	 * Create a new factory with the corresponding configuration :<br/>
 	 * <ul>
 	 * <li>no initial state (null)</li>
-	 * <li>2 dimensions</li>
+	 * <li>1 dimension</li>
 	 * <li>a memory size of 1</li>
 	 * <li>a static rule (keep current state)</li>
 	 * </ul>
 	 */
 	public CellFactory() {
 		initialState = null;
-		dimensions = 2;
+		dimensions = 1;
 		memorySize = 1;
 		rule = new RuleFactory<StateType>().getStaticRuleInstance();
 	}
 
 	/**
 	 * 
-	 * @return a cell with all the surrounding cells set to <code>null</code>.
+	 * @return a cell not linked to any other cell.
 	 */
 	public ICell<StateType> createIsolatedCell() {
-		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(),
-				getDimensions(), getMemorySize());
+		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(), getMemorySize());
 		cell.setRule(getRule());
-		for (int dim = 0; dim < getDimensions(); dim++) {
-			cell.setPreviousCellOnDimension(dim, null);
-			cell.setNextCellOnDimension(dim, null);
-		}
+		cell.setDimensions(getDimensions());
 		return cell;
 	}
 
 	/**
 	 * 
-	 * @return a cell with all the surrounding cells set to itself.
+	 * @return a cell linked to itself on each dimension.
 	 */
 	public ICell<StateType> createCyclicCell() {
-		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(),
-				getDimensions(), getMemorySize());
+		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(), getMemorySize());
 		cell.setRule(getRule());
-		for (int dim = 0; dim < getDimensions(); dim++) {
+		cell.setDimensions(getDimensions());
+		for (int dim = 0; dim < cell.getDimensions(); dim++) {
 			cell.setPreviousCellOnDimension(dim, cell);
 			cell.setNextCellOnDimension(dim, cell);
 		}
@@ -117,6 +113,7 @@ public class CellFactory<StateType> {
 	 * @return the number of dimensions to consider for each new cell.
 	 */
 	public int getDimensions() {
+		// TODO remove when there will eb no more
 		return dimensions;
 	}
 

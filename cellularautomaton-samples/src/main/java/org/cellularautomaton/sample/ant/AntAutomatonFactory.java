@@ -1,15 +1,14 @@
 package org.cellularautomaton.sample.ant;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.GeneratorConfiguration;
+import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
 
 public class AntAutomatonFactory {
 
 	public static CellularAutomaton<AntState> createAutomaton() {
-		final GeneratorConfiguration<AntState> config = new GeneratorConfiguration<AntState>();
-		config.rule = new IRule<AntState>() {
+		IRule<AntState> rule = new IRule<AntState>() {
 
 			public AntState calculateNextStateOf(ICell<AntState> cell) {
 				switch (cell.getCurrentState()) {
@@ -75,13 +74,13 @@ public class AntAutomatonFactory {
 				}
 			}
 		};
-		config.dimensionSizes = new int[] { 60, 60 };
-		config.initialState = AntState.BLACK;
-		config.isCyclic = true;
-		config.memorySize = 1;
+
+		CellSpaceBuilder<AntState> builder = new CellSpaceBuilder<AntState>();
+		builder.setInitialState(AntState.BLACK).setMemorySize(1).setRule(rule);
+		builder.createNewSpace(2).addDimension(60).addDimension(60);
 
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
-				config);
+				builder.getSpaceOfCellOrigin());
 
 		final ICell<AntState> origin = automaton.getOriginCell();
 		origin.getRelativeCell(30, 30).setCurrentState(AntState.ANT_WHITE_UP);

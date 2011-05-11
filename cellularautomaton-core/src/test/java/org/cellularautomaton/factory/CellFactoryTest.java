@@ -13,7 +13,7 @@ public class CellFactoryTest extends TestCase {
 	public void testInitialParameters() {
 		CellFactory<String> factory = new CellFactory<String>();
 		assertEquals(null, factory.getInitialState());
-		assertEquals(2, factory.getDimensions());
+		assertEquals(1, factory.getDimensions());
 		assertEquals(1, factory.getMemorySize());
 		assertEquals(StaticRule.class, factory.getRule().getClass());
 	}
@@ -26,11 +26,10 @@ public class CellFactoryTest extends TestCase {
 	 */
 	static public class IsolatedCellTest extends ICellTest {
 		public <StateType> ICell<StateType> createCell(StateType initialState,
-				int dimensions, int memorySize) {
+				int memorySize) {
 			CellFactory<StateType> factory = new CellFactory<StateType>();
 			return factory.setInitialState(initialState)
-					.setDimensions(dimensions).setMemorySize(memorySize)
-					.createIsolatedCell();
+					.setMemorySize(memorySize).createIsolatedCell();
 		};
 
 		@Test
@@ -69,11 +68,10 @@ public class CellFactoryTest extends TestCase {
 	 */
 	static public class CyclicCellTest extends ICellTest {
 		public <StateType> ICell<StateType> createCell(StateType initialState,
-				int dimensions, int memorySize) {
+				int memorySize) {
 			CellFactory<StateType> factory = new CellFactory<StateType>();
 			return factory.setInitialState(initialState)
-					.setDimensions(dimensions).setMemorySize(memorySize)
-					.createCyclicCell();
+					.setMemorySize(memorySize).createCyclicCell();
 		};
 
 		@Test

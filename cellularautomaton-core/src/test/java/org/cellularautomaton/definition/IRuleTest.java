@@ -30,6 +30,7 @@ public abstract class IRuleTest extends TestCase {
 		 */
 		IRule<Integer> rule = createRule();
 
+		// TODO replace cell factory by space builder
 		CellFactory<Integer> factory = new CellFactory<Integer>();
 		factory.setInitialState(0);
 		assertNotNull(rule.calculateNextStateOf(factory.createCyclicCell()));

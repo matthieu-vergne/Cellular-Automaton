@@ -1,7 +1,9 @@
 package org.cellularautomaton.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.cellularautomaton.StateMemory;
@@ -39,11 +41,14 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 * considered by the rule</b> which change the state of the cell, they are
 	 * the (physical) neighbors in the space of cells.
 	 */
-	private final ICell<StateType>[][] surroundings;
+	private final List<LinkedCellsCouple> surroundings;
 	/**
 	 * The coordinates of the cell in the space of cells.
 	 */
-	private final int[] coords;
+	private int[] coords;
+	/**
+	 * The rule to use in order to calculate the newt state of the cell.
+	 */
 	private IRule<StateType> rule;
 
 	/**
@@ -51,7 +56,30 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 * @return the dimensions this cell work on
 	 */
 	public int getDimensions() {
-		return surroundings.length;
+		return surroundings.size();
+	}
+
+	/**
+	 * If the dimension is decreased, the cells around for the kept dimensions
+	 * are preserved. If the dimensions are increased, no cells are linked for
+	 * the new dimensions.
+	 */
+	public void setDimensions(int dimensions) {
+		assert dimensions > 0;
+		
+		if (dimensions > getDimensions()) {
+			for (int dimension = getDimensions(); dimension < dimensions; dimension++) {
+				LinkedCellsCouple couple = new LinkedCellsCouple();
+				surroundings.add(couple);
+			}
+		} else if (dimensions < getDimensions()) {
+			for (int dimension = getDimensions() - 1; dimension >= dimensions; dimension--) {
+				surroundings.remove(dimension);
+			}
+		} else {
+			// nothing to do
+		}
+		coords = Arrays.copyOf(coords, dimensions);
 	}
 
 	/**
@@ -64,19 +92,13 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 * @param memorySize
 	 *            the number of states the cell can remember (at least 0)
 	 */
-	@SuppressWarnings("unchecked")
-	public GenericCell(StateType initialState, int dimensions, int memorySize) {
+	public GenericCell(StateType initialState, int memorySize) {
 		assert initialState != null;
-		assert dimensions > 0;
 		assert memorySize >= 0;
 
 		previousStates = new StateMemory<StateType>(memorySize, initialState);
-		this.surroundings = new ICell[dimensions][2];
-		for (int dimension = 0; dimension < dimensions; dimension++) {
-			surroundings[dimension] = new ICell[] { this, this };
-		}
-		coords = new int[dimensions];
-		Arrays.fill(getCoords(), 0);
+		this.surroundings = new ArrayList<LinkedCellsCouple>();
+		coords = new int[0];
 	}
 
 	public StateType getCurrentState() {
@@ -117,20 +139,20 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		nextState = null;
 	}
 
-	public ICell<StateType> getNextCellOnDimension(int dimension) {
-		return surroundings[dimension][1];
+	public void setNextCellOnDimension(int dimension, ICell<StateType> cell) {
+		surroundings.get(dimension).next = cell;
 	}
 
-	public void setNextCellOnDimension(int dimension, ICell<StateType> cell) {
-		surroundings[dimension][1] = cell;
+	public ICell<StateType> getNextCellOnDimension(int dimension) {
+		return surroundings.get(dimension).next;
 	}
 
 	public void setPreviousCellOnDimension(int dimension, ICell<StateType> cell) {
-		surroundings[dimension][0] = cell;
+		surroundings.get(dimension).previous = cell;
 	}
 
 	public ICell<StateType> getPreviousCellOnDimension(int dimension) {
-		return surroundings[dimension][0];
+		return surroundings.get(dimension).previous;
 	}
 
 	public boolean isNextStateCalculated() {
@@ -202,11 +224,9 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 */
 	public void setCoords(int... coords) {
 		assert coords != null;
-		assert coords.length == this.coords.length;
+		assert coords.length == getDimensions();
 
-		for (int i = 0; i < coords.length; i++) {
-			this.coords[i] = coords[i];
-		}
+		this.coords = Arrays.copyOf(coords, coords.length);
 	}
 
 	public void setCurrentState(StateType state) {
@@ -215,5 +235,18 @@ public class GenericCell<StateType> implements ICell<StateType> {
 
 	public void setRule(IRule<StateType> rule) {
 		this.rule = rule;
+	}
+
+	/**
+	 * This class is a simple container for the cells before/after the current
+	 * one on a specific dimensions. Basically, there is no link (
+	 * <code>null</code>).
+	 * 
+	 * @author Matthieu Vergne (matthieu.vergne@gmail.com)
+	 * 
+	 */
+	private class LinkedCellsCouple {
+		public ICell<StateType> previous = null;
+		public ICell<StateType> next = null;
 	}
 }

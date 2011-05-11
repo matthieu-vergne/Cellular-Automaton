@@ -2,8 +2,6 @@ package org.cellularautomaton.definition;
 
 import junit.framework.TestCase;
 
-import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.definition.IRule;
 import org.cellularautomaton.factory.RuleFactory;
 import org.junit.Assert;
 
@@ -18,18 +16,17 @@ import org.junit.Assert;
 public abstract class ICellTest extends TestCase {
 
 	public abstract <StateType> ICell<StateType> createCell(
-			StateType initialState, int dimensions, int memorySize);
+			StateType initialState, int memorySize);
 
 	private RuleFactory<String> ruleFactory = new RuleFactory<String>();
 
 	public void testCellState() {
-		int dimension = 2;
 		IRule<Integer> rule = new IRule<Integer>() {
 			public Integer calculateNextStateOf(ICell<Integer> cell) {
 				return cell.getCurrentState() + 1;
 			}
 		};
-		ICell<Integer> cell = createCell(0, dimension, 3);
+		ICell<Integer> cell = createCell(0, 3);
 		cell.setRule(rule);
 		assertEquals(Integer.valueOf(0), cell.getCurrentState());
 		assertEquals(Integer.valueOf(0), cell.getState(0));
@@ -102,43 +99,43 @@ public abstract class ICellTest extends TestCase {
 	}
 
 	public void testCellDimensions() {
-		ICell<String> cell;
-		IRule<String> rule = ruleFactory.getStaticRuleInstance();
+		ICell<String> cell = createCell("", 1);
 
-		cell = createCell("", 1, 1);
-		cell.setRule(rule);
-		assertEquals(1, cell.getDimensions());
-
-		cell = createCell("", 2, 1);
-		cell.setRule(rule);
+		cell.setDimensions(2);
 		assertEquals(2, cell.getDimensions());
 
-		cell = createCell("", 3, 1);
-		cell.setRule(rule);
-		assertEquals(3, cell.getDimensions());
+		cell.setDimensions(1);
+		assertEquals(1, cell.getDimensions());
 
+		cell.setDimensions(5);
+		assertEquals(5, cell.getDimensions());
 	}
 
 	public void testCellsAround() {
-		int dimension = 2;
+		int dimensions = 2;
 		IRule<String> rule = ruleFactory.getStaticRuleInstance();
 
-		ICell<String> cell = createCell("middle", dimension, 1);
+		ICell<String> cell = createCell("middle", 1);
 		cell.setRule(rule);
-		ICell<String> neighborTop = createCell("top", dimension, 1);
+		cell.setDimensions(dimensions);
+		ICell<String> neighborTop = createCell("top", 1);
 		neighborTop.setRule(rule);
-		ICell<String> neighborBottom = createCell("bottom", dimension, 1);
+		neighborTop.setDimensions(dimensions);
+		ICell<String> neighborBottom = createCell("bottom", 1);
 		neighborBottom.setRule(rule);
-		ICell<String> neighborLeft = createCell("left", dimension, 1);
+		neighborBottom.setDimensions(dimensions);
+		ICell<String> neighborLeft = createCell("left", 1);
 		neighborLeft.setRule(rule);
-		ICell<String> neighborRight = createCell("right", dimension, 1);
+		neighborLeft.setDimensions(dimensions);
+		ICell<String> neighborRight = createCell("right", 1);
 		neighborRight.setRule(rule);
+		neighborRight.setDimensions(dimensions);
 
 		ICell<String> actualLeft = cell.getPreviousCellOnDimension(0);
 		ICell<String> actualRight = cell.getNextCellOnDimension(0);
 		ICell<String> actualBottom = cell.getPreviousCellOnDimension(1);
 		ICell<String> actualTop = cell.getNextCellOnDimension(1);
-		
+
 		assertEquals(actualLeft, cell.getPreviousCellOnDimension(0));
 		assertEquals(actualRight, cell.getNextCellOnDimension(0));
 		assertEquals(actualBottom, cell.getPreviousCellOnDimension(1));
@@ -172,16 +169,19 @@ public abstract class ICellTest extends TestCase {
 		assertEquals(neighborBottom, cell.getPreviousCellOnDimension(1));
 		assertEquals(neighborTop, cell.getNextCellOnDimension(1));
 
-		ICell<String> neighborTopLeft = createCell("top-left", dimension, 1);
+		ICell<String> neighborTopLeft = createCell("top-left", 1);
 		neighborTopLeft.setRule(rule);
-		ICell<String> neighborTopRight = createCell("top-right", dimension, 1);
+		neighborTopLeft.setDimensions(dimensions);
+		ICell<String> neighborTopRight = createCell("top-right", 1);
 		neighborTopRight.setRule(rule);
-		ICell<String> neighborBottomLeft = createCell("bottom-left", dimension,
-				1);
+		neighborTopRight.setDimensions(dimensions);
+		ICell<String> neighborBottomLeft = createCell("bottom-left", 1);
 		neighborBottomLeft.setRule(rule);
-		ICell<String> neighborBottomRight = createCell("bottom-right",
-				dimension, 1);
+		neighborBottomLeft.setDimensions(dimensions);
+		ICell<String> neighborBottomRight = createCell("bottom-right", 1);
 		neighborBottomRight.setRule(rule);
+		neighborBottomRight.setDimensions(dimensions);
+
 		neighborTopLeft.setPreviousCellOnDimension(0, neighborTopRight);
 		neighborTopLeft.setNextCellOnDimension(0, neighborTop);
 		neighborTopLeft.setPreviousCellOnDimension(1, neighborLeft);
@@ -220,13 +220,22 @@ public abstract class ICellTest extends TestCase {
 	}
 
 	public void testCoords() {
-		ICell<String> cell = createCell("", 3, 1);
+		ICell<String> cell = createCell("", 1);
 		cell.setRule(ruleFactory.getStaticRuleInstance());
+
+		cell.setDimensions(3);
+		Assert.assertArrayEquals(new int[] { 0, 0, 0 }, cell.getCoords());
 
 		cell.setCoords(3, 5, 2);
 		Assert.assertArrayEquals(new int[] { 3, 5, 2 }, cell.getCoords());
 
 		cell.setCoords(1, 3, 4);
 		Assert.assertArrayEquals(new int[] { 1, 3, 4 }, cell.getCoords());
+
+		cell.setDimensions(4);
+		Assert.assertArrayEquals(new int[] { 1, 3, 4, 0 }, cell.getCoords());
+
+		cell.setDimensions(2);
+		Assert.assertArrayEquals(new int[] { 1, 3 }, cell.getCoords());
 	}
 }

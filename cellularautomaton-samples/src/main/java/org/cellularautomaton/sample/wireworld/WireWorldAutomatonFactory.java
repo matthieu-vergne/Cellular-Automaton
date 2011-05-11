@@ -1,15 +1,14 @@
 package org.cellularautomaton.sample.wireworld;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.GeneratorConfiguration;
+import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
 
 public class WireWorldAutomatonFactory {
 
 	public static CellularAutomaton<WireWorldState> createAutomaton() {
-		final GeneratorConfiguration<WireWorldState> config = new GeneratorConfiguration<WireWorldState>();
-		config.rule = new IRule<WireWorldState>() {
+		IRule<WireWorldState> rule = new IRule<WireWorldState>() {
 			public WireWorldState calculateNextStateOf(
 					ICell<WireWorldState> cell) {
 				switch (cell.getCurrentState()) {
@@ -36,13 +35,13 @@ public class WireWorldAutomatonFactory {
 				}
 			}
 		};
-		config.dimensionSizes = new int[] { 20, 10 };
-		config.initialState = WireWorldState.EMPTY;
-		config.isCyclic = true;
-		config.memorySize = 1;
+
+		CellSpaceBuilder<WireWorldState> builder = new CellSpaceBuilder<WireWorldState>();
+		builder.setInitialState(WireWorldState.EMPTY).setRule(rule);
+		builder.createNewSpace(2).addDimension(20).addDimension(10);
 
 		CellularAutomaton<WireWorldState> automaton = new CellularAutomaton<WireWorldState>(
-				config);
+				builder.getSpaceOfCellOrigin());
 
 		final ICell<WireWorldState> origin = automaton.getOriginCell();
 		for (final int[] coords : new int[][] { { 0, 2 }, { 1, 2 }, { 2, 2 },

@@ -18,12 +18,6 @@ public interface ICell<StateType> {
 
 	/**
 	 * 
-	 * @return the number of dimensions this cell work on
-	 */
-	public int getDimensions();
-
-	/**
-	 * 
 	 * @param state
 	 *            the state to apply to the cell
 	 */
@@ -79,6 +73,22 @@ public interface ICell<StateType> {
 	 *             the next state is not calculated yet
 	 */
 	public void applyNextState() throws IllegalStateException;
+
+	/**
+	 * 
+	 * @return the number of dimensions this cell work on
+	 */
+	public int getDimensions();
+
+	/**
+	 * This method may preserve all coherent data : if the dimensions are
+	 * decreased from 3 to 2 for example, the linked cells around must be
+	 * preserved for the dimensions 0 and 1 (as it is zero-based).
+	 * 
+	 * @param dimensions
+	 *            the number of dimensions this cell work on
+	 */
+	public void setDimensions(int dimensions);
 
 	/**
 	 * 
