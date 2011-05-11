@@ -1,9 +1,10 @@
 package org.cellularautomaton.impl;
 
+import org.cellularautomaton.CellularAutomaton;
+import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
 import org.cellularautomaton.definition.IRuleTest;
-import org.cellularautomaton.factory.CellFactory;
 import org.junit.Test;
 
 /**
@@ -23,24 +24,26 @@ public class StaticRuleTest extends IRuleTest {
 
 	@Test
 	public void testStaticValue() {
-		/*
-		 * this test is not exhaustive, there is just some evident cases but it
-		 * must be extended when some cells are found to give not static values.
-		 */
-		IRule<String> rule = createRule();
+		IRule<Integer> rule = createRule();
 
-		// TODO replace cell factory by space builder
-		CellFactory<String> factory = new CellFactory<String>();
-		factory.setInitialState("0");
-		ICell<String> cell = factory.createCyclicCell();
-		assertEquals("0", rule.calculateNextStateOf(cell));
-		cell = factory.createIsolatedCell();
-		assertEquals("0", rule.calculateNextStateOf(cell));
+		// TODO replace fix value by not homogeneous values
+		CellSpaceBuilder<Integer> builder = new CellSpaceBuilder<Integer>();
+		builder.setInitialState(0).setRule(rule);
+		builder.createNewSpace(3).addDimension(5).addDimension(5)
+				.addDimension(5);
+		CellularAutomaton<Integer> automaton = new CellularAutomaton<Integer>(
+				builder.getSpaceOfCellOrigin());
 
-		factory.setInitialState("aze");
-		cell = factory.createCyclicCell();
-		assertEquals("aze", rule.calculateNextStateOf(cell));
-		cell = factory.createIsolatedCell();
-		assertEquals("aze", rule.calculateNextStateOf(cell));
+		for (ICell<Integer> cell : automaton.getAllCells()) {
+			assertEquals(cell.getCurrentState(), rule.calculateNextStateOf(cell));
+		}
+		automaton.doStep();
+		for (ICell<Integer> cell : automaton.getAllCells()) {
+			assertEquals(cell.getCurrentState(), rule.calculateNextStateOf(cell));
+		}
+		automaton.doStep();
+		for (ICell<Integer> cell : automaton.getAllCells()) {
+			assertEquals(cell.getCurrentState(), rule.calculateNextStateOf(cell));
+		}
 	}
 }

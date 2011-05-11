@@ -2,7 +2,8 @@ package org.cellularautomaton.definition;
 
 import junit.framework.TestCase;
 
-import org.cellularautomaton.factory.CellFactory;
+import org.cellularautomaton.CellularAutomaton;
+import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.junit.Test;
 
 /**
@@ -19,25 +20,36 @@ public abstract class IRuleTest extends TestCase {
 
 	@Test
 	public void testNotNull() {
-		/*
-		 * this test is not exhaustive, there is just some evident cases but it
-		 * must be extended when some rules are found to give null values. Be
-		 * careful to check coherent ways : test the StaticRule on a cell having
-		 * a null state give a null state as a result of the calculation, but it
-		 * is not a coherent test as the problem here is not the result of the
-		 * rule but the actual null state of the cell. This kind of test must be
-		 * avoided.
-		 */
 		IRule<Integer> rule = createRule();
 
-		// TODO replace cell factory by space builder
-		CellFactory<Integer> factory = new CellFactory<Integer>();
-		factory.setInitialState(0);
-		assertNotNull(rule.calculateNextStateOf(factory.createCyclicCell()));
-		assertNotNull(rule.calculateNextStateOf(factory.createIsolatedCell()));
+		// generate automaton
+		// TODO replace fix value by not homogeneous values
+		CellSpaceBuilder<Integer> builder = new CellSpaceBuilder<Integer>();
+		builder.setInitialState(0).setRule(rule);
+		builder.createNewSpace(3).addDimension(5).addDimension(5)
+				.addDimension(5);
+		CellularAutomaton<Integer> automaton = new CellularAutomaton<Integer>(
+				builder.getSpaceOfCellOrigin());
 
-		factory.setInitialState(42);
-		assertNotNull(rule.calculateNextStateOf(factory.createCyclicCell()));
-		assertNotNull(rule.calculateNextStateOf(factory.createIsolatedCell()));
+		/*
+		 * check init of cells, this is just to ensure the benchmark is coherent
+		 * to do tests on it.
+		 */
+		for (ICell<Integer> cell : automaton.getAllCells()) {
+			assertNotNull(cell.getCurrentState());
+		}
+
+		// check rule
+		for (ICell<Integer> cell : automaton.getAllCells()) {
+			assertNotNull(rule.calculateNextStateOf(cell));
+		}
+		automaton.doStep();
+		for (ICell<Integer> cell : automaton.getAllCells()) {
+			assertNotNull(rule.calculateNextStateOf(cell));
+		}
+		automaton.doStep();
+		for (ICell<Integer> cell : automaton.getAllCells()) {
+			assertNotNull(rule.calculateNextStateOf(cell));
+		}
 	}
 }

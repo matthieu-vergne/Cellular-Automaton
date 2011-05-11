@@ -18,8 +18,6 @@ public abstract class ICellTest extends TestCase {
 	public abstract <StateType> ICell<StateType> createCell(
 			StateType initialState, int memorySize);
 
-	private RuleFactory<String> ruleFactory = new RuleFactory<String>();
-
 	public void testCellState() {
 		IRule<Integer> rule = new IRule<Integer>() {
 			public Integer calculateNextStateOf(ICell<Integer> cell) {
@@ -113,7 +111,7 @@ public abstract class ICellTest extends TestCase {
 
 	public void testCellsAround() {
 		int dimensions = 2;
-		IRule<String> rule = ruleFactory.getStaticRuleInstance();
+		IRule<String> rule = new RuleFactory<String>().getStaticRuleInstance();
 
 		ICell<String> cell = createCell("middle", 1);
 		cell.setRule(rule);
@@ -221,7 +219,7 @@ public abstract class ICellTest extends TestCase {
 
 	public void testCoords() {
 		ICell<String> cell = createCell("", 1);
-		cell.setRule(ruleFactory.getStaticRuleInstance());
+		cell.setRule(new RuleFactory<String>().getStaticRuleInstance());
 
 		cell.setDimensions(3);
 		Assert.assertArrayEquals(new int[] { 0, 0, 0 }, cell.getCoords());

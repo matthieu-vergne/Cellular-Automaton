@@ -18,7 +18,8 @@ public class CellSpaceBuilder<StateType> {
 	private final CellFactory<StateType> cellFactory = new CellFactory<StateType>();
 	private final ArrayList<Integer> dimensionLengths = new ArrayList<Integer>();
 
-	// TODO adapt to remove the constraint of giving dimensions from the beginning
+	// TODO adapt to remove the constraint of giving dimensions from the
+	// beginning
 	public CellSpaceBuilder<StateType> createNewSpace(int dimensions) {
 		cellFactory.setDimensions(dimensions);
 		dimensionLengths.clear();
@@ -126,6 +127,10 @@ public class CellSpaceBuilder<StateType> {
 		return cellFactory.getRule();
 	}
 
+	/*
+	 * TODO replace the fix initial state by a state factory, depending of the
+	 * cell
+	 */
 	public CellSpaceBuilder<StateType> setInitialState(StateType initialState) {
 		cellFactory.setInitialState(initialState);
 		return this;

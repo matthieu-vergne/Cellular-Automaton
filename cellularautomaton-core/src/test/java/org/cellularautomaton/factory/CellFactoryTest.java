@@ -19,7 +19,7 @@ public class CellFactoryTest extends TestCase {
 	}
 
 	/**
-	 * Basic test for isolated cell instance.
+	 * Test for isolated cell instance.
 	 * 
 	 * @author Matthieu Vergne (matthieu.vergne@gmail.com)
 	 * 
@@ -61,7 +61,7 @@ public class CellFactoryTest extends TestCase {
 	}
 
 	/**
-	 * Basic test for cyclic cell instance.
+	 * Test for cyclic cell instance.
 	 * 
 	 * @author Matthieu Vergne (matthieu.vergne@gmail.com)
 	 * 

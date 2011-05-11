@@ -14,7 +14,7 @@ import org.junit.Test;
 public class CellSpaceBuilderTest extends TestCase {
 
 	@Test
-	public void testGeneratedSpaceOfCells1D() {
+	public void testSpace1D() {
 		// generate space
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
 		builder.setInitialState("").setMemorySize(1).createNewSpace(1)
@@ -66,7 +66,7 @@ public class CellSpaceBuilderTest extends TestCase {
 	}
 
 	@Test
-	public void testGeneratedSpaceOfCells2D() {
+	public void testSpace2D() {
 		// generate space
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
 		builder.setInitialState("").setMemorySize(1).createNewSpace(2)
@@ -256,7 +256,7 @@ public class CellSpaceBuilderTest extends TestCase {
 	}
 
 	@Test
-	public void testGeneratedSpaceOfCells3D() {
+	public void testSpace3D() {
 		// config
 		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
 		config.initialState = "";

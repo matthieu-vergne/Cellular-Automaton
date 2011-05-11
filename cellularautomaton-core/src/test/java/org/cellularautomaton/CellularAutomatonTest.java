@@ -17,28 +17,8 @@ public class CellularAutomatonTest extends TestCase {
 	public void testGetAllCells() {
 		// generate space of cells
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1)
-				.setRule(new IRule<String>() {
-					public String calculateNextStateOf(ICell<String> cell) {
-						return cell.getRelativeCell(-1, -1).getCurrentState()
-								+ cell.getRelativeCell(+0, -1)
-										.getCurrentState()
-								+ cell.getRelativeCell(+1, -1)
-										.getCurrentState()
-								+ cell.getRelativeCell(-1, +0)
-										.getCurrentState()
-								+ cell.getRelativeCell(+0, +0)
-										.getCurrentState() // current
-								+ cell.getRelativeCell(+1, +0)
-										.getCurrentState()
-								+ cell.getRelativeCell(-1, +1)
-										.getCurrentState()
-								+ cell.getRelativeCell(+0, +1)
-										.getCurrentState()
-								+ cell.getRelativeCell(+1, +1)
-										.getCurrentState();
-					}
-				}).createNewSpace(2).addDimension(4).addDimension(4);
+		builder.setInitialState("").setMemorySize(1).createNewSpace(2)
+				.addDimension(4).addDimension(4);
 
 		// get cells
 		ICell<String> cell00 = builder.getSpaceOfCellOrigin();
@@ -144,7 +124,8 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell33));
 
 		// test accessibility
-		CellFactory<String> cellFactory = new CellFactory<String>().setDimensions(2);
+		CellFactory<String> cellFactory = new CellFactory<String>()
+				.setDimensions(2);
 		ICell<String> intruderFullyAccessible = cellFactory.setInitialState(
 				"total intruder").createCyclicCell();
 		intruderFullyAccessible.setPreviousCellOnDimension(0, cell20);
@@ -198,28 +179,8 @@ public class CellularAutomatonTest extends TestCase {
 	public void testCellsIterator() {
 		// generate space of cells
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1)
-				.setRule(new IRule<String>() {
-					public String calculateNextStateOf(ICell<String> cell) {
-						return cell.getRelativeCell(-1, -1).getCurrentState()
-								+ cell.getRelativeCell(+0, -1)
-										.getCurrentState()
-								+ cell.getRelativeCell(+1, -1)
-										.getCurrentState()
-								+ cell.getRelativeCell(-1, +0)
-										.getCurrentState()
-								+ cell.getRelativeCell(+0, +0)
-										.getCurrentState() // current
-								+ cell.getRelativeCell(+1, +0)
-										.getCurrentState()
-								+ cell.getRelativeCell(-1, +1)
-										.getCurrentState()
-								+ cell.getRelativeCell(+0, +1)
-										.getCurrentState()
-								+ cell.getRelativeCell(+1, +1)
-										.getCurrentState();
-					}
-				}).createNewSpace(2).addDimension(4).addDimension(4);
+		builder.setInitialState("").setMemorySize(1).createNewSpace(2)
+				.addDimension(4).addDimension(4);
 
 		// get cells
 		ICell<String> cell00 = builder.getSpaceOfCellOrigin();
@@ -285,7 +246,8 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(cellsToView.isEmpty());
 
 		// test accessibility
-		CellFactory<String> cellFactory = new CellFactory<String>().setDimensions(2);
+		CellFactory<String> cellFactory = new CellFactory<String>()
+				.setDimensions(2);
 		ICell<String> intruderFullyAccessible = cellFactory.setInitialState(
 				"total intruder").createCyclicCell();
 		intruderFullyAccessible.setPreviousCellOnDimension(0, cell20);
@@ -326,13 +288,8 @@ public class CellularAutomatonTest extends TestCase {
 	public void testOriginCell() {
 		// generate space of cells
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1)
-				.setRule(new IRule<String>() {
-					public String calculateNextStateOf(ICell<String> cell) {
-						return cell.getRelativeCell(-1).getCurrentState()
-								+ cell.getRelativeCell(+1).getCurrentState();
-					}
-				}).createNewSpace(1).addDimension(3);
+		builder.setInitialState("").setMemorySize(1).createNewSpace(1)
+				.addDimension(3);
 
 		// get cells
 		ICell<String> cell0 = builder.getSpaceOfCellOrigin();
@@ -356,7 +313,7 @@ public class CellularAutomatonTest extends TestCase {
 	}
 
 	@Test
-	public void testEvolutionOnExistentSpaceOfCells1D() {
+	public void testEvolutionOf1DAutomaton() {
 		// generate space of cells
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
 		builder.setInitialState("").setMemorySize(1)
@@ -404,7 +361,7 @@ public class CellularAutomatonTest extends TestCase {
 	}
 
 	@Test
-	public void testEvolutionOnExistentSpaceOfCells2D() {
+	public void testEvolutionOf2DAutomaton() {
 		// generate space of cells
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
 		builder.setInitialState("").setMemorySize(1)
