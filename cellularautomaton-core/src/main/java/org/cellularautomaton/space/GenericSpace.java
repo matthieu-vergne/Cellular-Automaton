@@ -39,6 +39,10 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 		this.originCell = originCell;
 	}
 
+	/**
+	 * All the cells accessible from the origin cell are returned (without any
+	 * ordering).
+	 */
 	public Collection<ICell<StateType>> getAllCells() {
 		Collection<ICell<StateType>> result = new ArrayList<ICell<StateType>>();
 		for (Iterator<ICell<StateType>> iterator = iterator(); iterator
@@ -49,10 +53,11 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 		return result;
 	}
 
+	/**
+	 * Give the origin cell given at the creation of the space.
+	 */
 	public ICell<StateType> getOrigin() {
-		synchronized (originCell) {
-			return originCell;
-		}
+		return originCell;
 	}
 
 	/**

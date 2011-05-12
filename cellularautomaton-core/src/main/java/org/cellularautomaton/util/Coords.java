@@ -110,6 +110,9 @@ public class Coords implements Comparable<Coords> {
 		}
 	}
 
+	/**
+	 * Display the coordinates.
+	 */
 	@Override
 	public String toString() {
 		String s = "";

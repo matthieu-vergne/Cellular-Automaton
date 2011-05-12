@@ -97,10 +97,10 @@ public interface ICell<StateType> {
 	 * 
 	 * @param dimension
 	 *            the dimension to consider (zero-based)
-	 * @param cell
+	 * @param next
 	 *            the cell to consider as the next cell on this dimension
 	 */
-	public void setNextCellOnDimension(int dimension, ICell<StateType> cell);
+	public void setNextCellOnDimension(int dimension, ICell<StateType> next);
 
 	/**
 	 * 
@@ -114,10 +114,11 @@ public interface ICell<StateType> {
 	 * 
 	 * @param dimension
 	 *            the dimension to consider (0 for the first dimension)
-	 * @param cell
+	 * @param previous
 	 *            the cell to consider as the previous cell on this dimension
 	 */
-	public void setPreviousCellOnDimension(int dimension, ICell<StateType> cell);
+	public void setPreviousCellOnDimension(int dimension,
+			ICell<StateType> previous);
 
 	/**
 	 * 

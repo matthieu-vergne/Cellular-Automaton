@@ -103,6 +103,9 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		coords = new Coords();
 	}
 
+	/**
+	 * This method is similar to {@link #getState(int)} with the argument 0.
+	 */
 	public StateType getCurrentState() {
 		return getState(0);
 	}
@@ -141,22 +144,45 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		nextState = null;
 	}
 
-	public void setNextCellOnDimension(int dimension, ICell<StateType> cell) {
-		surroundings.get(dimension).next = cell;
+	/**
+	 * Change the link between this cell and the given one as : current -> next.
+	 * <b>It does not make the reverse link.</b>
+	 */
+	public void setNextCellOnDimension(int dimension, ICell<StateType> next) {
+		surroundings.get(dimension).next = next;
 	}
 
+	/**
+	 * Gives the cell which follows this one on the given dimension.
+	 */
 	public ICell<StateType> getNextCellOnDimension(int dimension) {
 		return surroundings.get(dimension).next;
 	}
 
-	public void setPreviousCellOnDimension(int dimension, ICell<StateType> cell) {
-		surroundings.get(dimension).previous = cell;
+	/**
+	 * Change the link between this cell and the given one as : previous <-
+	 * current. <b>It does not make the reverse link.</b>
+	 */
+	public void setPreviousCellOnDimension(int dimension,
+			ICell<StateType> previous) {
+		surroundings.get(dimension).previous = previous;
 	}
 
+	/**
+	 * Gives the cell which precedes this one on the given dimension.
+	 */
 	public ICell<StateType> getPreviousCellOnDimension(int dimension) {
 		return surroundings.get(dimension).previous;
 	}
 
+	/**
+	 * This method indicate <code>true</code> after the calculating is done. It
+	 * returns to <code>false</code> when the next state is applied or removed
+	 * (set to <code>null</code>.
+	 * 
+	 * @see #calculateNextState()
+	 * @see #applyNextState()
+	 */
 	public boolean isNextStateCalculated() {
 		return nextState != null;
 	}
@@ -164,6 +190,9 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	/**
 	 * This method allows to get all the cells linked to this one : the cells
 	 * before and after this one on each dimension.
+	 * 
+	 * @see #getPreviousCellOnDimension(int)
+	 * @see #getNextCellOnDimension(int)
 	 */
 	public Set<ICell<StateType>> getAllCellsAround() {
 		Set<ICell<StateType>> neighbors = new HashSet<ICell<StateType>>();
@@ -201,6 +230,9 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		return cell;
 	}
 
+	/**
+	 * Gives a simple display of the cell.
+	 */
 	@Override
 	public String toString() {
 		return "cell(" + getCurrentState().toString() + ") "
@@ -217,10 +249,16 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		return coords;
 	}
 
+	/**
+	 * Force the current state to a particular value.
+	 */
 	public void setCurrentState(StateType state) {
 		previousStates.forceCurrentState(state);
 	}
 
+	/**
+	 * Replace the rule to apply to this cell.
+	 */
 	public void setRule(IRule<StateType> rule) {
 		this.rule = rule;
 	}

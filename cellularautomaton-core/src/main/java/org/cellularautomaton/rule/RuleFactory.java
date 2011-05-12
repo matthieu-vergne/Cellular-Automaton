@@ -1,6 +1,5 @@
 package org.cellularautomaton.rule;
 
-
 /**
  * A rule factory allows to create different type of rules easily.
  * 
@@ -14,6 +13,9 @@ package org.cellularautomaton.rule;
  */
 public class RuleFactory<StateType> {
 
+	/**
+	 * The static rule instance.
+	 */
 	private IRule<StateType> staticRule = null;
 
 	/**
