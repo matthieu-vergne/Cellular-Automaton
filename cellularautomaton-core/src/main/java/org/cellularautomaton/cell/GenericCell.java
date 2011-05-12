@@ -67,19 +67,21 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	public void setDimensions(int dimensions) {
 		assert dimensions > 0;
 
-		if (dimensions > getDimensions()) {
-			for (int dimension = getDimensions(); dimension < dimensions; dimension++) {
-				LinkedCellsCouple couple = new LinkedCellsCouple();
-				surroundings.add(couple);
-			}
-		} else if (dimensions < getDimensions()) {
-			for (int dimension = getDimensions() - 1; dimension >= dimensions; dimension--) {
-				surroundings.remove(dimension);
-			}
-		} else {
+		if (dimensions == getDimensions()) {
 			// nothing to do
+		} else {
+			if (dimensions > getDimensions()) {
+				for (int dimension = getDimensions(); dimension < dimensions; dimension++) {
+					LinkedCellsCouple couple = new LinkedCellsCouple();
+					surroundings.add(couple);
+				}
+			} else {
+				for (int dimension = getDimensions() - 1; dimension >= dimensions; dimension--) {
+					surroundings.remove(dimension);
+				}
+			}
+			coords.setDimensions(dimensions);
 		}
-		coords.setDimensions(dimensions);
 	}
 
 	/**
@@ -169,6 +171,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 			neighbors.add(getPreviousCellOnDimension(dimension));
 			neighbors.add(getNextCellOnDimension(dimension));
 		}
+		neighbors.remove(null);
 		return neighbors;
 	}
 

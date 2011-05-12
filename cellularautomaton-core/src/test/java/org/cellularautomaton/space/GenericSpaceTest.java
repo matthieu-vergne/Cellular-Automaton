@@ -20,7 +20,7 @@ public class GenericSpaceTest extends ISpaceTest<TestState> {
 	@Override
 	public ISpace<TestState> createSpace() {
 		ICell<TestState> origin = new SpaceBuilder<TestState>()
-				.setStateFactory(stateFactory).createNewSpace(2)
+				.setStateFactory(stateFactory).createNewSpace()
 				.addDimension(5).addDimension(5).getSpaceOfCell().getOrigin();
 		return new GenericSpace<TestState>(origin);
 	}

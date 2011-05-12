@@ -102,7 +102,7 @@ public class AntAutomatonFactory {
 
 		SpaceBuilder<AntState> builder = new SpaceBuilder<AntState>();
 		builder.setStateFactory(stateFactory).setRule(rule);
-		builder.createNewSpace(2).addDimension(60).addDimension(60);
+		builder.createNewSpace().addDimension(60).addDimension(60);
 
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
 				builder.getSpaceOfCell());

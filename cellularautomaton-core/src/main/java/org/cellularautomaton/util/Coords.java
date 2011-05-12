@@ -38,7 +38,9 @@ public class Coords implements Comparable<Coords> {
 	 *            the dimensions of these coordinates
 	 */
 	public void setDimensions(int dimensions) {
-		coords = Arrays.copyOf(coords, dimensions);
+		if (getDimensions() != dimensions) {
+			coords = Arrays.copyOf(coords, dimensions);
+		}
 	}
 
 	/**

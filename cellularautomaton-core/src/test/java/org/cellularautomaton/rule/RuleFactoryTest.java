@@ -25,7 +25,7 @@ public class RuleFactoryTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).createNewSpace(1).addDimension(4);
+		builder.setStateFactory(stateFactory).createNewSpace().addDimension(4);
 		ICell<String> cell0 = builder.getSpaceOfCell().getOrigin();
 		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
 		ICell<String> cell2 = cell1.getNextCellOnDimension(0);

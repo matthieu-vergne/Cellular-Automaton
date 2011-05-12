@@ -34,7 +34,6 @@ public abstract class ISpaceTest<StateType> extends TestCase {
 				expectedCells.add(cell);
 				toCheck.addAll(cell.getAllCellsAround());
 				toCheck.removeAll(expectedCells);
-				toCheck.remove(null);
 			}
 		}
 
@@ -50,12 +49,12 @@ public abstract class ISpaceTest<StateType> extends TestCase {
 				.setDimensions(2);
 		ICell<StateType> hostCell = iterator.next();
 
-		ICell<StateType> intruderAccessible = cellFactory.createIsolatedCell();
+		ICell<StateType> intruderAccessible = cellFactory.createCell();
 		intruderAccessible.setPreviousCellOnDimension(0, hostCell);
 		hostCell.setNextCellOnDimension(0, intruderAccessible);
 
 		ICell<StateType> intruderNotAccessible = cellFactory
-				.createIsolatedCell();
+				.createCell();
 		intruderNotAccessible.setNextCellOnDimension(0, hostCell);
 
 		expectedCells.add(intruderAccessible);
@@ -80,7 +79,6 @@ public abstract class ISpaceTest<StateType> extends TestCase {
 				expectedCells.add(cell);
 				toCheck.addAll(cell.getAllCellsAround());
 				toCheck.removeAll(expectedCells);
-				toCheck.remove(null);
 			}
 		}
 
@@ -104,12 +102,12 @@ public abstract class ISpaceTest<StateType> extends TestCase {
 			ICell<StateType> hostCell = iterator.next();
 
 			ICell<StateType> intruderAccessible = cellFactory
-					.createIsolatedCell();
+					.createCell();
 			intruderAccessible.setPreviousCellOnDimension(0, hostCell);
 			hostCell.setNextCellOnDimension(0, intruderAccessible);
 
 			ICell<StateType> intruderNotAccessible = cellFactory
-					.createIsolatedCell();
+					.createCell();
 			intruderNotAccessible.setNextCellOnDimension(0, hostCell);
 
 			Collection<ICell<StateType>> cellsToView = space.getAllCells();
@@ -134,7 +132,7 @@ public abstract class ISpaceTest<StateType> extends TestCase {
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
 		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace(1).addDimension(3);
+				.createNewSpace().addDimension(3);
 
 		// get cells
 		ISpace<String> space = builder.getSpaceOfCell();

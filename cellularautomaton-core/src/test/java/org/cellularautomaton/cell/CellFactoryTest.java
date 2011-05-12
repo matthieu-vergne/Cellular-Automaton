@@ -29,7 +29,7 @@ public class CellFactoryTest extends TestCase {
 				int memorySize) {
 			CellFactory<StateType> factory = new CellFactory<StateType>();
 			return factory.setInitialState(initialState)
-					.setMemorySize(memorySize).createIsolatedCell();
+					.setMemorySize(memorySize).createCell();
 		};
 
 		@Test
@@ -38,19 +38,19 @@ public class CellFactoryTest extends TestCase {
 			factory.setInitialState("");
 
 			factory.setDimensions(1);
-			ICell<String> cell = factory.createIsolatedCell();
+			ICell<String> cell = factory.createCell();
 			assertNull(cell.getPreviousCellOnDimension(0));
 			assertNull(cell.getNextCellOnDimension(0));
 
 			factory.setDimensions(2);
-			cell = factory.createIsolatedCell();
+			cell = factory.createCell();
 			assertNull(cell.getPreviousCellOnDimension(0));
 			assertNull(cell.getNextCellOnDimension(0));
 			assertNull(cell.getPreviousCellOnDimension(1));
 			assertNull(cell.getNextCellOnDimension(1));
 
 			factory.setDimensions(3);
-			cell = factory.createIsolatedCell();
+			cell = factory.createCell();
 			assertNull(cell.getPreviousCellOnDimension(0));
 			assertNull(cell.getNextCellOnDimension(0));
 			assertNull(cell.getPreviousCellOnDimension(1));

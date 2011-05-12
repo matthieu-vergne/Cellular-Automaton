@@ -110,7 +110,7 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 				cellsToCheck.remove(cell);
 				cellsUsed.add(cell);
 				for (ICell<StateType> cellAround : cell.getAllCellsAround()) {
-					if (!cellsUsed.contains(cellAround) && cellAround != null) {
+					if (!cellsUsed.contains(cellAround)) {
 						cellsToCheck.add(cellAround);
 					}
 				}

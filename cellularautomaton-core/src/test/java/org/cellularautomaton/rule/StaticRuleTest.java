@@ -61,7 +61,7 @@ public class StaticRuleTest extends IRuleTest<Integer> {
 
 		SpaceBuilder<Integer> builder = new SpaceBuilder<Integer>();
 		builder.setStateFactory(stateFactory).setRule(rule);
-		builder.createNewSpace(3).addDimension(5).addDimension(5)
+		builder.createNewSpace().addDimension(5).addDimension(5)
 				.addDimension(5);
 		CellularAutomaton<Integer> automaton = new CellularAutomaton<Integer>(
 				builder.getSpaceOfCell());

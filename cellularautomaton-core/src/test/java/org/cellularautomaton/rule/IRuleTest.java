@@ -40,7 +40,7 @@ public abstract class IRuleTest<StateType> extends TestCase {
 		
 		SpaceBuilder<StateType> builder = new SpaceBuilder<StateType>();
 		builder.setStateFactory(stateFactory).setRule(rule);
-		builder.createNewSpace(3).addDimension(5).addDimension(5)
+		builder.createNewSpace().addDimension(5).addDimension(5)
 				.addDimension(5);
 		CellularAutomaton<StateType> automaton = new CellularAutomaton<StateType>(
 				builder.getSpaceOfCell());

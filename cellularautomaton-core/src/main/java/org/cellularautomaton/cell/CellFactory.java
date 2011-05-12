@@ -53,9 +53,9 @@ public class CellFactory<StateType> {
 
 	/**
 	 * 
-	 * @return a cell not linked to any other cell.
+	 * @return a new cell with the rule and dimensions set in the factory
 	 */
-	public ICell<StateType> createIsolatedCell() {
+	public ICell<StateType> createCell() {
 		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(), getMemorySize());
 		cell.setRule(getRule());
 		cell.setDimensions(getDimensions());

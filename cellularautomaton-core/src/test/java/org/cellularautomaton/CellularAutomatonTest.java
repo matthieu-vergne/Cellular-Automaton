@@ -45,7 +45,7 @@ public class CellularAutomatonTest extends TestCase {
 				return cell.getRelativeCell(-1).getCurrentState()
 						+ cell.getRelativeCell(+1).getCurrentState();
 			}
-		}).createNewSpace(1).addDimension(4);
+		}).createNewSpace().addDimension(4);
 		ISpace<String> space = builder.getSpaceOfCell();
 
 		// create automaton
@@ -65,7 +65,7 @@ public class CellularAutomatonTest extends TestCase {
 				return cell.getRelativeCell(-1).getCurrentState()
 						+ cell.getRelativeCell(+1).getCurrentState();
 			}
-		}).createNewSpace(1).addDimension(4);
+		}).createNewSpace().addDimension(4);
 
 		// get cells
 		ISpace<String> space = builder.getSpaceOfCell();
@@ -125,7 +125,7 @@ public class CellularAutomatonTest extends TestCase {
 								+ cell.getRelativeCell(+1, +1)
 										.getCurrentState();
 					}
-				}).createNewSpace(2).addDimension(4).addDimension(4);
+				}).createNewSpace().addDimension(4).addDimension(4);
 
 		// get cells
 		ISpace<String> space = builder.getSpaceOfCell();

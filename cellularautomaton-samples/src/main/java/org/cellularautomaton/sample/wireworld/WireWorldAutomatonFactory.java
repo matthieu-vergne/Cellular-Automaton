@@ -107,7 +107,7 @@ public class WireWorldAutomatonFactory {
 
 		SpaceBuilder<WireWorldState> builder = new SpaceBuilder<WireWorldState>();
 		builder.setStateFactory(stateFactory).setRule(rule);
-		builder.createNewSpace(2).addDimension(20).addDimension(10);
+		builder.createNewSpace().addDimension(20).addDimension(10);
 
 		CellularAutomaton<WireWorldState> automaton = new CellularAutomaton<WireWorldState>(
 				builder.getSpaceOfCell());

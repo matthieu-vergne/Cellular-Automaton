@@ -61,7 +61,7 @@ public class GOLAutomatonFactory {
 
 		SpaceBuilder<GameOfLifeState> builder = new SpaceBuilder<GameOfLifeState>();
 		builder.setStateFactory(stateFactory).setMemorySize(1).setRule(rule);
-		builder.createNewSpace(2).addDimension(40).addDimension(50);
+		builder.createNewSpace().addDimension(40).addDimension(50);
 
 		CellularAutomaton<GameOfLifeState> automaton = new CellularAutomaton<GameOfLifeState>(
 				builder.getSpaceOfCell());

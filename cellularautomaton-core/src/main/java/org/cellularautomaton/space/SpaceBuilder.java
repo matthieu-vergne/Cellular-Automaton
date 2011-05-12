@@ -1,6 +1,8 @@
 package org.cellularautomaton.space;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.cellularautomaton.cell.CellFactory;
@@ -26,7 +28,7 @@ public class SpaceBuilder<StateType> {
 	 * The state factory used to initialize the cells.
 	 */
 	private IStateFactory<StateType> stateFactory;
-	
+
 	/**
 	 * Create a new space builder with :<br/>
 	 * <ul>
@@ -40,21 +42,94 @@ public class SpaceBuilder<StateType> {
 		dimensionLengths = new ArrayList<Integer>();
 	}
 
-	// TODO adapt to remove the constraint of giving dimensions from the
-	// beginning
-	public SpaceBuilder<StateType> createNewSpace(int dimensions) {
-		cellFactory.setDimensions(dimensions);
+	public SpaceBuilder<StateType> createNewSpace() {
 		dimensionLengths.clear();
 		originCell = null;
 		return this;
 	}
 
 	public SpaceBuilder<StateType> addDimension(int length) {
-		dimensionLengths.add(length);
-		if (dimensionLengths.size() == cellFactory.getDimensions()) {
-			originCell = generateCells(dimensionLengths.size() - 1);
+		return addDimension(length, true);
+	}
+
+	public SpaceBuilder<StateType> addDimension(int length, boolean cyclic) {
+		if (originCell == null) {
+			originCell = cellFactory.createCell();
 		}
+
+		dimensionLengths.add(length);
+		final Collection<ICell<StateType>> starts = new GenericSpace<StateType>(
+				originCell).getAllCells();
+		generateDimensionFrom(starts, length);
+
+		if (cyclic) {
+			cycle(starts, dimensionLengths.size() - 1);
+		}
+
 		return this;
+	}
+
+	private void cycle(Collection<ICell<StateType>> startCells, int i) {
+		for (ICell<StateType> start : startCells) {
+			ICell<StateType> stop = start;
+			while (stop.getNextCellOnDimension(i) != null) {
+				stop = stop.getNextCellOnDimension(i);
+			}
+			stop.setNextCellOnDimension(i, start);
+			start.setPreviousCellOnDimension(i, stop);
+		}
+	}
+
+	private void generateDimensionFrom(Collection<ICell<StateType>> refs,
+			int length) {
+		// dimension caracteristics
+		int actualDimension = dimensionLengths.size() - 1;
+
+		// expansion
+		for (int rank = 1; rank < length; rank++) {
+			// creation of the next layer of cells
+			Collection<ICell<StateType>> added = new HashSet<ICell<StateType>>();
+			for (ICell<StateType> cellBefore : refs) {
+				ICell<StateType> cellAfter = cellFactory.createCell();
+
+				if (rank == 1) {
+					cellBefore.setDimensions(actualDimension + 1);
+				}
+				cellAfter.setDimensions(cellBefore.getDimensions());
+				cellAfter.getCoords().setAll(cellBefore.getCoords().getAll());
+				cellAfter.getCoords().set(actualDimension, rank);
+
+				linkCells(cellBefore, cellAfter, actualDimension);
+
+				added.add(cellAfter);
+			}
+
+			// linking of the new layer
+			for (ICell<StateType> cellBefore : added) {
+				ICell<StateType> ref = cellBefore
+						.getPreviousCellOnDimension(actualDimension);
+				for (int dim = 0; dim < actualDimension; dim++) {
+					if (ref.getNextCellOnDimension(dim) != null
+							&& ref.getNextCellOnDimension(dim) != ref) {
+						ICell<StateType> cellAfter = ref
+								.getNextCellOnDimension(dim)
+								.getNextCellOnDimension(actualDimension);
+
+						linkCells(cellBefore, cellAfter, dim);
+					}
+				}
+			}
+
+			// preparation of the next layer
+			refs = added;
+		}
+	}
+
+	private void linkCells(ICell<StateType> cellBefore,
+			ICell<StateType> cellAfter, int dimension) {
+		cellBefore.setNextCellOnDimension(dimension, cellAfter);
+
+		cellAfter.setPreviousCellOnDimension(dimension, cellBefore);
 	}
 
 	/**
@@ -63,81 +138,12 @@ public class SpaceBuilder<StateType> {
 	 */
 	public ISpace<StateType> getSpaceOfCell() {
 		GenericSpace<StateType> space = new GenericSpace<StateType>(originCell);
-		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator.hasNext();) {
+		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
+				.hasNext();) {
 			ICell<StateType> cell = iterator.next();
 			cell.setCurrentState(stateFactory.getStateFor(cell));
 		}
 		return space;
-	}
-
-	/**
-	 * 
-	 * @param dimension
-	 *            the zero-based dimension to consider, basically the dimension
-	 *            in the configuration - 1
-	 * @return a cell which can be used to get all the others (looking the cells
-	 *         around)
-	 */
-	// FIXME this method is for complete generation, not incremental
-	private ICell<StateType> generateCells(int dimension) {
-		if (dimension < 0) {
-			// TODO consider the isCyclic field after creating test
-			ICell<StateType> cell = cellFactory.createCyclicCell();
-			return cell;
-		} else {
-			ICell<StateType> start = null;
-			ICell<StateType> ref = null;
-			for (int coord = 0; coord < dimensionLengths.get(dimension); coord++) {
-				ICell<StateType> cell = generateCells(dimension - 1);
-				if (start != null) {
-					checkLevel(ref, cell, dimension - 1, dimension, coord);
-				} else {
-					start = cell;
-				}
-				ref = cell;
-			}
-			return start;
-		}
-	}
-
-	/**
-	 * 
-	 * @param cellBefore
-	 *            the cell in the previous place
-	 * @param cellAfter
-	 *            the cell in the next place
-	 * @param dimensionToCheck
-	 *            the zero-based dimension to consider
-	 * @param initialDimension
-	 *            the initial zero-based dimension of the check
-	 * @param coord
-	 *            the coordinate of the cell in the considered dimension
-	 */
-	// FIXME this method is for complete generation, not incremental
-	private void checkLevel(ICell<StateType> cellBefore,
-			ICell<StateType> cellAfter, int dimensionToCheck,
-			int initialDimension, int coord) {
-		if (dimensionToCheck < 0) {
-			// TODO consider the isCyclic field after creating test
-			cellAfter.setPreviousCellOnDimension(initialDimension, cellBefore);
-			cellAfter.setNextCellOnDimension(initialDimension,
-					cellBefore.getNextCellOnDimension(initialDimension));
-			cellAfter.getCoords().set(initialDimension, coord);
-			ICell<StateType> tempCell = cellBefore
-					.getNextCellOnDimension(initialDimension);
-			if (tempCell != null) {
-				tempCell.setPreviousCellOnDimension(initialDimension, cellAfter);
-			}
-			cellBefore.setNextCellOnDimension(initialDimension, cellAfter);
-		} else {
-			for (int i = 0; i < dimensionLengths.get(dimensionToCheck); i++) {
-				checkLevel(cellBefore, cellAfter, dimensionToCheck - 1,
-						initialDimension, coord);
-				cellBefore = cellBefore
-						.getNextCellOnDimension(dimensionToCheck);
-				cellAfter = cellAfter.getNextCellOnDimension(dimensionToCheck);
-			}
-		}
 	}
 
 	public SpaceBuilder<StateType> setMemorySize(int memorySize) {
@@ -160,9 +166,11 @@ public class SpaceBuilder<StateType> {
 
 	/**
 	 * 
-	 * @param stateFactory the state factory used to initialize the cells
+	 * @param stateFactory
+	 *            the state factory used to initialize the cells
 	 */
-	public SpaceBuilder<StateType> setStateFactory(IStateFactory<StateType> stateFactory) {
+	public SpaceBuilder<StateType> setStateFactory(
+			IStateFactory<StateType> stateFactory) {
 		this.stateFactory = stateFactory;
 		cellFactory.setInitialState(stateFactory.getDefaultState());
 		return this;
@@ -175,6 +183,5 @@ public class SpaceBuilder<StateType> {
 	public IStateFactory<StateType> getStateFactory() {
 		return stateFactory;
 	}
-	
-	
+
 }
