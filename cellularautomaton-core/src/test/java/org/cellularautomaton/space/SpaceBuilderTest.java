@@ -606,8 +606,6 @@ public class SpaceBuilderTest extends TestCase {
 		assertArrayEquals(new int[] { 2, 2, 2 }, cell222.getCoords());
 	}
 
-	// FIXME create the test checking the state factory is well used to give the
-	// cell initial states
 	public void testSpaceStates() {
 		// generate space
 		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {

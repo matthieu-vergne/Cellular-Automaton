@@ -61,7 +61,7 @@ public class WireWorldAutomatonFactory {
 		CellularAutomaton<WireWorldState> automaton = new CellularAutomaton<WireWorldState>(
 				builder.getSpaceOfCell());
 
-		final ICell<WireWorldState> origin = automaton.getCellSpace().getOrigin();
+		final ICell<WireWorldState> origin = automaton.getSpace().getOrigin();
 		for (final int[] coords : new int[][] { { 0, 2 }, { 1, 2 }, { 2, 2 },
 				{ 3, 2 }, { 4, 2 }, { 5, 1 }, { 5, 3 }, { 6, 1 }, { 6, 2 },
 				{ 6, 3 }, { 7, 2 }, { 8, 2 }, { 9, 2 },

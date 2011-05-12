@@ -16,7 +16,6 @@ import org.cellularautomaton.cell.ICell;
  *            data for particular uses (just consider all the cells use the same
  *            type).
  */
-// FIXME create test
 public interface ISpace<StateType> extends Iterable<ICell<StateType>> {
 	/**
 	 * 

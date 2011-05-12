@@ -36,7 +36,6 @@ public abstract class IRuleTest<StateType> extends TestCase {
 		IRule<StateType> rule = createRule();
 
 		// generate automaton
-		// TODO replace fix value by not homogeneous values
 		IStateFactory<StateType> stateFactory = getStateFactory();
 		
 		SpaceBuilder<StateType> builder = new SpaceBuilder<StateType>();
@@ -50,20 +49,20 @@ public abstract class IRuleTest<StateType> extends TestCase {
 		 * check init of cells, this is just to ensure the benchmark is coherent
 		 * to do tests on it.
 		 */
-		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<StateType> cell : automaton.getSpace().getAllCells()) {
 			assertNotNull(cell.getCurrentState());
 		}
 
 		// check rule
-		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<StateType> cell : automaton.getSpace().getAllCells()) {
 			assertNotNull(rule.calculateNextStateOf(cell));
 		}
 		automaton.doStep();
-		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<StateType> cell : automaton.getSpace().getAllCells()) {
 			assertNotNull(rule.calculateNextStateOf(cell));
 		}
 		automaton.doStep();
-		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<StateType> cell : automaton.getSpace().getAllCells()) {
 			assertNotNull(rule.calculateNextStateOf(cell));
 		}
 	}

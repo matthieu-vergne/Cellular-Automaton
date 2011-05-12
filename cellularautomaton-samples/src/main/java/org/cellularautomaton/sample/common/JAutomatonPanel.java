@@ -35,7 +35,7 @@ public class JAutomatonPanel<T> extends JPanel {
 		this.renderer = renderer;
 		this.width = 0;
 		this.height = 0;
-		for (ICell<?> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<?> cell : automaton.getSpace().getAllCells()) {
 			this.width = Math.max(this.width, cell.getCoords()[0]);
 			this.height = Math.max(this.height, cell.getCoords()[1]);
 		}
@@ -44,7 +44,7 @@ public class JAutomatonPanel<T> extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		ICell<? extends T> origin = automaton.getCellSpace().getOrigin();
+		ICell<? extends T> origin = automaton.getSpace().getOrigin();
 		for (int y = height - 1; y >= 0; y--) {
 			for (int x = 0; x < width; x++) {
 				T state = origin.getRelativeCell(x, y).getCurrentState();

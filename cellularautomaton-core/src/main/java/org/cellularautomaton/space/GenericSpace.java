@@ -21,7 +21,6 @@ import org.cellularautomaton.cell.ICell;
  *            data for particular uses (just consider all the cells use the same
  *            type).
  */
-// FIXME create test
 public class GenericSpace<StateType> implements ISpace<StateType> {
 	/**
 	 * The cell to consider as the start of the space (all the other cells are
@@ -111,7 +110,7 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 				cellsToCheck.remove(cell);
 				cellsUsed.add(cell);
 				for (ICell<StateType> cellAround : cell.getAllCellsAround()) {
-					if (!cellsUsed.contains(cellAround)) {
+					if (!cellsUsed.contains(cellAround) && cellAround != null) {
 						cellsToCheck.add(cellAround);
 					}
 				}

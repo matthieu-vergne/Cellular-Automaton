@@ -77,7 +77,6 @@ public class AntAutomatonFactory {
 			}
 		};
 
-		// TODO use this factory to set the initial states of the cells
 		IStateFactory<AntState> stateFactory = new EnumStateFactory<AntState>() {
 			@Override
 			public Class<AntState> getEnumType() {
@@ -92,6 +91,12 @@ public class AntAutomatonFactory {
 			public AntState getDefaultState() {
 				return AntState.BLACK;
 			}
+
+			@Override
+			public AntState getStateFor(ICell<AntState> cell) {
+				return cell.getCoords()[0] == 30 && cell.getCoords()[1] == 30 ? AntState.ANT_WHITE_UP
+						: cell.getCurrentState();
+			}
 		};
 
 		SpaceBuilder<AntState> builder = new SpaceBuilder<AntState>();
@@ -100,9 +105,6 @@ public class AntAutomatonFactory {
 
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
 				builder.getSpaceOfCell());
-
-		final ICell<AntState> origin = automaton.getCellSpace().getOrigin();
-		origin.getRelativeCell(30, 30).setCurrentState(AntState.ANT_WHITE_UP);
 
 		return automaton;
 	}

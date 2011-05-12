@@ -9,6 +9,7 @@ import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.rule.StaticRule;
 import org.cellularautomaton.space.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
+import org.cellularautomaton.state.AbstractStateFactoryTest;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 
@@ -29,24 +30,34 @@ public class StaticRuleTest extends IRuleTest<Integer> {
 
 	@Override
 	public IStateFactory<Integer> getStateFactory() {
-		return new AbstractStateFactory<Integer>() {
-			public List<Integer> getPossibleStates() {
-				return Arrays.asList(new Integer[] { 0, 1, 2, 5, 8, 10, 125,
-						165, 651, -1, -2, -65, -496 });
-			}
-		};
+		return new IntegerStateFactory();
+	}
+
+	public static class IntegerStateFactory extends
+			AbstractStateFactory<Integer> {
+		public List<Integer> getPossibleStates() {
+			return Arrays.asList(new Integer[] { -3, -1, 0, 1, 2, 3, 5 });
+		}
+
+		@Override
+		public Integer getStateFor(ICell<Integer> cell) {
+			return getRandomState();
+		}
+	}
+
+	public static class IntegerStateFactoryTest extends
+			AbstractStateFactoryTest<Integer> {
+		@Override
+		public IStateFactory<Integer> createFactory() {
+			return new IntegerStateFactory();
+		}
 	}
 
 	@Test
 	public void testStaticValue() {
 		IRule<Integer> rule = createRule();
 
-		// TODO replace fix value by not homogeneous values
-		IStateFactory<Integer> stateFactory = new AbstractStateFactory<Integer>() {
-			public List<Integer> getPossibleStates() {
-				return Arrays.asList(new Integer[] { 0 });
-			}
-		};
+		IStateFactory<Integer> stateFactory = new IntegerStateFactory();
 
 		SpaceBuilder<Integer> builder = new SpaceBuilder<Integer>();
 		builder.setStateFactory(stateFactory).setRule(rule);
@@ -55,17 +66,17 @@ public class StaticRuleTest extends IRuleTest<Integer> {
 		CellularAutomaton<Integer> automaton = new CellularAutomaton<Integer>(
 				builder.getSpaceOfCell());
 
-		for (ICell<Integer> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<Integer> cell : automaton.getSpace().getAllCells()) {
 			assertEquals(cell.getCurrentState(),
 					rule.calculateNextStateOf(cell));
 		}
 		automaton.doStep();
-		for (ICell<Integer> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<Integer> cell : automaton.getSpace().getAllCells()) {
 			assertEquals(cell.getCurrentState(),
 					rule.calculateNextStateOf(cell));
 		}
 		automaton.doStep();
-		for (ICell<Integer> cell : automaton.getCellSpace().getAllCells()) {
+		for (ICell<Integer> cell : automaton.getSpace().getAllCells()) {
 			assertEquals(cell.getCurrentState(),
 					rule.calculateNextStateOf(cell));
 		}

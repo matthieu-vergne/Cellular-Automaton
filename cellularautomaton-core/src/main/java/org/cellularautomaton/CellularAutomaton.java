@@ -38,7 +38,7 @@ public class CellularAutomaton<StateType> {
 	 * is to apply it with {@link #applyNextStep()}.
 	 */
 	public void calculateNextStep() {
-		for (ICell<StateType> cell : getCellSpace().getAllCells()) {
+		for (ICell<StateType> cell : getSpace().getAllCells()) {
 			cell.calculateNextState();
 		}
 	}
@@ -48,7 +48,7 @@ public class CellularAutomaton<StateType> {
 	 * not calculated yet, their state does not change.
 	 */
 	public void applyNextStep() {
-		for (ICell<StateType> cell : getCellSpace().getAllCells()) {
+		for (ICell<StateType> cell : getSpace().getAllCells()) {
 			cell.applyNextState();
 		}
 	}
@@ -66,7 +66,7 @@ public class CellularAutomaton<StateType> {
 	 * 
 	 * @return the space of cells this automaton work on
 	 */
-	public ISpace<StateType> getCellSpace() {
+	public ISpace<StateType> getSpace() {
 		return cellSpace;
 	}
 

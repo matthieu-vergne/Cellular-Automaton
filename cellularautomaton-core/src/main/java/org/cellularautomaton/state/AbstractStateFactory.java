@@ -10,7 +10,8 @@ public abstract class AbstractStateFactory<StateType> implements
 	 * The index of the last state used in the {@link #getRandomState()} method.
 	 */
 	private int lastStateIndex = 0;
-	
+	private int lastStateDelta = 1;
+
 	/**
 	 * This implementation gives the first possible value;
 	 */
@@ -31,7 +32,8 @@ public abstract class AbstractStateFactory<StateType> implements
 	public StateType getRandomState() {
 		List<StateType> states = getPossibleStates();
 		int size = states.size();
-		lastStateIndex = (size * lastStateIndex + (lastStateIndex + 1)) % size;
+		lastStateIndex = (lastStateIndex + lastStateDelta) % size;
+		lastStateDelta = (lastStateDelta + 1) % (13 * size / 17);
 		return states.get(lastStateIndex);
 	}
 }

@@ -28,14 +28,14 @@ public class GOLAutomatonFactory {
 						: GameOfLifeState.DEAD;
 			}
 		};
-		
+
 		// TODO use this factory to set the initial states of the cells
 		IStateFactory<GameOfLifeState> stateFactory = new EnumStateFactory<GameOfLifeState>() {
 			@Override
 			public Class<GameOfLifeState> getEnumType() {
 				return GameOfLifeState.class;
 			}
-			
+
 			/**
 			 * The initial state of all the cells is dead.
 			 */
@@ -43,8 +43,9 @@ public class GOLAutomatonFactory {
 			public GameOfLifeState getDefaultState() {
 				return GameOfLifeState.DEAD;
 			}
+
 		};
-		
+
 		SpaceBuilder<GameOfLifeState> builder = new SpaceBuilder<GameOfLifeState>();
 		builder.setStateFactory(stateFactory).setMemorySize(1).setRule(rule);
 		builder.createNewSpace(2).addDimension(40).addDimension(50);
@@ -52,7 +53,8 @@ public class GOLAutomatonFactory {
 		CellularAutomaton<GameOfLifeState> automaton = new CellularAutomaton<GameOfLifeState>(
 				builder.getSpaceOfCell());
 
-		final ICell<GameOfLifeState> origin = automaton.getCellSpace().getOrigin();
+		final ICell<GameOfLifeState> origin = automaton.getSpace()
+				.getOrigin();
 		for (final int[] coords : new int[][] { { 2, 0 }, { 2, 1 }, { 1, 2 },
 				{ 3, 1 }, { 3, 2 }, }) {
 			origin.getRelativeCell(coords).setCurrentState(
