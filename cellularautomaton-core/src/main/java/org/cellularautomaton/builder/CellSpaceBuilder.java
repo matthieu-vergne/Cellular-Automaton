@@ -1,10 +1,14 @@
 package org.cellularautomaton.builder;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.ICellSpace;
 import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.definition.IStateFactory;
 import org.cellularautomaton.factory.CellFactory;
+import org.cellularautomaton.impl.GenericCellSpace;
 
 public class CellSpaceBuilder<StateType> {
 	/**
@@ -15,8 +19,28 @@ public class CellSpaceBuilder<StateType> {
 	/**
 	 * The factory used to create the space of cells.
 	 */
-	private final CellFactory<StateType> cellFactory = new CellFactory<StateType>();
-	private final ArrayList<Integer> dimensionLengths = new ArrayList<Integer>();
+	private final CellFactory<StateType> cellFactory;
+	/**
+	 * The lengths of each dimension.
+	 */
+	private final ArrayList<Integer> dimensionLengths;
+	/**
+	 * The state factory used to initialize the cells.
+	 */
+	private IStateFactory<StateType> stateFactory;
+	
+	/**
+	 * Create a new space builder with :<br/>
+	 * <ul>
+	 * <li>no state factory (given manually)</li>
+	 * <li>a memory size of 1</li>
+	 * <li>a static rule</li>
+	 * </ul>
+	 */
+	public CellSpaceBuilder() {
+		cellFactory = new CellFactory<StateType>();
+		dimensionLengths = new ArrayList<Integer>();
+	}
 
 	// TODO adapt to remove the constraint of giving dimensions from the
 	// beginning
@@ -35,8 +59,17 @@ public class CellSpaceBuilder<StateType> {
 		return this;
 	}
 
-	public ICell<StateType> getSpaceOfCellOrigin() {
-		return originCell;
+	/**
+	 * 
+	 * @return the space of cells
+	 */
+	public ICellSpace<StateType> getSpaceOfCell() {
+		GenericCellSpace<StateType> space = new GenericCellSpace<StateType>(originCell);
+		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator.hasNext();) {
+			ICell<StateType> cell = iterator.next();
+			cell.setCurrentState(stateFactory.getStateFor(cell));
+		}
+		return space;
 	}
 
 	/**
@@ -127,16 +160,23 @@ public class CellSpaceBuilder<StateType> {
 		return cellFactory.getRule();
 	}
 
-	/*
-	 * TODO replace the fix initial state by a state factory, depending of the
-	 * cell
+	/**
+	 * 
+	 * @param stateFactory the state factory used to initialize the cells
 	 */
-	public CellSpaceBuilder<StateType> setInitialState(StateType initialState) {
-		cellFactory.setInitialState(initialState);
+	public CellSpaceBuilder<StateType> setStateFactory(IStateFactory<StateType> stateFactory) {
+		this.stateFactory = stateFactory;
+		cellFactory.setInitialState(stateFactory.getDefaultState());
 		return this;
 	}
 
-	public StateType getInitialState() {
-		return cellFactory.getInitialState();
+	/**
+	 * 
+	 * @return the state factory used to initialize the cells
+	 */
+	public IStateFactory<StateType> getStateFactory() {
+		return stateFactory;
 	}
+	
+	
 }

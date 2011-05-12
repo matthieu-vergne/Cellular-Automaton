@@ -14,41 +14,53 @@ import org.junit.Test;
  * @author Matthieu Vergne (matthieu.vergne@gmail.com)
  * 
  */
-public abstract class IRuleTest extends TestCase {
+public abstract class IRuleTest<StateType> extends TestCase {
 
-	public abstract <StateType> IRule<StateType> createRule();
+	/**
+	 * 
+	 * @return a new rule to test
+	 */
+	public abstract IRule<StateType> createRule();
+
+	/**
+	 * 
+	 * @return a collection of values to use in tests
+	 */
+	public abstract IStateFactory<StateType> getStateFactory();
 
 	@Test
 	public void testNotNull() {
-		IRule<Integer> rule = createRule();
+		IRule<StateType> rule = createRule();
 
 		// generate automaton
 		// TODO replace fix value by not homogeneous values
-		CellSpaceBuilder<Integer> builder = new CellSpaceBuilder<Integer>();
-		builder.setInitialState(0).setRule(rule);
+		IStateFactory<StateType> stateFactory = getStateFactory();
+		
+		CellSpaceBuilder<StateType> builder = new CellSpaceBuilder<StateType>();
+		builder.setStateFactory(stateFactory).setRule(rule);
 		builder.createNewSpace(3).addDimension(5).addDimension(5)
 				.addDimension(5);
-		CellularAutomaton<Integer> automaton = new CellularAutomaton<Integer>(
-				builder.getSpaceOfCellOrigin());
+		CellularAutomaton<StateType> automaton = new CellularAutomaton<StateType>(
+				builder.getSpaceOfCell());
 
 		/*
 		 * check init of cells, this is just to ensure the benchmark is coherent
 		 * to do tests on it.
 		 */
-		for (ICell<Integer> cell : automaton.getAllCells()) {
+		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
 			assertNotNull(cell.getCurrentState());
 		}
 
 		// check rule
-		for (ICell<Integer> cell : automaton.getAllCells()) {
+		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
 			assertNotNull(rule.calculateNextStateOf(cell));
 		}
 		automaton.doStep();
-		for (ICell<Integer> cell : automaton.getAllCells()) {
+		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
 			assertNotNull(rule.calculateNextStateOf(cell));
 		}
 		automaton.doStep();
-		for (ICell<Integer> cell : automaton.getAllCells()) {
+		for (ICell<StateType> cell : automaton.getCellSpace().getAllCells()) {
 			assertNotNull(rule.calculateNextStateOf(cell));
 		}
 	}

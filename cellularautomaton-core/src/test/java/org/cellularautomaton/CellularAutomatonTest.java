@@ -1,14 +1,19 @@
 package org.cellularautomaton;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.ICellSpace;
 import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.definition.IStateFactory;
 import org.cellularautomaton.factory.CellFactory;
+import org.cellularautomaton.impl.AbstractStateFactory;
 import org.junit.Test;
 
 public class CellularAutomatonTest extends TestCase {
@@ -16,12 +21,20 @@ public class CellularAutomatonTest extends TestCase {
 	@Test
 	public void testGetAllCells() {
 		// generate space of cells
+		// TODO factorize this factory
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1).createNewSpace(2)
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace(2)
 				.addDimension(4).addDimension(4);
 
 		// get cells
-		ICell<String> cell00 = builder.getSpaceOfCellOrigin();
+		ICellSpace<String> space = builder.getSpaceOfCell();
+		ICell<String> cell00 = space.getOrigin();
 		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
 		ICell<String> cell02 = cell01.getNextCellOnDimension(0);
 		ICell<String> cell03 = cell02.getNextCellOnDimension(0);
@@ -40,10 +53,10 @@ public class CellularAutomatonTest extends TestCase {
 
 		// generate automaton
 		CellularAutomaton<String> automaton2D = new CellularAutomaton<String>(
-				cell00);
+				space);
 
 		// test init
-		Collection<ICell<String>> list = automaton2D.getAllCells();
+		Collection<ICell<String>> list = automaton2D.getCellSpace().getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
 		assertTrue(list.contains(cell01));
@@ -64,7 +77,7 @@ public class CellularAutomatonTest extends TestCase {
 
 		// test invariability (no ordering is considered)
 		automaton2D.doStep();
-		list = automaton2D.getAllCells();
+		list = automaton2D.getCellSpace().getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
 		assertTrue(list.contains(cell01));
@@ -84,7 +97,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell33));
 
 		automaton2D.doStep();
-		list = automaton2D.getAllCells();
+		list = automaton2D.getCellSpace().getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
 		assertTrue(list.contains(cell01));
@@ -104,7 +117,7 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(list.contains(cell33));
 
 		automaton2D.doStep();
-		list = automaton2D.getAllCells();
+		list = automaton2D.getCellSpace().getAllCells();
 		assertEquals(16, list.size());
 		assertTrue(list.contains(cell00));
 		assertTrue(list.contains(cell01));
@@ -152,7 +165,7 @@ public class CellularAutomatonTest extends TestCase {
 		intruderNotAccessible.setPreviousCellOnDimension(1, cell03);
 		intruderNotAccessible.setNextCellOnDimension(1, cell13);
 
-		list = automaton2D.getAllCells();
+		list = automaton2D.getCellSpace().getAllCells();
 		assertEquals(18, list.size());
 		assertTrue(list.contains(cell00));
 		assertTrue(list.contains(cell01));
@@ -178,12 +191,19 @@ public class CellularAutomatonTest extends TestCase {
 	@Test
 	public void testCellsIterator() {
 		// generate space of cells
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1).createNewSpace(2)
-				.addDimension(4).addDimension(4);
+		builder.setStateFactory(stateFactory).setMemorySize(1)
+				.createNewSpace(2).addDimension(4).addDimension(4);
 
 		// get cells
-		ICell<String> cell00 = builder.getSpaceOfCellOrigin();
+		ICellSpace<String> space = builder.getSpaceOfCell();
+		ICell<String> cell00 = space.getOrigin();
 		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
 		ICell<String> cell02 = cell01.getNextCellOnDimension(0);
 		ICell<String> cell03 = cell02.getNextCellOnDimension(0);
@@ -202,11 +222,11 @@ public class CellularAutomatonTest extends TestCase {
 
 		// generate automaton
 		CellularAutomaton<String> automaton2D = new CellularAutomaton<String>(
-				cell00);
+				space);
 
 		// test init
-		Collection<ICell<String>> cellsToView = automaton2D.getAllCells();
-		Iterator<ICell<String>> iterator = automaton2D.iterator();
+		Collection<ICell<String>> cellsToView = automaton2D.getCellSpace().getAllCells();
+		Iterator<ICell<String>> iterator = automaton2D.getCellSpace().iterator();
 		while (iterator.hasNext()) {
 			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
@@ -216,8 +236,8 @@ public class CellularAutomatonTest extends TestCase {
 
 		// test invariability (no ordering is considered)
 		automaton2D.doStep();
-		cellsToView = automaton2D.getAllCells();
-		iterator = automaton2D.iterator();
+		cellsToView = automaton2D.getCellSpace().getAllCells();
+		iterator = automaton2D.getCellSpace().iterator();
 		while (iterator.hasNext()) {
 			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
@@ -226,8 +246,8 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(cellsToView.isEmpty());
 
 		automaton2D.doStep();
-		cellsToView = automaton2D.getAllCells();
-		iterator = automaton2D.iterator();
+		cellsToView = automaton2D.getCellSpace().getAllCells();
+		iterator = automaton2D.getCellSpace().iterator();
 		while (iterator.hasNext()) {
 			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
@@ -236,8 +256,8 @@ public class CellularAutomatonTest extends TestCase {
 		assertTrue(cellsToView.isEmpty());
 
 		automaton2D.doStep();
-		cellsToView = automaton2D.getAllCells();
-		iterator = automaton2D.iterator();
+		cellsToView = automaton2D.getCellSpace().getAllCells();
+		iterator = automaton2D.getCellSpace().iterator();
 		while (iterator.hasNext()) {
 			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
@@ -274,8 +294,8 @@ public class CellularAutomatonTest extends TestCase {
 		intruderNotAccessible.setPreviousCellOnDimension(1, cell03);
 		intruderNotAccessible.setNextCellOnDimension(1, cell13);
 
-		cellsToView = automaton2D.getAllCells();
-		iterator = automaton2D.iterator();
+		cellsToView = automaton2D.getCellSpace().getAllCells();
+		iterator = automaton2D.getCellSpace().iterator();
 		while (iterator.hasNext()) {
 			ICell<String> cell = iterator.next();
 			assertTrue(cellsToView.contains(cell));
@@ -287,36 +307,51 @@ public class CellularAutomatonTest extends TestCase {
 	@Test
 	public void testOriginCell() {
 		// generate space of cells
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1).createNewSpace(1)
-				.addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1)
+				.createNewSpace(1).addDimension(3);
 
 		// get cells
-		ICell<String> cell0 = builder.getSpaceOfCellOrigin();
+		ICellSpace<String> space = builder.getSpaceOfCell();
+		ICell<String> cell0 = space.getOrigin();
 
 		// generate automaton
 		CellularAutomaton<String> automaton1D = new CellularAutomaton<String>(
-				cell0);
+				space);
 
 		// check init
-		assertEquals(cell0, automaton1D.getOriginCell());
+		assertEquals(cell0, automaton1D.getCellSpace().getOrigin());
 
 		// check invariability
 		automaton1D.doStep();
-		assertEquals(cell0, automaton1D.getOriginCell());
+		assertEquals(cell0, automaton1D.getCellSpace().getOrigin());
 
 		automaton1D.doStep();
-		assertEquals(cell0, automaton1D.getOriginCell());
+		assertEquals(cell0, automaton1D.getCellSpace().getOrigin());
 
 		automaton1D.doStep();
-		assertEquals(cell0, automaton1D.getOriginCell());
+		assertEquals(cell0, automaton1D.getCellSpace().getOrigin());
 	}
 
 	@Test
 	public void testEvolutionOf1DAutomaton() {
 		// generate space of cells
+		// TODO use this factory to set the current state of each cell (check it
+		// for all the uses of the factory
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1)
+		builder.setStateFactory(stateFactory).setMemorySize(1)
 				.setRule(new IRule<String>() {
 					public String calculateNextStateOf(ICell<String> cell) {
 						return cell.getRelativeCell(-1).getCurrentState()
@@ -325,7 +360,8 @@ public class CellularAutomatonTest extends TestCase {
 				}).createNewSpace(1).addDimension(4);
 
 		// get cells
-		ICell<String> cell0 = builder.getSpaceOfCellOrigin();
+		ICellSpace<String> space = builder.getSpaceOfCell();
+		ICell<String> cell0 = space.getOrigin();
 		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
 		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
 		ICell<String> cell3 = cell2.getNextCellOnDimension(0);
@@ -336,7 +372,7 @@ public class CellularAutomatonTest extends TestCase {
 
 		// generate automaton
 		CellularAutomaton<String> automaton1D = new CellularAutomaton<String>(
-				cell0);
+				space);
 
 		// check init
 		assertEquals("0", cell0.getCurrentState());
@@ -363,8 +399,14 @@ public class CellularAutomatonTest extends TestCase {
 	@Test
 	public void testEvolutionOf2DAutomaton() {
 		// generate space of cells
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1)
+		builder.setStateFactory(stateFactory).setMemorySize(1)
 				.setRule(new IRule<String>() {
 					public String calculateNextStateOf(ICell<String> cell) {
 						return cell.getRelativeCell(-1, -1).getCurrentState()
@@ -388,7 +430,8 @@ public class CellularAutomatonTest extends TestCase {
 				}).createNewSpace(2).addDimension(4).addDimension(4);
 
 		// get cells
-		ICell<String> cell00 = builder.getSpaceOfCellOrigin();
+		ICellSpace<String> space = builder.getSpaceOfCell();
+		ICell<String> cell00 = space.getOrigin();
 		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
 		ICell<String> cell02 = cell01.getNextCellOnDimension(0);
 		ICell<String> cell03 = cell02.getNextCellOnDimension(0);
@@ -423,7 +466,7 @@ public class CellularAutomatonTest extends TestCase {
 
 		// generate automaton
 		CellularAutomaton<String> automaton2D = new CellularAutomaton<String>(
-				cell00);
+				space);
 
 		// check init
 		assertEquals("00", cell00.getCurrentState());

@@ -4,6 +4,8 @@ import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.definition.IStateFactory;
+import org.cellularautomaton.impl.EnumStateFactory;
 
 public class AntAutomatonFactory {
 
@@ -75,14 +77,31 @@ public class AntAutomatonFactory {
 			}
 		};
 
+		// TODO use this factory to set the initial states of the cells
+		IStateFactory<AntState> stateFactory = new EnumStateFactory<AntState>() {
+			@Override
+			public Class<AntState> getEnumType() {
+				return AntState.class;
+			}
+
+			/**
+			 * The most used state of the ant automaton is
+			 * {@link AntState#BLACK }.
+			 */
+			@Override
+			public AntState getDefaultState() {
+				return AntState.BLACK;
+			}
+		};
+
 		CellSpaceBuilder<AntState> builder = new CellSpaceBuilder<AntState>();
-		builder.setInitialState(AntState.BLACK).setMemorySize(1).setRule(rule);
+		builder.setStateFactory(stateFactory).setRule(rule);
 		builder.createNewSpace(2).addDimension(60).addDimension(60);
 
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
-				builder.getSpaceOfCellOrigin());
+				builder.getSpaceOfCell());
 
-		final ICell<AntState> origin = automaton.getOriginCell();
+		final ICell<AntState> origin = automaton.getCellSpace().getOrigin();
 		origin.getRelativeCell(30, 30).setCurrentState(AntState.ANT_WHITE_UP);
 
 		return automaton;

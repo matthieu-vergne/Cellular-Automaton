@@ -4,6 +4,8 @@ import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.definition.IStateFactory;
+import org.cellularautomaton.impl.EnumStateFactory;
 
 public class WireWorldAutomatonFactory {
 
@@ -36,14 +38,30 @@ public class WireWorldAutomatonFactory {
 			}
 		};
 
+		// TODO use this factory to set the initial states of the cells
+		IStateFactory<WireWorldState> stateFactory = new EnumStateFactory<WireWorldState>() {
+			@Override
+			public Class<WireWorldState> getEnumType() {
+				return WireWorldState.class;
+			}
+
+			/**
+			 * The most used state of the wireworld automaton is empty.
+			 */
+			@Override
+			public WireWorldState getDefaultState() {
+				return WireWorldState.EMPTY;
+			}
+		};
+
 		CellSpaceBuilder<WireWorldState> builder = new CellSpaceBuilder<WireWorldState>();
-		builder.setInitialState(WireWorldState.EMPTY).setRule(rule);
+		builder.setStateFactory(stateFactory).setRule(rule);
 		builder.createNewSpace(2).addDimension(20).addDimension(10);
 
 		CellularAutomaton<WireWorldState> automaton = new CellularAutomaton<WireWorldState>(
-				builder.getSpaceOfCellOrigin());
+				builder.getSpaceOfCell());
 
-		final ICell<WireWorldState> origin = automaton.getOriginCell();
+		final ICell<WireWorldState> origin = automaton.getCellSpace().getOrigin();
 		for (final int[] coords : new int[][] { { 0, 2 }, { 1, 2 }, { 2, 2 },
 				{ 3, 2 }, { 4, 2 }, { 5, 1 }, { 5, 3 }, { 6, 1 }, { 6, 2 },
 				{ 6, 3 }, { 7, 2 }, { 8, 2 }, { 9, 2 },

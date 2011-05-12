@@ -4,6 +4,8 @@ import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.definition.IStateFactory;
+import org.cellularautomaton.impl.EnumStateFactory;
 
 public class GOLAutomatonFactory {
 
@@ -27,14 +29,30 @@ public class GOLAutomatonFactory {
 			}
 		};
 		
+		// TODO use this factory to set the initial states of the cells
+		IStateFactory<GameOfLifeState> stateFactory = new EnumStateFactory<GameOfLifeState>() {
+			@Override
+			public Class<GameOfLifeState> getEnumType() {
+				return GameOfLifeState.class;
+			}
+			
+			/**
+			 * The initial state of all the cells is dead.
+			 */
+			@Override
+			public GameOfLifeState getDefaultState() {
+				return GameOfLifeState.DEAD;
+			}
+		};
+		
 		CellSpaceBuilder<GameOfLifeState> builder = new CellSpaceBuilder<GameOfLifeState>();
-		builder.setInitialState(GameOfLifeState.DEAD).setMemorySize(1).setRule(rule);
+		builder.setStateFactory(stateFactory).setMemorySize(1).setRule(rule);
 		builder.createNewSpace(2).addDimension(40).addDimension(50);
 
 		CellularAutomaton<GameOfLifeState> automaton = new CellularAutomaton<GameOfLifeState>(
-				builder.getSpaceOfCellOrigin());
+				builder.getSpaceOfCell());
 
-		final ICell<GameOfLifeState> origin = automaton.getOriginCell();
+		final ICell<GameOfLifeState> origin = automaton.getCellSpace().getOrigin();
 		for (final int[] coords : new int[][] { { 2, 0 }, { 2, 1 }, { 1, 2 },
 				{ 3, 1 }, { 3, 2 }, }) {
 			origin.getRelativeCell(coords).setCurrentState(

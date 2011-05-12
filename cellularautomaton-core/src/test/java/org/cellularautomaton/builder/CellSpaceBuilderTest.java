@@ -3,12 +3,14 @@ package org.cellularautomaton.builder;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.cellularautomaton.GeneratorConfiguration;
 import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.definition.IStateFactory;
+import org.cellularautomaton.impl.AbstractStateFactory;
 import org.junit.Test;
 
 public class CellSpaceBuilderTest extends TestCase {
@@ -16,12 +18,18 @@ public class CellSpaceBuilderTest extends TestCase {
 	@Test
 	public void testSpace1D() {
 		// generate space
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1).createNewSpace(1)
-				.addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1)
+				.createNewSpace(1).addDimension(3);
 
 		// get cells
-		ICell<String> cell0 = builder.getSpaceOfCellOrigin();
+		ICell<String> cell0 = builder.getSpaceOfCell().getOrigin();
 		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
 		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
 
@@ -68,12 +76,18 @@ public class CellSpaceBuilderTest extends TestCase {
 	@Test
 	public void testSpace2D() {
 		// generate space
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1).createNewSpace(2)
-				.addDimension(3).addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1)
+				.createNewSpace(2).addDimension(3).addDimension(3);
 
 		// get cells
-		ICell<String> cell00 = builder.getSpaceOfCellOrigin();
+		ICell<String> cell00 = builder.getSpaceOfCell().getOrigin();
 		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
 		ICell<String> cell02 = cell01.getNextCellOnDimension(0);
 		ICell<String> cell10 = cell00.getNextCellOnDimension(1);
@@ -257,18 +271,20 @@ public class CellSpaceBuilderTest extends TestCase {
 
 	@Test
 	public void testSpace3D() {
-		// config
-		final GeneratorConfiguration<String> config = new GeneratorConfiguration<String>();
-		config.initialState = "";
-		config.dimensionSizes = new int[] { 3, 3, 3 };
-
 		// generate space
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("").setMemorySize(1).createNewSpace(3)
-				.addDimension(3).addDimension(3).addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1)
+				.createNewSpace(3).addDimension(3).addDimension(3)
+				.addDimension(3);
 
 		// get cells
-		ICell<String> cell000 = builder.getSpaceOfCellOrigin();
+		ICell<String> cell000 = builder.getSpaceOfCell().getOrigin();
 		ICell<String> cell001 = cell000.getNextCellOnDimension(0);
 		ICell<String> cell002 = cell001.getNextCellOnDimension(0);
 		ICell<String> cell010 = cell000.getNextCellOnDimension(1);
@@ -587,5 +603,34 @@ public class CellSpaceBuilderTest extends TestCase {
 		assertArrayEquals(new int[] { 0, 2, 2 }, cell220.getCoords());
 		assertArrayEquals(new int[] { 1, 2, 2 }, cell221.getCoords());
 		assertArrayEquals(new int[] { 2, 2, 2 }, cell222.getCoords());
+	}
+
+	// FIXME create the test checking the state factory is well used to give the
+	// cell initial states
+	public void testSpaceStates() {
+		// generate space
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "0", "1", "2" });
+			}
+
+			@Override
+			public String getStateFor(ICell<String> cell) {
+				return "" + cell.getCoords()[0];
+			}
+		};
+
+		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
+		builder.setStateFactory(stateFactory).createNewSpace(1).addDimension(3);
+
+		// get cells
+		ICell<String> cell0 = builder.getSpaceOfCell().getOrigin();
+		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
+		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
+
+		// check cells state
+		assertEquals("0", cell0.getCurrentState());
+		assertEquals("1", cell1.getCurrentState());
+		assertEquals("2", cell2.getCurrentState());
 	}
 }

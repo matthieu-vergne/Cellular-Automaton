@@ -1,10 +1,15 @@
 package org.cellularautomaton.factory;
 
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.cellularautomaton.builder.CellSpaceBuilder;
 import org.cellularautomaton.definition.ICell;
 import org.cellularautomaton.definition.IRule;
+import org.cellularautomaton.definition.IStateFactory;
+import org.cellularautomaton.impl.AbstractStateFactory;
 import org.junit.Test;
 
 public class RuleFactoryTest extends TestCase {
@@ -12,9 +17,15 @@ public class RuleFactoryTest extends TestCase {
 	@Test
 	public void testStaticRuleInstance() {
 		/* create 1D space */
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "0" });
+			}
+		};
+
 		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
-		builder.setInitialState("0").createNewSpace(1).addDimension(4);
-		ICell<String> cell0 = builder.getSpaceOfCellOrigin();
+		builder.setStateFactory(stateFactory).createNewSpace(1).addDimension(4);
+		ICell<String> cell0 = builder.getSpaceOfCell().getOrigin();
 		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
 		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
 		ICell<String> cell3 = cell2.getNextCellOnDimension(0);
@@ -66,8 +77,8 @@ public class RuleFactoryTest extends TestCase {
 
 	public static class StaticRuleTest extends org.cellularautomaton.impl.StaticRuleTest {
 		@Override
-		public <StateType> IRule<StateType> createRule() {
-			return new RuleFactory<StateType>().getStaticRuleInstance();
+		public IRule<Integer> createRule() {
+			return new RuleFactory<Integer>().getStaticRuleInstance();
 		}
 	}
 }
