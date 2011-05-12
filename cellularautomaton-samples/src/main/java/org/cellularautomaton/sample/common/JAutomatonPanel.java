@@ -7,7 +7,7 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.definition.ICell;
+import org.cellularautomaton.cell.ICell;
 
 public class JAutomatonPanel<T> extends JPanel {
 	private static final int CELL_SIZE = 10;

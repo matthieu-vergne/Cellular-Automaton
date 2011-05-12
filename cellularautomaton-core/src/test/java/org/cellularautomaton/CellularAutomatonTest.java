@@ -7,13 +7,13 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.cellularautomaton.builder.CellSpaceBuilder;
-import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.definition.ICellSpace;
-import org.cellularautomaton.definition.IRule;
-import org.cellularautomaton.definition.IStateFactory;
-import org.cellularautomaton.factory.CellFactory;
-import org.cellularautomaton.impl.AbstractStateFactory;
+import org.cellularautomaton.cell.CellFactory;
+import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.rule.IRule;
+import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.space.ISpace;
+import org.cellularautomaton.state.AbstractStateFactory;
+import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 
 public class CellularAutomatonTest extends TestCase {
@@ -28,12 +28,12 @@ public class CellularAutomatonTest extends TestCase {
 			}
 		};
 
-		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
 		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace(2)
 				.addDimension(4).addDimension(4);
 
 		// get cells
-		ICellSpace<String> space = builder.getSpaceOfCell();
+		ISpace<String> space = builder.getSpaceOfCell();
 		ICell<String> cell00 = space.getOrigin();
 		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
 		ICell<String> cell02 = cell01.getNextCellOnDimension(0);
@@ -197,12 +197,12 @@ public class CellularAutomatonTest extends TestCase {
 			}
 		};
 
-		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
 		builder.setStateFactory(stateFactory).setMemorySize(1)
 				.createNewSpace(2).addDimension(4).addDimension(4);
 
 		// get cells
-		ICellSpace<String> space = builder.getSpaceOfCell();
+		ISpace<String> space = builder.getSpaceOfCell();
 		ICell<String> cell00 = space.getOrigin();
 		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
 		ICell<String> cell02 = cell01.getNextCellOnDimension(0);
@@ -313,12 +313,12 @@ public class CellularAutomatonTest extends TestCase {
 			}
 		};
 
-		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
 		builder.setStateFactory(stateFactory).setMemorySize(1)
 				.createNewSpace(1).addDimension(3);
 
 		// get cells
-		ICellSpace<String> space = builder.getSpaceOfCell();
+		ISpace<String> space = builder.getSpaceOfCell();
 		ICell<String> cell0 = space.getOrigin();
 
 		// generate automaton
@@ -350,7 +350,7 @@ public class CellularAutomatonTest extends TestCase {
 			}
 		};
 
-		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
 		builder.setStateFactory(stateFactory).setMemorySize(1)
 				.setRule(new IRule<String>() {
 					public String calculateNextStateOf(ICell<String> cell) {
@@ -360,7 +360,7 @@ public class CellularAutomatonTest extends TestCase {
 				}).createNewSpace(1).addDimension(4);
 
 		// get cells
-		ICellSpace<String> space = builder.getSpaceOfCell();
+		ISpace<String> space = builder.getSpaceOfCell();
 		ICell<String> cell0 = space.getOrigin();
 		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
 		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
@@ -405,7 +405,7 @@ public class CellularAutomatonTest extends TestCase {
 			}
 		};
 
-		CellSpaceBuilder<String> builder = new CellSpaceBuilder<String>();
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
 		builder.setStateFactory(stateFactory).setMemorySize(1)
 				.setRule(new IRule<String>() {
 					public String calculateNextStateOf(ICell<String> cell) {
@@ -430,7 +430,7 @@ public class CellularAutomatonTest extends TestCase {
 				}).createNewSpace(2).addDimension(4).addDimension(4);
 
 		// get cells
-		ICellSpace<String> space = builder.getSpaceOfCell();
+		ISpace<String> space = builder.getSpaceOfCell();
 		ICell<String> cell00 = space.getOrigin();
 		ICell<String> cell01 = cell00.getNextCellOnDimension(0);
 		ICell<String> cell02 = cell01.getNextCellOnDimension(0);

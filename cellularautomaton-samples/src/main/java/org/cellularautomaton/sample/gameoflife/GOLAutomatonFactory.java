@@ -1,11 +1,11 @@
 package org.cellularautomaton.sample.gameoflife;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.builder.CellSpaceBuilder;
-import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.definition.IRule;
-import org.cellularautomaton.definition.IStateFactory;
-import org.cellularautomaton.impl.EnumStateFactory;
+import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.rule.IRule;
+import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.state.EnumStateFactory;
+import org.cellularautomaton.state.IStateFactory;
 
 public class GOLAutomatonFactory {
 
@@ -45,7 +45,7 @@ public class GOLAutomatonFactory {
 			}
 		};
 		
-		CellSpaceBuilder<GameOfLifeState> builder = new CellSpaceBuilder<GameOfLifeState>();
+		SpaceBuilder<GameOfLifeState> builder = new SpaceBuilder<GameOfLifeState>();
 		builder.setStateFactory(stateFactory).setMemorySize(1).setRule(rule);
 		builder.createNewSpace(2).addDimension(40).addDimension(50);
 

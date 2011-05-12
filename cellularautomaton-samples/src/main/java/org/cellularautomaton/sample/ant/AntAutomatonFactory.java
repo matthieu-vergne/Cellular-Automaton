@@ -1,11 +1,11 @@
 package org.cellularautomaton.sample.ant;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.builder.CellSpaceBuilder;
-import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.definition.IRule;
-import org.cellularautomaton.definition.IStateFactory;
-import org.cellularautomaton.impl.EnumStateFactory;
+import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.rule.IRule;
+import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.state.EnumStateFactory;
+import org.cellularautomaton.state.IStateFactory;
 
 public class AntAutomatonFactory {
 
@@ -94,7 +94,7 @@ public class AntAutomatonFactory {
 			}
 		};
 
-		CellSpaceBuilder<AntState> builder = new CellSpaceBuilder<AntState>();
+		SpaceBuilder<AntState> builder = new SpaceBuilder<AntState>();
 		builder.setStateFactory(stateFactory).setRule(rule);
 		builder.createNewSpace(2).addDimension(60).addDimension(60);
 

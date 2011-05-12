@@ -1,7 +1,7 @@
 package org.cellularautomaton;
 
-import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.definition.ICellSpace;
+import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.space.ISpace;
 
 /**
  * A cellular automaton is a space of evolving cells. Each cell evolves
@@ -21,7 +21,7 @@ public class CellularAutomaton<StateType> {
 	/**
 	 * The space of cells this automaton work on.
 	 */
-	private final ICellSpace<StateType> cellSpace;
+	private final ISpace<StateType> cellSpace;
 
 	/**
 	 * Create an automaton on a specific space of cells.
@@ -29,7 +29,7 @@ public class CellularAutomaton<StateType> {
 	 * @param cellSpace
 	 *            the space of cells to work on
 	 */
-	public CellularAutomaton(ICellSpace<StateType> cellSpace) {
+	public CellularAutomaton(ISpace<StateType> cellSpace) {
 		this.cellSpace = cellSpace;
 	}
 
@@ -66,7 +66,7 @@ public class CellularAutomaton<StateType> {
 	 * 
 	 * @return the space of cells this automaton work on
 	 */
-	public ICellSpace<StateType> getCellSpace() {
+	public ISpace<StateType> getCellSpace() {
 		return cellSpace;
 	}
 

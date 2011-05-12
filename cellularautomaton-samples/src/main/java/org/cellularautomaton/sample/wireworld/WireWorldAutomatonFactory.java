@@ -1,11 +1,11 @@
 package org.cellularautomaton.sample.wireworld;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.builder.CellSpaceBuilder;
-import org.cellularautomaton.definition.ICell;
-import org.cellularautomaton.definition.IRule;
-import org.cellularautomaton.definition.IStateFactory;
-import org.cellularautomaton.impl.EnumStateFactory;
+import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.rule.IRule;
+import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.state.EnumStateFactory;
+import org.cellularautomaton.state.IStateFactory;
 
 public class WireWorldAutomatonFactory {
 
@@ -54,7 +54,7 @@ public class WireWorldAutomatonFactory {
 			}
 		};
 
-		CellSpaceBuilder<WireWorldState> builder = new CellSpaceBuilder<WireWorldState>();
+		SpaceBuilder<WireWorldState> builder = new SpaceBuilder<WireWorldState>();
 		builder.setStateFactory(stateFactory).setRule(rule);
 		builder.createNewSpace(2).addDimension(20).addDimension(10);
 
