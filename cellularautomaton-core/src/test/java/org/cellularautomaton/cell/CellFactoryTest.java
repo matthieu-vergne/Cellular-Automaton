@@ -13,7 +13,7 @@ public class CellFactoryTest extends TestCase {
 	public void testInitialParameters() {
 		CellFactory<String> factory = new CellFactory<String>();
 		assertEquals(null, factory.getInitialState());
-		assertEquals(1, factory.getDimensions());
+		assertEquals(0, factory.getDimensions());
 		assertEquals(1, factory.getMemorySize());
 		assertEquals(StaticRule.class, factory.getRule().getClass());
 	}

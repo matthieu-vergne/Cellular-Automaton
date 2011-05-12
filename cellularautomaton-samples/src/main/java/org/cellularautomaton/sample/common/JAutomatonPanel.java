@@ -36,8 +36,8 @@ public class JAutomatonPanel<T> extends JPanel {
 		this.width = 0;
 		this.height = 0;
 		for (ICell<?> cell : automaton.getSpace().getAllCells()) {
-			this.width = Math.max(this.width, cell.getCoords()[0]);
-			this.height = Math.max(this.height, cell.getCoords()[1]);
+			this.width = Math.max(this.width, cell.getCoords().get(0));
+			this.height = Math.max(this.height, cell.getCoords().get(1));
 		}
 	}
 

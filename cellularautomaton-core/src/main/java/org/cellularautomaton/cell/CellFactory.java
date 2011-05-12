@@ -39,14 +39,14 @@ public class CellFactory<StateType> {
 	 * Create a new factory with the corresponding configuration :<br/>
 	 * <ul>
 	 * <li>no initial state (null)</li>
-	 * <li>1 dimension</li>
+	 * <li>0 dimensions (no cells around)</li>
 	 * <li>a memory size of 1</li>
 	 * <li>a static rule (keep current state)</li>
 	 * </ul>
 	 */
 	public CellFactory() {
 		initialState = null;
-		dimensions = 1;
+		dimensions = 0;
 		memorySize = 1;
 		rule = new RuleFactory<StateType>().getStaticRuleInstance();
 	}

@@ -22,7 +22,7 @@ public class CellularAutomatonTest extends TestCase {
 
 		@Override
 		public String getStateFor(ICell<String> cell) {
-			return "" + cell.getCoords()[0];
+			return "" + cell.getCoords().get(0);
 		}
 	};
 
@@ -33,7 +33,7 @@ public class CellularAutomatonTest extends TestCase {
 
 		@Override
 		public String getStateFor(ICell<String> cell) {
-			return "" + cell.getCoords()[1] + cell.getCoords()[0];
+			return "" + cell.getCoords().get(1) + cell.getCoords().get(0);
 		}
 	};
 

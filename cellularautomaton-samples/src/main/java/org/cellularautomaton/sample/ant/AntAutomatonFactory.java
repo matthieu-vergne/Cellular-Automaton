@@ -6,6 +6,7 @@ import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.space.SpaceBuilder;
 import org.cellularautomaton.state.EnumStateFactory;
 import org.cellularautomaton.state.IStateFactory;
+import org.cellularautomaton.util.Coords;
 
 public class AntAutomatonFactory {
 
@@ -94,7 +95,7 @@ public class AntAutomatonFactory {
 
 			@Override
 			public AntState getStateFor(ICell<AntState> cell) {
-				return cell.getCoords()[0] == 30 && cell.getCoords()[1] == 30 ? AntState.ANT_WHITE_UP
+				return cell.getCoords().equals(new Coords(30, 30)) ? AntState.ANT_WHITE_UP
 						: cell.getCurrentState();
 			}
 		};

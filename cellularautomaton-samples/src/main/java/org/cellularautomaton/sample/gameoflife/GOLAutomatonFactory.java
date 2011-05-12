@@ -1,11 +1,15 @@
 package org.cellularautomaton.sample.gameoflife;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.space.SpaceBuilder;
 import org.cellularautomaton.state.EnumStateFactory;
 import org.cellularautomaton.state.IStateFactory;
+import org.cellularautomaton.util.Coords;
 
 public class GOLAutomatonFactory {
 
@@ -29,7 +33,6 @@ public class GOLAutomatonFactory {
 			}
 		};
 
-		// TODO use this factory to set the initial states of the cells
 		IStateFactory<GameOfLifeState> stateFactory = new EnumStateFactory<GameOfLifeState>() {
 			@Override
 			public Class<GameOfLifeState> getEnumType() {
@@ -44,6 +47,16 @@ public class GOLAutomatonFactory {
 				return GameOfLifeState.DEAD;
 			}
 
+			private final List<Coords> aliveCoords = Arrays
+					.asList(new Coords[] { new Coords(2, 0), new Coords(2, 1),
+							new Coords(1, 2), new Coords(3, 1),
+							new Coords(3, 2), });
+
+			@Override
+			public GameOfLifeState getStateFor(ICell<GameOfLifeState> cell) {
+				return aliveCoords.contains(cell.getCoords()) ? GameOfLifeState.ALIVE
+						: cell.getCurrentState();
+			}
 		};
 
 		SpaceBuilder<GameOfLifeState> builder = new SpaceBuilder<GameOfLifeState>();
@@ -53,15 +66,6 @@ public class GOLAutomatonFactory {
 		CellularAutomaton<GameOfLifeState> automaton = new CellularAutomaton<GameOfLifeState>(
 				builder.getSpaceOfCell());
 
-		final ICell<GameOfLifeState> origin = automaton.getSpace()
-				.getOrigin();
-		for (final int[] coords : new int[][] { { 2, 0 }, { 2, 1 }, { 1, 2 },
-				{ 3, 1 }, { 3, 2 }, }) {
-			origin.getRelativeCell(coords).setCurrentState(
-					GameOfLifeState.ALIVE);
-		}
-
 		return automaton;
 	}
-
 }

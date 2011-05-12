@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.state.StateMemory;
+import org.cellularautomaton.util.Coords;
 
 /**
  * A generic cell implements all the interface {@link ICell} in a generic way.
@@ -44,7 +45,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	/**
 	 * The coordinates of the cell in the space of cells.
 	 */
-	private int[] coords;
+	private Coords coords;
 	/**
 	 * The rule to use in order to calculate the newt state of the cell.
 	 */
@@ -65,7 +66,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 */
 	public void setDimensions(int dimensions) {
 		assert dimensions > 0;
-		
+
 		if (dimensions > getDimensions()) {
 			for (int dimension = getDimensions(); dimension < dimensions; dimension++) {
 				LinkedCellsCouple couple = new LinkedCellsCouple();
@@ -78,7 +79,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 		} else {
 			// nothing to do
 		}
-		coords = Arrays.copyOf(coords, dimensions);
+		coords.setDimensions(dimensions);
 	}
 
 	/**
@@ -97,7 +98,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 
 		previousStates = new StateMemory<StateType>(memorySize, initialState);
 		this.surroundings = new ArrayList<LinkedCellsCouple>();
-		coords = new int[0];
+		coords = new Coords();
 	}
 
 	public StateType getCurrentState() {
@@ -200,7 +201,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	@Override
 	public String toString() {
 		return "cell(" + getCurrentState().toString() + ") "
-				+ Arrays.toString(coords);
+				+ Arrays.toString(coords.getAll());
 	}
 
 	/**
@@ -209,23 +210,8 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 * only if you are sure they corresponds to the reality. Otherwise using
 	 * them is not recommended.
 	 */
-	public int[] getCoords() {
+	public Coords getCoords() {
 		return coords;
-	}
-
-	/**
-	 * This method allows to give specific coordinates to the current cell. This
-	 * is only a parameter of the cell, it does not "move" the cell in the space
-	 * in order to place it at the given coordinates. Moreover, it does not
-	 * update automatically if the cell is moved. No check is done on the
-	 * values, so you must be sure of what you give if you want to use these
-	 * coordinates later correctly.
-	 */
-	public void setCoords(int... coords) {
-		assert coords != null;
-		assert coords.length == getDimensions();
-
-		this.coords = Arrays.copyOf(coords, coords.length);
 	}
 
 	public void setCurrentState(StateType state) {

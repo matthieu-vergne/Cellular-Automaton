@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.rule.RuleFactory;
+import org.cellularautomaton.util.Coords;
 import org.junit.Assert;
 
 /**
@@ -221,21 +222,18 @@ public abstract class ICellTest extends TestCase {
 
 	public void testCoords() {
 		ICell<String> cell = createCell("", 1);
-		cell.setRule(new RuleFactory<String>().getStaticRuleInstance());
+		Assert.assertEquals(new Coords(), cell.getCoords());
 
 		cell.setDimensions(3);
-		Assert.assertArrayEquals(new int[] { 0, 0, 0 }, cell.getCoords());
+		Assert.assertEquals(new Coords( 0, 0, 0 ), cell.getCoords());
 
-		cell.setCoords(3, 5, 2);
-		Assert.assertArrayEquals(new int[] { 3, 5, 2 }, cell.getCoords());
-
-		cell.setCoords(1, 3, 4);
-		Assert.assertArrayEquals(new int[] { 1, 3, 4 }, cell.getCoords());
+		cell.getCoords().setAll(1, 3, 4);
+		Assert.assertEquals(new Coords( 1, 3, 4 ), cell.getCoords());
 
 		cell.setDimensions(4);
-		Assert.assertArrayEquals(new int[] { 1, 3, 4, 0 }, cell.getCoords());
+		Assert.assertEquals(new Coords( 1, 3, 4, 0 ), cell.getCoords());
 
 		cell.setDimensions(2);
-		Assert.assertArrayEquals(new int[] { 1, 3 }, cell.getCoords());
+		Assert.assertEquals(new Coords( 1, 3 ), cell.getCoords());
 	}
 }

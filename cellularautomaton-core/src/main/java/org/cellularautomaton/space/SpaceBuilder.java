@@ -122,7 +122,7 @@ public class SpaceBuilder<StateType> {
 			cellAfter.setPreviousCellOnDimension(initialDimension, cellBefore);
 			cellAfter.setNextCellOnDimension(initialDimension,
 					cellBefore.getNextCellOnDimension(initialDimension));
-			cellAfter.getCoords()[initialDimension] = coord;
+			cellAfter.getCoords().set(initialDimension, coord);
 			ICell<StateType> tempCell = cellBefore
 					.getNextCellOnDimension(initialDimension);
 			if (tempCell != null) {

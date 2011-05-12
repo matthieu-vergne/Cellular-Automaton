@@ -1,7 +1,5 @@
 package org.cellularautomaton.space;
 
-import static org.junit.Assert.assertArrayEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,9 +7,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.space.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.IStateFactory;
+import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 
 public class SpaceBuilderTest extends TestCase {
@@ -69,9 +67,9 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(cell0, cell2.getNextCellOnDimension(0));
 
 		// check coords
-		assertArrayEquals(new int[] { 0 }, cell0.getCoords());
-		assertArrayEquals(new int[] { 1 }, cell1.getCoords());
-		assertArrayEquals(new int[] { 2 }, cell2.getCoords());
+		assertEquals(new Coords(0), cell0.getCoords());
+		assertEquals(new Coords(1), cell1.getCoords());
+		assertEquals(new Coords(2), cell2.getCoords());
 	}
 
 	@Test
@@ -259,15 +257,15 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(cell02, cell22.getNextCellOnDimension(1));
 
 		// check coords
-		assertArrayEquals(new int[] { 0, 0 }, cell00.getCoords());
-		assertArrayEquals(new int[] { 1, 0 }, cell01.getCoords());
-		assertArrayEquals(new int[] { 2, 0 }, cell02.getCoords());
-		assertArrayEquals(new int[] { 0, 1 }, cell10.getCoords());
-		assertArrayEquals(new int[] { 1, 1 }, cell11.getCoords());
-		assertArrayEquals(new int[] { 2, 1 }, cell12.getCoords());
-		assertArrayEquals(new int[] { 0, 2 }, cell20.getCoords());
-		assertArrayEquals(new int[] { 1, 2 }, cell21.getCoords());
-		assertArrayEquals(new int[] { 2, 2 }, cell22.getCoords());
+		assertEquals(new Coords(0, 0), cell00.getCoords());
+		assertEquals(new Coords(1, 0), cell01.getCoords());
+		assertEquals(new Coords(2, 0), cell02.getCoords());
+		assertEquals(new Coords(0, 1), cell10.getCoords());
+		assertEquals(new Coords(1, 1), cell11.getCoords());
+		assertEquals(new Coords(2, 1), cell12.getCoords());
+		assertEquals(new Coords(0, 2), cell20.getCoords());
+		assertEquals(new Coords(1, 2), cell21.getCoords());
+		assertEquals(new Coords(2, 2), cell22.getCoords());
 	}
 
 	@Test
@@ -577,33 +575,33 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(cell022, cell222.getNextCellOnDimension(2));
 
 		// check coords
-		assertArrayEquals(new int[] { 0, 0, 0 }, cell000.getCoords());
-		assertArrayEquals(new int[] { 1, 0, 0 }, cell001.getCoords());
-		assertArrayEquals(new int[] { 2, 0, 0 }, cell002.getCoords());
-		assertArrayEquals(new int[] { 0, 1, 0 }, cell010.getCoords());
-		assertArrayEquals(new int[] { 1, 1, 0 }, cell011.getCoords());
-		assertArrayEquals(new int[] { 2, 1, 0 }, cell012.getCoords());
-		assertArrayEquals(new int[] { 0, 2, 0 }, cell020.getCoords());
-		assertArrayEquals(new int[] { 1, 2, 0 }, cell021.getCoords());
-		assertArrayEquals(new int[] { 2, 2, 0 }, cell022.getCoords());
-		assertArrayEquals(new int[] { 0, 0, 1 }, cell100.getCoords());
-		assertArrayEquals(new int[] { 1, 0, 1 }, cell101.getCoords());
-		assertArrayEquals(new int[] { 2, 0, 1 }, cell102.getCoords());
-		assertArrayEquals(new int[] { 0, 1, 1 }, cell110.getCoords());
-		assertArrayEquals(new int[] { 1, 1, 1 }, cell111.getCoords());
-		assertArrayEquals(new int[] { 2, 1, 1 }, cell112.getCoords());
-		assertArrayEquals(new int[] { 0, 2, 1 }, cell120.getCoords());
-		assertArrayEquals(new int[] { 1, 2, 1 }, cell121.getCoords());
-		assertArrayEquals(new int[] { 2, 2, 1 }, cell122.getCoords());
-		assertArrayEquals(new int[] { 0, 0, 2 }, cell200.getCoords());
-		assertArrayEquals(new int[] { 1, 0, 2 }, cell201.getCoords());
-		assertArrayEquals(new int[] { 2, 0, 2 }, cell202.getCoords());
-		assertArrayEquals(new int[] { 0, 1, 2 }, cell210.getCoords());
-		assertArrayEquals(new int[] { 1, 1, 2 }, cell211.getCoords());
-		assertArrayEquals(new int[] { 2, 1, 2 }, cell212.getCoords());
-		assertArrayEquals(new int[] { 0, 2, 2 }, cell220.getCoords());
-		assertArrayEquals(new int[] { 1, 2, 2 }, cell221.getCoords());
-		assertArrayEquals(new int[] { 2, 2, 2 }, cell222.getCoords());
+		assertEquals(new Coords(0, 0, 0), cell000.getCoords());
+		assertEquals(new Coords(1, 0, 0), cell001.getCoords());
+		assertEquals(new Coords(2, 0, 0), cell002.getCoords());
+		assertEquals(new Coords(0, 1, 0), cell010.getCoords());
+		assertEquals(new Coords(1, 1, 0), cell011.getCoords());
+		assertEquals(new Coords(2, 1, 0), cell012.getCoords());
+		assertEquals(new Coords(0, 2, 0), cell020.getCoords());
+		assertEquals(new Coords(1, 2, 0), cell021.getCoords());
+		assertEquals(new Coords(2, 2, 0), cell022.getCoords());
+		assertEquals(new Coords(0, 0, 1), cell100.getCoords());
+		assertEquals(new Coords(1, 0, 1), cell101.getCoords());
+		assertEquals(new Coords(2, 0, 1), cell102.getCoords());
+		assertEquals(new Coords(0, 1, 1), cell110.getCoords());
+		assertEquals(new Coords(1, 1, 1), cell111.getCoords());
+		assertEquals(new Coords(2, 1, 1), cell112.getCoords());
+		assertEquals(new Coords(0, 2, 1), cell120.getCoords());
+		assertEquals(new Coords(1, 2, 1), cell121.getCoords());
+		assertEquals(new Coords(2, 2, 1), cell122.getCoords());
+		assertEquals(new Coords(0, 0, 2), cell200.getCoords());
+		assertEquals(new Coords(1, 0, 2), cell201.getCoords());
+		assertEquals(new Coords(2, 0, 2), cell202.getCoords());
+		assertEquals(new Coords(0, 1, 2), cell210.getCoords());
+		assertEquals(new Coords(1, 1, 2), cell211.getCoords());
+		assertEquals(new Coords(2, 1, 2), cell212.getCoords());
+		assertEquals(new Coords(0, 2, 2), cell220.getCoords());
+		assertEquals(new Coords(1, 2, 2), cell221.getCoords());
+		assertEquals(new Coords(2, 2, 2), cell222.getCoords());
 	}
 
 	public void testSpaceStates() {
@@ -615,7 +613,7 @@ public class SpaceBuilderTest extends TestCase {
 
 			@Override
 			public String getStateFor(ICell<String> cell) {
-				return "" + cell.getCoords()[0];
+				return "" + cell.getCoords().get(0);
 			}
 		};
 

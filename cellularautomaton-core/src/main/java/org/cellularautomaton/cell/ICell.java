@@ -3,6 +3,7 @@ package org.cellularautomaton.cell;
 import java.util.Set;
 
 import org.cellularautomaton.rule.IRule;
+import org.cellularautomaton.util.Coords;
 
 /**
  * A cell is an element storing a state. This cell evolves in a space of cells
@@ -150,14 +151,7 @@ public interface ICell<StateType> {
 
 	/**
 	 * 
-	 * @param coords
-	 *            the coordinates of the cell
-	 */
-	public void setCoords(int... coords);
-
-	/**
-	 * 
 	 * @return the coordinates of the cell in the space
 	 */
-	public int[] getCoords();
+	public Coords getCoords();
 }
