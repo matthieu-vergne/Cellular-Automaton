@@ -52,11 +52,23 @@ public class CellFactory<StateType> {
 	}
 
 	/**
+	 * This method simply instantiates a new cell. The basic implementation take
+	 * a {@link GenericCell}, but it can be overridden to change the type of
+	 * cell. The objective is, for example, to use optimized implementations.
+	 * 
+	 * @return the cell instantiated
+	 */
+	public ICell<StateType> instantiateCell() {
+		return new GenericCell<StateType>();
+	}
+
+	/**
 	 * 
 	 * @return a new cell with the rule and dimensions set in the factory
 	 */
 	public ICell<StateType> createCell() {
-		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(), getMemorySize());
+		ICell<StateType> cell = instantiateCell();
+		cell.setMemory(getMemorySize(), getInitialState());
 		cell.setRule(getRule());
 		cell.setDimensions(getDimensions());
 		return cell;
@@ -67,9 +79,7 @@ public class CellFactory<StateType> {
 	 * @return a cell linked to itself on each dimension.
 	 */
 	public ICell<StateType> createCyclicCell() {
-		ICell<StateType> cell = new GenericCell<StateType>(getInitialState(), getMemorySize());
-		cell.setRule(getRule());
-		cell.setDimensions(getDimensions());
+		ICell<StateType> cell = createCell();
 		for (int dim = 0; dim < cell.getDimensions(); dim++) {
 			cell.setPreviousCellOnDimension(dim, cell);
 			cell.setNextCellOnDimension(dim, cell);

@@ -24,12 +24,9 @@ public class CellFactoryTest extends TestCase {
 	 * @author Matthieu Vergne (matthieu.vergne@gmail.com)
 	 * 
 	 */
-	static public class IsolatedCellTest extends ICellTest {
-		public <StateType> ICell<StateType> createCell(StateType initialState,
-				int memorySize) {
-			CellFactory<StateType> factory = new CellFactory<StateType>();
-			return factory.setInitialState(initialState)
-					.setMemorySize(memorySize).createCell();
+	static public class CellTest extends ICellTest {
+		public <StateType> ICell<StateType> createCell() {
+			return new CellFactory<StateType>().createCell();
 		};
 
 		@Test
@@ -67,11 +64,8 @@ public class CellFactoryTest extends TestCase {
 	 * 
 	 */
 	static public class CyclicCellTest extends ICellTest {
-		public <StateType> ICell<StateType> createCell(StateType initialState,
-				int memorySize) {
-			CellFactory<StateType> factory = new CellFactory<StateType>();
-			return factory.setInitialState(initialState)
-					.setMemorySize(memorySize).createCyclicCell();
+		public <StateType> ICell<StateType> createCell() {
+			return new CellFactory<StateType>().createCyclicCell();
 		};
 
 		@Test

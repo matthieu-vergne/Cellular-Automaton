@@ -29,7 +29,7 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	 * The previous states of the cell. This memory is used in the case several
 	 * generations are needed to calculate the new states.
 	 */
-	private final StateMemory<StateType> previousStates;
+	private StateMemory<StateType> previousStates;
 	/**
 	 * The next state to apply to this cell.
 	 * 
@@ -62,7 +62,10 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	/**
 	 * If the dimension is decreased, the cells around for the kept dimensions
 	 * are preserved. If the dimensions are increased, no cells are linked for
-	 * the new dimensions.
+	 * the new dimensions, you need to give it manually.
+	 * 
+	 * @see #setPreviousCellOnDimension(int, ICell)
+	 * @see #setNextCellOnDimension(int, ICell)
 	 */
 	public void setDimensions(int dimensions) {
 		assert dimensions > 0;
@@ -85,22 +88,22 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	}
 
 	/**
-	 * Create a new cell.
+	 * Create a new cell. You must set its memory and its rule before to use it.
 	 * 
-	 * @param initialState
-	 *            the initial state of the cell
-	 * @param dimensions
-	 *            the number of dimensions to consider (at least 1)
-	 * @param memorySize
-	 *            the number of states the cell can remember (at least 0)
+	 * @see #setMemory(int, Object)
+	 * @see #setRule(IRule)
 	 */
-	public GenericCell(StateType initialState, int memorySize) {
-		assert initialState != null;
-		assert memorySize >= 0;
-
-		previousStates = new StateMemory<StateType>(memorySize, initialState);
+	public GenericCell() {
 		this.surroundings = new ArrayList<LinkedCellsCouple>();
 		coords = new Coords();
+	}
+
+	/**
+	 * Give a new memory to the cell. Basically, this method is used just after
+	 * the instantiation of the cell.
+	 */
+	public void setMemory(int memorySize, StateType initialState) {
+		previousStates = new StateMemory<StateType>(memorySize, initialState);
 	}
 
 	/**

@@ -20,6 +20,16 @@ import org.cellularautomaton.util.Coords;
 public interface ICell<StateType> {
 
 	/**
+	 * This method must instantiate the complete memory of the cell.
+	 * 
+	 * @param memorySize
+	 *            the number of states the cell can remember (at least 0)
+	 * @param initialState
+	 *            the initial state of the cell
+	 */
+	public void setMemory(int memorySize, StateType initialState);
+
+	/**
 	 * 
 	 * @param state
 	 *            the state to apply to the cell

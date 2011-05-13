@@ -19,10 +19,25 @@ import org.cellularautomaton.cell.ICell;
 public interface ISpace<StateType> extends Iterable<ICell<StateType>> {
 	/**
 	 * 
+	 * @param origin
+	 *            the cell this space work from, all the others cells the space
+	 *            consider are available from this one (with relative
+	 *            coordinates).
+	 */
+	public void setOrigin(ICell<StateType> origin);
+
+	/**
+	 * 
 	 * @return the cell this space work from, all the others cells the space
 	 *         consider are available from this one (with relative coordinates).
 	 */
 	public ICell<StateType> getOrigin();
+
+	/**
+	 * 
+	 * @return true if there is no cell in the space
+	 */
+	public boolean isEmpty();
 
 	/**
 	 * 

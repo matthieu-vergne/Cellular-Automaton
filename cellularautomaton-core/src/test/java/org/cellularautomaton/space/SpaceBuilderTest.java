@@ -24,8 +24,8 @@ public class SpaceBuilderTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3, false);
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3, false);
 
 		// get cells
 		ICell<String> cell0 = builder.getSpaceOfCell().getOrigin();
@@ -71,7 +71,7 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(new Coords(1), cell1.getCoords());
 		assertEquals(new Coords(2), cell2.getCoords());
 	}
-	
+
 	@Test
 	public void testCyclicSpace1D() {
 		// generate space
@@ -82,8 +82,8 @@ public class SpaceBuilderTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3);
 
 		// get cells
 		ICell<String> cell0 = builder.getSpaceOfCell().getOrigin();
@@ -140,8 +140,8 @@ public class SpaceBuilderTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3, false).addDimension(3, false);
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3, false).addDimension(3, false);
 
 		// get cells
 		ICell<String> cell00 = builder.getSpaceOfCell().getOrigin();
@@ -325,7 +325,7 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(new Coords(1, 2), cell21.getCoords());
 		assertEquals(new Coords(2, 2), cell22.getCoords());
 	}
-	
+
 	@Test
 	public void testCyclicSpace2D() {
 		// generate space
@@ -336,8 +336,8 @@ public class SpaceBuilderTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3).addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3).addDimension(3);
 
 		// get cells
 		ICell<String> cell00 = builder.getSpaceOfCell().getOrigin();
@@ -521,7 +521,7 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(new Coords(1, 2), cell21.getCoords());
 		assertEquals(new Coords(2, 2), cell22.getCoords());
 	}
-	
+
 	@Test
 	public void testSemiCyclicSpace2D() {
 		// generate space
@@ -532,8 +532,8 @@ public class SpaceBuilderTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3, false).addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3, false).addDimension(3);
 
 		// get cells
 		ICell<String> cell00 = builder.getSpaceOfCell().getOrigin();
@@ -728,8 +728,8 @@ public class SpaceBuilderTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3, false).addDimension(3, false)
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3, false).addDimension(3, false)
 				.addDimension(3, false);
 
 		// get cells
@@ -1053,7 +1053,7 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(new Coords(1, 2, 2), cell221.getCoords());
 		assertEquals(new Coords(2, 2, 2), cell222.getCoords());
 	}
-	
+
 	@Test
 	public void testCyclicSpace3D() {
 		// generate space
@@ -1064,9 +1064,8 @@ public class SpaceBuilderTest extends TestCase {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3).addDimension(3)
-				.addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3).addDimension(3).addDimension(3);
 
 		// get cells
 		ICell<String> cell000 = builder.getSpaceOfCell().getOrigin();
@@ -1415,5 +1414,35 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals("0", cell0.getCurrentState());
 		assertEquals("1", cell1.getCurrentState());
 		assertEquals("2", cell2.getCurrentState());
+	}
+
+	public void testFinalisation() {
+		// generate space
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "" });
+			}
+		};
+
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
+		assertFalse(builder.isSpaceFinalized());
+
+		builder.setStateFactory(stateFactory);
+		assertFalse(builder.isSpaceFinalized());
+
+		builder.setMemorySize(1);
+		assertFalse(builder.isSpaceFinalized());
+
+		builder.createNewSpace();
+		assertFalse(builder.isSpaceFinalized());
+
+		builder.addDimension(3);
+		assertFalse(builder.isSpaceFinalized());
+
+		builder.finalizeSpace();
+		assertTrue(builder.isSpaceFinalized());
+
+		builder.getSpaceOfCell();
+		assertTrue(builder.isSpaceFinalized());
 	}
 }

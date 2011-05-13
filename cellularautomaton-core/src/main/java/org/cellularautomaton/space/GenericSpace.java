@@ -26,7 +26,7 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 	 * The cell to consider as the start of the space (all the other cells are
 	 * accessible from this one).
 	 */
-	private final ICell<StateType> originCell;
+	private ICell<StateType> originCell;
 
 	/**
 	 * Create a space of cells with the given origin and all the other cells
@@ -35,8 +35,8 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 	 * @param originCell
 	 *            the cell to consider as the origin of the space
 	 */
-	public GenericSpace(ICell<StateType> originCell) {
-		this.originCell = originCell;
+	public GenericSpace() {
+		this.originCell = null;
 	}
 
 	/**
@@ -54,7 +54,16 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 	}
 
 	/**
-	 * Give the origin cell given at the creation of the space.
+	 * Change the origin of the space. <b>BE CAREFUL :</b> the complete space
+	 * can be changed with this way, especially if you give a cell which is not
+	 * accessible in the current space. All the space works on this origin.
+	 */
+	public void setOrigin(ICell<StateType> origin) {
+		originCell = origin;
+	}
+
+	/**
+	 * Give the origin of the space of cells.
 	 */
 	public ICell<StateType> getOrigin() {
 		return originCell;
@@ -71,6 +80,14 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 		return new CellIterator();
 	}
 
+	/**
+	 * An empty space is a space with no origin cell.
+	 * @see #setOrigin(ICell)
+	 */
+	public boolean isEmpty() {
+		return originCell == null;
+	}
+	
 	/**
 	 * Specific iterator for the space of cells. If the space is modified during
 	 * the iteration, it is possible that the modifications are not considered :<br/>
@@ -101,7 +118,9 @@ public class GenericSpace<StateType> implements ISpace<StateType> {
 		 * Create an iterator over the current space of cells.
 		 */
 		public CellIterator() {
-			cellsToCheck.add(getOrigin());
+			if (getOrigin() != null) {
+				cellsToCheck.add(getOrigin());
+			}
 		}
 
 		public boolean hasNext() {

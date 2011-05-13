@@ -25,11 +25,6 @@ import org.cellularautomaton.state.IStateFactory;
  */
 public class SpaceBuilder<StateType> {
 	/**
-	 * The cell to consider as the start of the space (all the other cells are
-	 * accessible from this one).
-	 */
-	private ICell<StateType> originCell;
-	/**
 	 * The factory used to create the space of cells.
 	 */
 	private final CellFactory<StateType> cellFactory;
@@ -41,6 +36,16 @@ public class SpaceBuilder<StateType> {
 	 * The state factory used to initialize the cells.
 	 */
 	private IStateFactory<StateType> stateFactory;
+	/**
+	 * The space itself.
+	 */
+	private ISpace<StateType> space;
+	/**
+	 * Tell if the current space is finalized.
+	 * 
+	 * @see #finalizeSpace()
+	 */
+	private boolean isSpaceFinalized;
 
 	/**
 	 * Create a new space builder with :<br/>
@@ -53,6 +58,7 @@ public class SpaceBuilder<StateType> {
 	public SpaceBuilder() {
 		cellFactory = new CellFactory<StateType>();
 		dimensionLengths = new ArrayList<Integer>();
+		isSpaceFinalized = false;
 	}
 
 	/**
@@ -64,8 +70,21 @@ public class SpaceBuilder<StateType> {
 	 */
 	public SpaceBuilder<StateType> createNewSpace() {
 		dimensionLengths.clear();
-		originCell = null;
+		space = instantiateEmptySpace();
+		isSpaceFinalized = false;
 		return this;
+	}
+
+	/**
+	 * This method simply instantiates a new space with no cells. The basic
+	 * implementation take a {@link GenericSpace}, but it can be overridden to
+	 * change the type of space. The objective is, for example, to use optimized
+	 * implementations.
+	 * 
+	 * @return a space newly instantiate
+	 */
+	protected ISpace<StateType> instantiateEmptySpace() {
+		return new GenericSpace<StateType>();
 	}
 
 	/**
@@ -81,7 +100,7 @@ public class SpaceBuilder<StateType> {
 	 * length of the dimension indicate the number of cells on this dimension.
 	 * The coordinates of these cells go from 0 to <code>length - 1</code> on
 	 * the new dimension. When no more dimensions (and cells) are needed, you
-	 * can get the space.
+	 * can finalize and get the space.
 	 * 
 	 * @param length
 	 *            the number of cells to put in this dimension
@@ -89,16 +108,22 @@ public class SpaceBuilder<StateType> {
 	 *            tells if the last cells of the dimension must loop to the
 	 *            firsts
 	 * @return this builder
+	 * @throws IllegalStateException
+	 *             if the space is already finalized
+	 * @see #finalizeSpace()
 	 * @see #getSpaceOfCell()
 	 */
 	public SpaceBuilder<StateType> addDimension(int length, boolean cyclic) {
-		if (originCell == null) {
-			originCell = cellFactory.createCell();
+		if (isSpaceFinalized()) {
+			throw new IllegalStateException("the space is already finalized");
+		}
+
+		if (space.isEmpty()) {
+			space.setOrigin(cellFactory.createCell());
 		}
 
 		dimensionLengths.add(length);
-		final Collection<ICell<StateType>> starts = new GenericSpace<StateType>(
-				originCell).getAllCells();
+		final Collection<ICell<StateType>> starts = space.getAllCells();
 		generateDimensionFrom(starts, length);
 
 		if (cyclic) {
@@ -199,20 +224,43 @@ public class SpaceBuilder<StateType> {
 	}
 
 	/**
-	 * <b>BE CAREFUL :</b> when you get the space of cells through this method,
-	 * it is not deleted from the builder. If you add another dimension, it is
-	 * probable that the already gotten space will be affected. Be sure to
-	 * create a new space before to modify it if this is not what you want.
+	 * This method finalize the space creation. Since this method is called, the
+	 * space of cells should not be modified. A complete check is done on the
+	 * space in order to configure the last properties of each cell (like their
+	 * current state).
+	 * 
+	 * @return this builder
+	 */
+	public SpaceBuilder<StateType> finalizeSpace() {
+		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
+				.hasNext();) {
+			ICell<StateType> cell = iterator.next();
+			StateType state = stateFactory.getStateFor(cell);
+			cell.setCurrentState(state);
+		}
+		isSpaceFinalized = true;
+
+		return this;
+	}
+
+	/**
+	 * 
+	 * @return true if the space is finalized and ready to be gotten
+	 */
+	public boolean isSpaceFinalized() {
+		return isSpaceFinalized;
+	}
+
+	/**
+	 * If the space is not yet finalized, the finalization is done before to get
+	 * it.
 	 * 
 	 * @return the space of cells
 	 * @see #createNewSpace()
 	 */
 	public ISpace<StateType> getSpaceOfCell() {
-		GenericSpace<StateType> space = new GenericSpace<StateType>(originCell);
-		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
-				.hasNext();) {
-			ICell<StateType> cell = iterator.next();
-			cell.setCurrentState(stateFactory.getStateFor(cell));
+		if (!isSpaceFinalized()) {
+			finalizeSpace();
 		}
 		return space;
 	}

@@ -34,8 +34,6 @@ public abstract class EnumStateFactory<StateType extends Enum<?>> extends
 	 * This method give all the values defined by the enumeration type.
 	 */
 	public List<StateType> getPossibleStates() {
-		Class<StateType> class1 = getEnumType();
-		StateType[] enumConstants = class1.getEnumConstants();
-		return Arrays.asList(enumConstants);
+		return Arrays.asList(getEnumType().getEnumConstants());
 	}
 }

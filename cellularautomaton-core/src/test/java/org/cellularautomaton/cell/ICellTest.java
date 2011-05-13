@@ -18,8 +18,7 @@ import org.junit.Assert;
  */
 public abstract class ICellTest extends TestCase {
 
-	public abstract <StateType> ICell<StateType> createCell(
-			StateType initialState, int memorySize);
+	public abstract <StateType> ICell<StateType> createCell();
 
 	public void testCellState() {
 		IRule<Integer> rule = new IRule<Integer>() {
@@ -27,7 +26,8 @@ public abstract class ICellTest extends TestCase {
 				return cell.getCurrentState() + 1;
 			}
 		};
-		ICell<Integer> cell = createCell(0, 3);
+		ICell<Integer> cell = createCell();
+		cell.setMemory(3, 0);
 		cell.setRule(rule);
 		assertEquals(Integer.valueOf(0), cell.getCurrentState());
 		assertEquals(Integer.valueOf(0), cell.getState(0));
@@ -100,7 +100,8 @@ public abstract class ICellTest extends TestCase {
 	}
 
 	public void testCellDimensions() {
-		ICell<String> cell = createCell("", 1);
+		ICell<String> cell = createCell();
+		cell.setMemory(1, "");
 
 		cell.setDimensions(2);
 		assertEquals(2, cell.getDimensions());
@@ -116,19 +117,24 @@ public abstract class ICellTest extends TestCase {
 		int dimensions = 2;
 		IRule<String> rule = new RuleFactory<String>().getStaticRuleInstance();
 
-		ICell<String> cell = createCell("middle", 1);
+		ICell<String> cell = createCell();
+		cell.setMemory(1, "middle");
 		cell.setRule(rule);
 		cell.setDimensions(dimensions);
-		ICell<String> neighborTop = createCell("top", 1);
+		ICell<String> neighborTop = createCell();
+		cell.setMemory(1, "top");
 		neighborTop.setRule(rule);
 		neighborTop.setDimensions(dimensions);
-		ICell<String> neighborBottom = createCell("bottom", 1);
+		ICell<String> neighborBottom = createCell();
+		cell.setMemory(1, "bottom");
 		neighborBottom.setRule(rule);
 		neighborBottom.setDimensions(dimensions);
-		ICell<String> neighborLeft = createCell("left", 1);
+		ICell<String> neighborLeft = createCell();
+		cell.setMemory(1, "left");
 		neighborLeft.setRule(rule);
 		neighborLeft.setDimensions(dimensions);
-		ICell<String> neighborRight = createCell("right", 1);
+		ICell<String> neighborRight = createCell();
+		cell.setMemory(1, "right");
 		neighborRight.setRule(rule);
 		neighborRight.setDimensions(dimensions);
 
@@ -170,16 +176,20 @@ public abstract class ICellTest extends TestCase {
 		assertEquals(neighborBottom, cell.getPreviousCellOnDimension(1));
 		assertEquals(neighborTop, cell.getNextCellOnDimension(1));
 
-		ICell<String> neighborTopLeft = createCell("top-left", 1);
+		ICell<String> neighborTopLeft = createCell();
+		cell.setMemory(1, "top-left");
 		neighborTopLeft.setRule(rule);
 		neighborTopLeft.setDimensions(dimensions);
-		ICell<String> neighborTopRight = createCell("top-right", 1);
+		ICell<String> neighborTopRight = createCell();
+		cell.setMemory(1, "top-right");
 		neighborTopRight.setRule(rule);
 		neighborTopRight.setDimensions(dimensions);
-		ICell<String> neighborBottomLeft = createCell("bottom-left", 1);
+		ICell<String> neighborBottomLeft = createCell();
+		cell.setMemory(1, "bottom-left");
 		neighborBottomLeft.setRule(rule);
 		neighborBottomLeft.setDimensions(dimensions);
-		ICell<String> neighborBottomRight = createCell("bottom-right", 1);
+		ICell<String> neighborBottomRight = createCell();
+		cell.setMemory(1, "bottom-right");
 		neighborBottomRight.setRule(rule);
 		neighborBottomRight.setDimensions(dimensions);
 
@@ -221,7 +231,8 @@ public abstract class ICellTest extends TestCase {
 	}
 
 	public void testCoords() {
-		ICell<String> cell = createCell("", 1);
+		ICell<String> cell = createCell();
+		cell.setMemory(1, "");
 		Assert.assertEquals(new Coords(), cell.getCoords());
 
 		cell.setDimensions(3);

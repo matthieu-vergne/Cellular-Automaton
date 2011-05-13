@@ -1,6 +1,5 @@
 package org.cellularautomaton.space;
 
-import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.space.GenericSpaceTest.TestState;
 import org.cellularautomaton.state.EnumStateFactory;
 
@@ -19,9 +18,13 @@ public class GenericSpaceTest extends ISpaceTest<TestState> {
 
 	@Override
 	public ISpace<TestState> createSpace() {
-		ICell<TestState> origin = new SpaceBuilder<TestState>()
-				.setStateFactory(stateFactory).createNewSpace()
-				.addDimension(5).addDimension(5).getSpaceOfCell().getOrigin();
-		return new GenericSpace<TestState>(origin);
+		SpaceBuilder<TestState> builder = new SpaceBuilder<TestState>() {
+			@Override
+			protected ISpace<TestState> instantiateEmptySpace() {
+				return new GenericSpace<TestState>();
+			}
+		};
+		return builder.setStateFactory(stateFactory).createNewSpace()
+				.addDimension(5).addDimension(5).getSpaceOfCell();
 	}
 }
