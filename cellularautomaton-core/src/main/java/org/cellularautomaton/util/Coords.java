@@ -115,26 +115,28 @@ public class Coords implements Comparable<Coords> {
 	 */
 	@Override
 	public String toString() {
-		String s = "";
-		for (int i : coords) {
-			s += "," + i;
-		}
-		return "(" + (s.length() > 0 ? s.substring(1) : "") + ")";
+		return Arrays.toString(coords);
 	}
 
-	/**
-	 * A coordinate is equal to another coordinate if they have the same
-	 * dimension and same values in each dimension. Moreover, instead of a
-	 * {@link Coords} object, a simple int[] can be given.
-	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(coords);
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Coords) {
-			return compareTo((Coords) obj) == 0;
-		} else if (obj instanceof int[]) {
-			return equals(new Coords((int[]) obj));
-		} else {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
+		Coords other = (Coords) obj;
+		if (!Arrays.equals(coords, other.coords))
+			return false;
+		return true;
 	}
 }

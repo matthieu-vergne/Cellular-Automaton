@@ -126,10 +126,9 @@ public class CellFactory<StateType> {
 	}
 
 	/**
-	 * 
+	 * Set the amount of states the cell has to remember.
 	 * @param memorySize
-	 *            the memory size of each cell (the number of states it can
-	 *            remember, 1 is the basic value).
+	 *            the memory size of each cell. Default value: 1.
 	 * @return the factory
 	 */
 	public CellFactory<StateType> setMemorySize(int memorySize) {

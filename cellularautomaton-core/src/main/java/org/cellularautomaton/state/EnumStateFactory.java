@@ -18,7 +18,7 @@ import javax.naming.spi.StateFactory;
  *            {@link Float} for arithmetical states, or any specific type of
  *            data for particular uses.
  */
-public abstract class EnumStateFactory<StateType extends Enum<?>> extends
+public abstract class EnumStateFactory<StateType extends Enum<StateType>> extends
 		AbstractStateFactory<StateType> {
 
 	/**
