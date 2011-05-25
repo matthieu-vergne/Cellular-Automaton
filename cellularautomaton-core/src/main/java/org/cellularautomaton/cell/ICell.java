@@ -79,10 +79,19 @@ public interface ICell<StateType> {
 	public boolean isNextStateCalculated();
 
 	/**
+	 * 
+	 * @return true if the next state is different to the current state, false
+	 *         otherwise
+	 * @throws StateNotCalculatedException
+	 *             the next state is not calculated yet
+	 */
+	public boolean isNextStateDifferent();
+
+	/**
 	 * This method must change the current state in order to pass to the next
 	 * generation.
 	 * 
-	 * @throws IllegalStateException
+	 * @throws StateNotCalculatedException
 	 *             the next state is not calculated yet
 	 */
 	public void applyNextState() throws IllegalStateException;

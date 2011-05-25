@@ -21,28 +21,19 @@ public abstract class ICellTest extends TestCase {
 	public abstract <StateType> ICell<StateType> createCell();
 
 	public void testCellState() {
-		IRule<Integer> rule = new IRule<Integer>() {
-			public Integer calculateNextStateOf(ICell<Integer> cell) {
-				return cell.getCurrentState() + 1;
-			}
-		};
 		ICell<Integer> cell = createCell();
 		cell.setMemory(3, 0);
-		cell.setRule(rule);
 		assertEquals(Integer.valueOf(0), cell.getCurrentState());
 		assertEquals(Integer.valueOf(0), cell.getState(0));
 		assertEquals(Integer.valueOf(0), cell.getState(1));
 		assertEquals(Integer.valueOf(0), cell.getState(2));
-		assertFalse(cell.isNextStateCalculated());
-
-		cell.calculateNextState();
-		assertEquals(Integer.valueOf(0), cell.getCurrentState());
-		assertEquals(Integer.valueOf(0), cell.getState(0));
-		assertEquals(Integer.valueOf(0), cell.getState(1));
-		assertEquals(Integer.valueOf(0), cell.getState(2));
-		assertTrue(cell.isNextStateCalculated());
-
-		cell.applyNextState();
+		
+		cell.setRule(new IRule<Integer>() {
+			public Integer calculateNextStateOf(ICell<Integer> cell) {
+				return cell.getState(0) + cell.getState(1);
+			}
+		});
+		cell.setCurrentState(1);
 		assertEquals(Integer.valueOf(1), cell.getCurrentState());
 		assertEquals(Integer.valueOf(1), cell.getState(0));
 		assertEquals(Integer.valueOf(0), cell.getState(1));
@@ -55,20 +46,37 @@ public abstract class ICellTest extends TestCase {
 		assertEquals(Integer.valueOf(0), cell.getState(1));
 		assertEquals(Integer.valueOf(0), cell.getState(2));
 		assertTrue(cell.isNextStateCalculated());
+		assertFalse(cell.isNextStateDifferent());
+		
+		cell.applyNextState();
+		assertEquals(Integer.valueOf(1), cell.getCurrentState());
+		assertEquals(Integer.valueOf(1), cell.getState(0));
+		assertEquals(Integer.valueOf(1), cell.getState(1));
+		assertEquals(Integer.valueOf(0), cell.getState(2));
+		assertFalse(cell.isNextStateCalculated());
+
+		cell.calculateNextState();
+		assertEquals(Integer.valueOf(1), cell.getCurrentState());
+		assertEquals(Integer.valueOf(1), cell.getState(0));
+		assertEquals(Integer.valueOf(1), cell.getState(1));
+		assertEquals(Integer.valueOf(0), cell.getState(2));
+		assertTrue(cell.isNextStateCalculated());
+		assertTrue(cell.isNextStateDifferent());
 
 		cell.applyNextState();
 		assertEquals(Integer.valueOf(2), cell.getCurrentState());
 		assertEquals(Integer.valueOf(2), cell.getState(0));
 		assertEquals(Integer.valueOf(1), cell.getState(1));
-		assertEquals(Integer.valueOf(0), cell.getState(2));
+		assertEquals(Integer.valueOf(1), cell.getState(2));
 		assertFalse(cell.isNextStateCalculated());
 
 		cell.calculateNextState();
 		assertEquals(Integer.valueOf(2), cell.getCurrentState());
 		assertEquals(Integer.valueOf(2), cell.getState(0));
 		assertEquals(Integer.valueOf(1), cell.getState(1));
-		assertEquals(Integer.valueOf(0), cell.getState(2));
+		assertEquals(Integer.valueOf(1), cell.getState(2));
 		assertTrue(cell.isNextStateCalculated());
+		assertTrue(cell.isNextStateDifferent());
 
 		cell.applyNextState();
 		assertEquals(Integer.valueOf(3), cell.getCurrentState());
@@ -83,17 +91,11 @@ public abstract class ICellTest extends TestCase {
 		assertEquals(Integer.valueOf(2), cell.getState(1));
 		assertEquals(Integer.valueOf(1), cell.getState(2));
 		assertTrue(cell.isNextStateCalculated());
+		assertTrue(cell.isNextStateDifferent());
 
 		cell.applyNextState();
-		assertEquals(Integer.valueOf(4), cell.getCurrentState());
-		assertEquals(Integer.valueOf(4), cell.getState(0));
-		assertEquals(Integer.valueOf(3), cell.getState(1));
-		assertEquals(Integer.valueOf(2), cell.getState(2));
-		assertFalse(cell.isNextStateCalculated());
-
-		cell.setCurrentState(18);
-		assertEquals(Integer.valueOf(18), cell.getCurrentState());
-		assertEquals(Integer.valueOf(18), cell.getState(0));
+		assertEquals(Integer.valueOf(5), cell.getCurrentState());
+		assertEquals(Integer.valueOf(5), cell.getState(0));
 		assertEquals(Integer.valueOf(3), cell.getState(1));
 		assertEquals(Integer.valueOf(2), cell.getState(2));
 		assertFalse(cell.isNextStateCalculated());
@@ -236,15 +238,15 @@ public abstract class ICellTest extends TestCase {
 		Assert.assertEquals(new Coords(), cell.getCoords());
 
 		cell.setDimensions(3);
-		Assert.assertEquals(new Coords( 0, 0, 0 ), cell.getCoords());
+		Assert.assertEquals(new Coords(0, 0, 0), cell.getCoords());
 
 		cell.getCoords().setAll(1, 3, 4);
-		Assert.assertEquals(new Coords( 1, 3, 4 ), cell.getCoords());
+		Assert.assertEquals(new Coords(1, 3, 4), cell.getCoords());
 
 		cell.setDimensions(4);
-		Assert.assertEquals(new Coords( 1, 3, 4, 0 ), cell.getCoords());
+		Assert.assertEquals(new Coords(1, 3, 4, 0), cell.getCoords());
 
 		cell.setDimensions(2);
-		Assert.assertEquals(new Coords( 1, 3 ), cell.getCoords());
+		Assert.assertEquals(new Coords(1, 3), cell.getCoords());
 	}
 }

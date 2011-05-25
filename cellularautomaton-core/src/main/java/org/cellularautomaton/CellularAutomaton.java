@@ -1,5 +1,8 @@
 package org.cellularautomaton;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.space.ISpace;
 
@@ -24,6 +27,12 @@ public class CellularAutomaton<StateType> {
 	private final ISpace<StateType> cellSpace;
 
 	/**
+	 * The cells which need to see their new state calculated during the next
+	 * step.
+	 */
+	private final Collection<ICell<StateType>> cellsToCalculate = new HashSet<ICell<StateType>>();
+
+	/**
 	 * Create an automaton on a specific space of cells.
 	 * 
 	 * @param cellSpace
@@ -31,6 +40,7 @@ public class CellularAutomaton<StateType> {
 	 */
 	public CellularAutomaton(ISpace<StateType> cellSpace) {
 		this.cellSpace = cellSpace;
+		cellsToCalculate.addAll(cellSpace.getAllCells());
 	}
 
 	/**
@@ -38,7 +48,7 @@ public class CellularAutomaton<StateType> {
 	 * is to apply it with {@link #applyNextStep()}.
 	 */
 	public void calculateNextStep() {
-		for (ICell<StateType> cell : getSpace().getAllCells()) {
+		for (ICell<StateType> cell : cellsToCalculate) {
 			cell.calculateNextState();
 		}
 	}
@@ -48,9 +58,34 @@ public class CellularAutomaton<StateType> {
 	 * not calculated yet, their state does not change.
 	 */
 	public void applyNextStep() {
-		for (ICell<StateType> cell : getSpace().getAllCells()) {
-			cell.applyNextState();
+		Collection<ICell<StateType>> nextCellsToCalculate = new HashSet<ICell<StateType>>();
+		for (ICell<StateType> cell : cellsToCalculate) {
+			if (cell.isNextStateDifferent()) {
+				cell.applyNextState();
+				nextCellsToCalculate.addAll(getCellsDependingTo(cell));
+			}
 		}
+
+		cellsToCalculate.clear();
+		cellsToCalculate.addAll(nextCellsToCalculate);
+	}
+
+	/**
+	 * This method allows to know the cells which need to be calculated at the
+	 * next step. If a cell see its state modified during the current step, this
+	 * method is called to know all the cells which depend on it.<br/>
+	 * <br/>
+	 * The default implementation return all the calculated cells, so each cell
+	 * calculated at the beginning will be calculated at the next step (a priori
+	 * all the cells). This method can be overridden to optimize the process.
+	 * 
+	 * @param cell
+	 *            the cell to consider the dependencies with
+	 * @return the cells which depends of the cell given in argument
+	 */
+	protected Collection<ICell<StateType>> getCellsDependingTo(
+			ICell<StateType> cell) {
+		return getCellsToCalculate();
 	}
 
 	/**
@@ -68,6 +103,15 @@ public class CellularAutomaton<StateType> {
 	 */
 	public ISpace<StateType> getSpace() {
 		return cellSpace;
+	}
+
+	/**
+	 * 
+	 * @return the cells which need to see their new state calculated during the
+	 *         next step
+	 */
+	public Collection<ICell<StateType>> getCellsToCalculate() {
+		return cellsToCalculate;
 	}
 
 }

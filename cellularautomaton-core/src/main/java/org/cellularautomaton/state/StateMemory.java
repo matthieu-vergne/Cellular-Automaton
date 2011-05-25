@@ -54,7 +54,7 @@ public class StateMemory<StateType> {
 	 */
 	public StateType getState(int age) {
 		int size = getMemorySize();
-		assert age >= 0 && age < size : "the age must be between 0 and " + size;
+		assert age >= 0 && age < size : "the age must be in [0;" + (size - 1) + "]";
 
 		return states.get(size - age - 1);
 	}

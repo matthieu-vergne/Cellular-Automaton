@@ -1,5 +1,7 @@
 package org.cellularautomaton.sample.ant;
 
+import java.util.Collection;
+
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.IRule;
@@ -106,6 +108,19 @@ public class AntAutomatonFactory {
 
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
 				builder.getSpaceOfCell());
+
+		return automaton;
+	}
+	
+	public static CellularAutomaton<AntState> createOptimizedAutomaton() {
+		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
+				createAutomaton().getSpace()) {
+			@Override
+			protected Collection<ICell<AntState>> getCellsDependingTo(
+					ICell<AntState> cell) {
+				return cell.getAllCellsAround();
+			}
+		};
 
 		return automaton;
 	}

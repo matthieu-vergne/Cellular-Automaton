@@ -42,10 +42,12 @@ public class JAutomatonFrame<T> extends JFrame {
 
 		public void run() {
 			while (true) {
-				try {
-					Thread.sleep(millis);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				if (millis != 0) {
+					try {
+						Thread.sleep(millis);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 
 				jautomaton.getAutomaton().doStep();

@@ -135,12 +135,23 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	}
 
 	/**
+	 * This method indicates if the state of the cell will change during the
+	 * step. This method does not indicate
+	 */
+	public boolean isNextStateDifferent() {
+		if (!isNextStateCalculated()) {
+			throw new StateNotCalculatedException();
+		}
+
+		return !nextState.equals(getCurrentState());
+	}
+
+	/**
 	 * The calculated next state is applied to the cell with this method.
 	 */
 	public void applyNextState() {
 		if (!isNextStateCalculated()) {
-			throw new IllegalStateException(
-					"the next state is not calculated yet");
+			throw new StateNotCalculatedException();
 		}
 
 		previousStates.pushNewState(nextState);

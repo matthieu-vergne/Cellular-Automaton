@@ -1,17 +1,17 @@
 package org.cellularautomaton.sample.ant;
 
-public class Ant extends AntFrame {
+public class OptimizedAnt extends AntFrame {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Ant() {
-		super(AntAutomatonFactory.createAutomaton());
+	public OptimizedAnt() {
+		super(AntAutomatonFactory.createOptimizedAutomaton());
 	}
 
 	public static void main(String[] args) {
-		new Ant();
+		new OptimizedAnt();
 	}
 }
