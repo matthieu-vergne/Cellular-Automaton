@@ -58,26 +58,30 @@ public class CellularAutomaton<StateType> {
 	 * not calculated yet, their state does not change.
 	 */
 	public void applyNextStep() {
-		Collection<ICell<StateType>> nextCellsToCalculate = new HashSet<ICell<StateType>>();
+		Collection<ICell<StateType>> modifiedCells = new HashSet<ICell<StateType>>();
 		for (ICell<StateType> cell : cellsToCalculate) {
 			if (cell.isNextStateDifferent()) {
 				cell.applyNextState();
-				nextCellsToCalculate.addAll(getCellsDependingTo(cell));
+				modifiedCells.add(cell);
 			}
 		}
 
+		// check the next cells to calculate
 		cellsToCalculate.clear();
-		cellsToCalculate.addAll(nextCellsToCalculate);
+		for (ICell<StateType> cell : modifiedCells) {
+			cellsToCalculate.addAll(getCellsDependingTo(cell));
+		}
 	}
 
 	/**
 	 * This method allows to know the cells which need to be calculated at the
 	 * next step. If a cell see its state modified during the current step, this
-	 * method is called to know all the cells which depend on it.<br/>
+	 * method is called to know all the cells which depend on it. When this
+	 * method is called, <b>all the cells</b> have their new state (the step is
+	 * finished).<br/>
 	 * <br/>
-	 * The default implementation return all the calculated cells, so each cell
-	 * calculated at the beginning will be calculated at the next step (a priori
-	 * all the cells). This method can be overridden to optimize the process.
+	 * The default implementation return all the cells of the space. This method
+	 * may be overridden to optimize the process.
 	 * 
 	 * @param cell
 	 *            the cell to consider the dependencies with
@@ -85,7 +89,7 @@ public class CellularAutomaton<StateType> {
 	 */
 	protected Collection<ICell<StateType>> getCellsDependingTo(
 			ICell<StateType> cell) {
-		return getCellsToCalculate();
+		return getSpace().getAllCells();
 	}
 
 	/**
