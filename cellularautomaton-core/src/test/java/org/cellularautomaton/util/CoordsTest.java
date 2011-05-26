@@ -67,42 +67,91 @@ public class CoordsTest extends TestCase {
 	}
 
 	public void testToString() {
-		assertEquals("[]", new Coords().toString());
-		assertEquals("[1, 2, 3]", new Coords(1, 2, 3).toString());
+		assertEquals("()", new Coords().toString());
+		assertEquals("(1, 2, 3)", new Coords(1, 2, 3).toString());
 	}
 
 	public void testEqualsReflexive() {
-		Coords c = new Coords(2);
-		assertTrue("CoordsTest.equals() must be reflexive", c.equals(c));
-	}
-	
-	public void testEqualsSymmetric(){
-		Coords c1 = new Coords(1,1);
-		Coords c2 = new Coords(1,1);
-		Coords c3 = new Coords(2,2);
-		
-		assertTrue("CoordsTest.equals() must be symmetric", c1.equals(c2) == c2.equals(c1));
-		assertTrue("CoordsTest.equals() must be symmetric", c1.equals(c3) == c3.equals(c1));
-	}
-	
-	public void testEqualsTransitive(){
-		Coords c1 = new Coords(1,1);
-		Coords c2 = new Coords(1,1);
-		Coords c3 = new Coords(1,1);
-		
-		if(c1.equals(c2) && c2.equals(c3)) {
-			assertTrue("CoordsTest.equals() must be transitive",  c1.equals(c3));
+		for (Coords c : new Coords[] { new Coords(), new Coords(2),
+				new Coords(3, 5, 4) }) {
+			assertTrue("CoordsTest.equals() must be reflexive", c.equals(c));
 		}
 	}
-	
-	public void testEqualsConsistent(){
-		Coords c1 = new Coords(1,1);
-		Coords c2 = new Coords(1,1);
-		assertTrue("CoordsTest.equals() must be consistent", c1.equals(c1) == c2.equals(c2));
+
+	public void testEqualsSymmetric() {
+		Coords c1 = new Coords(1, 1);
+		Coords c2 = new Coords(1, 1);
+		Coords c3 = new Coords(2, 2);
+
+		assertTrue("CoordsTest.equals() must be symmetric",
+				c1.equals(c2) == c2.equals(c1));
+		assertTrue("CoordsTest.equals() must be symmetric",
+				c1.equals(c3) == c3.equals(c1));
 	}
-	
-	public void testEqualsNull(){
-		Coords c1 = new Coords(1,1);
+
+	public void testEqualsTransitive() {
+		Coords c1 = new Coords(1, 1);
+		Coords c2 = new Coords(1, 1);
+		Coords c3 = new Coords(1, 1);
+
+		if (c1.equals(c2) && c2.equals(c3)) {
+			assertTrue("CoordsTest.equals() must be transitive", c1.equals(c3));
+		}
+	}
+
+	public void testEqualsConsistent() {
+		Coords c1 = new Coords(1, 1);
+		Coords c2 = new Coords(1, 1);
+		assertTrue("CoordsTest.equals() must be consistent",
+				c1.equals(c1) == c2.equals(c2));
+	}
+
+	public void testEqualsNull() {
+		Coords c1 = new Coords(1, 1);
 		assertFalse(c1.equals(null));
+	}
+
+	public void testEquals() {
+		Coords c1a = new Coords(1);
+		Coords c2a = new Coords(2);
+		Coords c3a = new Coords(1, 1);
+		Coords c4a = new Coords(1, 2);
+		Coords c5a = new Coords(2, 1);
+
+		Coords c1b = new Coords(1);
+		Coords c2b = new Coords(2);
+		Coords c3b = new Coords(1, 1);
+		Coords c4b = new Coords(1, 2);
+		Coords c5b = new Coords(2, 1);
+
+		assertTrue(c1a.equals(c1b));
+		assertFalse(c1a.equals(c2b));
+		assertFalse(c1a.equals(c3b));
+		assertFalse(c1a.equals(c4b));
+		assertFalse(c1a.equals(c5b));
+
+		assertFalse(c2a.equals(c1b));
+		assertTrue(c2a.equals(c2b));
+		assertFalse(c2a.equals(c3b));
+		assertFalse(c2a.equals(c4b));
+		assertFalse(c2a.equals(c5b));
+
+		assertFalse(c3a.equals(c1b));
+		assertFalse(c3a.equals(c2b));
+		assertTrue(c3a.equals(c3b));
+		assertFalse(c3a.equals(c4b));
+		assertFalse(c3a.equals(c5b));
+
+		assertFalse(c4a.equals(c1b));
+		assertFalse(c4a.equals(c2b));
+		assertFalse(c4a.equals(c3b));
+		assertTrue(c4a.equals(c4b));
+		assertFalse(c4a.equals(c5b));
+
+		assertFalse(c5a.equals(c1b));
+		assertFalse(c5a.equals(c2b));
+		assertFalse(c5a.equals(c3b));
+		assertFalse(c5a.equals(c4b));
+		assertTrue(c5a.equals(c5b));
 	}
 }

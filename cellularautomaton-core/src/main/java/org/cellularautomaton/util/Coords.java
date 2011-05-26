@@ -115,7 +115,8 @@ public class Coords implements Comparable<Coords> {
 	 */
 	@Override
 	public String toString() {
-		return Arrays.toString(coords);
+		String string = Arrays.toString(coords);
+		return "(" + string.substring(1, string.length() - 1) + ")";
 	}
 
 	@Override
@@ -128,15 +129,10 @@ public class Coords implements Comparable<Coords> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
+		if (obj instanceof Coords) {
+			return compareTo((Coords) obj) == 0;
+		} else {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Coords other = (Coords) obj;
-		if (!Arrays.equals(coords, other.coords))
-			return false;
-		return true;
+		}
 	}
 }
