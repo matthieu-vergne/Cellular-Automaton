@@ -118,6 +118,7 @@ public class AntAutomatonFactory {
 			@Override
 			protected Collection<ICell<AntState>> getCellsDependingTo(
 					ICell<AntState> cell) {
+				// heuristic optimization
 				return cell.getAllCellsAround();
 			}
 		};
