@@ -1,12 +1,13 @@
 package org.cellularautomaton.space;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.CellFactory;
@@ -15,7 +16,7 @@ import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 
-public abstract class ISpaceTest<StateType> extends TestCase {
+public abstract class ISpaceTest<StateType> {
 
 	public abstract ISpace<StateType> createSpace();
 

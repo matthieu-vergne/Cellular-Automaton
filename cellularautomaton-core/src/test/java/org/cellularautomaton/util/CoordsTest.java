@@ -1,12 +1,17 @@
 package org.cellularautomaton.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class CoordsTest extends TestCase {
+public class CoordsTest {
 
+	@Test
 	public void testCreation() {
 		Coords coords = new Coords();
 		assertEquals(0, coords.getDimensions());
@@ -18,6 +23,7 @@ public class CoordsTest extends TestCase {
 		assertEquals(3, coords.get(2));
 	}
 
+	@Test
 	public void testComparison() {
 		Coords c1 = new Coords(1);
 		Coords c2 = new Coords(2);
@@ -40,6 +46,7 @@ public class CoordsTest extends TestCase {
 		assertEquals(c5, iterator.next());
 	}
 
+	@Test
 	public void testValues() {
 		Coords c = new Coords(1, 2, 3);
 		assertEquals(3, c.getDimensions());
@@ -66,11 +73,13 @@ public class CoordsTest extends TestCase {
 		assertEquals(12, c.get(2));
 	}
 
+	@Test
 	public void testToString() {
 		assertEquals("()", new Coords().toString());
 		assertEquals("(1, 2, 3)", new Coords(1, 2, 3).toString());
 	}
 
+	@Test
 	public void testEqualsReflexive() {
 		for (Coords c : new Coords[] { new Coords(), new Coords(2),
 				new Coords(3, 5, 4) }) {
@@ -78,6 +87,7 @@ public class CoordsTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testEqualsSymmetric() {
 		Coords c1 = new Coords(1, 1);
 		Coords c2 = new Coords(1, 1);
@@ -89,6 +99,7 @@ public class CoordsTest extends TestCase {
 				c1.equals(c3) == c3.equals(c1));
 	}
 
+	@Test
 	public void testEqualsTransitive() {
 		Coords c1 = new Coords(1, 1);
 		Coords c2 = new Coords(1, 1);
@@ -99,6 +110,7 @@ public class CoordsTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testEqualsConsistent() {
 		Coords c1 = new Coords(1, 1);
 		Coords c2 = new Coords(1, 1);
@@ -106,11 +118,13 @@ public class CoordsTest extends TestCase {
 				c1.equals(c1) == c2.equals(c2));
 	}
 
+	@Test
 	public void testEqualsNull() {
 		Coords c1 = new Coords(1, 1);
 		assertFalse(c1.equals(null));
 	}
 
+	@Test
 	public void testEquals() {
 		Coords c1a = new Coords(1);
 		Coords c2a = new Coords(2);

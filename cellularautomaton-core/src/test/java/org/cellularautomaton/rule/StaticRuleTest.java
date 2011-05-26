@@ -1,12 +1,12 @@
 package org.cellularautomaton.rule;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.rule.IRule;
-import org.cellularautomaton.rule.StaticRule;
 import org.cellularautomaton.space.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.AbstractStateFactoryTest;

@@ -1,19 +1,17 @@
 package org.cellularautomaton.rule;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.rule.IRule;
-import org.cellularautomaton.rule.RuleFactory;
 import org.cellularautomaton.space.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 
-public class RuleFactoryTest extends TestCase {
+public class RuleFactoryTest {
 
 	@Test
 	public void testStaticRuleInstance() {

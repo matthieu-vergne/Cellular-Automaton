@@ -1,10 +1,12 @@
 package org.cellularautomaton.state;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
-import org.cellularautomaton.state.EnumStateFactory;
-import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.state.EnumStateFactoryTest.TestEnum;
+import org.junit.Test;
 
 
 public class EnumStateFactoryTest extends AbstractStateFactoryTest<TestEnum> {
@@ -25,6 +27,7 @@ public class EnumStateFactoryTest extends AbstractStateFactoryTest<TestEnum> {
 		};
 	}
 	
+	@Test
 	public void testCompletePossibilities() {
 		IStateFactory<TestEnum> factory = createFactory();
 		List<TestEnum> states = factory.getPossibleStates();

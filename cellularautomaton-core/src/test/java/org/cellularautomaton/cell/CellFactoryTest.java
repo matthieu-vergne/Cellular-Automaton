@@ -1,13 +1,12 @@
 package org.cellularautomaton.cell;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import org.cellularautomaton.cell.CellFactory;
-import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.StaticRule;
 import org.junit.Test;
 
-public class CellFactoryTest extends TestCase {
+public class CellFactoryTest {
 
 	@Test
 	public void testInitialParameters() {

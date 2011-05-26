@@ -1,12 +1,14 @@
 package org.cellularautomaton.cell;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.rule.RuleFactory;
 import org.cellularautomaton.util.Coords;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * This test case is a model for all the {@link ICell} implementations. All the
@@ -16,10 +18,11 @@ import org.junit.Assert;
  * @author Matthieu Vergne (matthieu.vergne@gmail.com)
  * 
  */
-public abstract class ICellTest extends TestCase {
+public abstract class ICellTest {
 
 	public abstract <StateType> ICell<StateType> createCell();
 
+	@Test
 	public void testCellState() {
 		ICell<Integer> cell = createCell();
 		cell.setMemory(3, 0);
@@ -101,6 +104,7 @@ public abstract class ICellTest extends TestCase {
 		assertFalse(cell.isNextStateCalculated());
 	}
 
+	@Test
 	public void testCellDimensions() {
 		ICell<String> cell = createCell();
 		cell.setMemory(1, "");
@@ -115,6 +119,7 @@ public abstract class ICellTest extends TestCase {
 		assertEquals(5, cell.getDimensions());
 	}
 
+	@Test
 	public void testCellsAround() {
 		int dimensions = 2;
 		IRule<String> rule = new RuleFactory<String>().getStaticRuleInstance();
@@ -232,6 +237,7 @@ public abstract class ICellTest extends TestCase {
 		assertEquals(neighborTopRight, cell.getRelativeCell(1, 1));
 	}
 
+	@Test
 	public void testCoords() {
 		ICell<String> cell = createCell();
 		cell.setMemory(1, "");

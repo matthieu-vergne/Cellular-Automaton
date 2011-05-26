@@ -1,11 +1,12 @@
 package org.cellularautomaton.state;
 
-import org.cellularautomaton.state.StateMemory;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class StateMemoryTest extends TestCase {
+public class StateMemoryTest {
 
+	@Test
 	public void testMemoryInit() {
 		StateMemory<String> memory = new StateMemory<String>(3, "");
 		assertEquals("", memory.getState(0));
@@ -13,6 +14,7 @@ public class StateMemoryTest extends TestCase {
 		assertEquals("", memory.getState(2));
 	}
 
+	@Test
 	public void testMemoryPushGetForce() {
 		StateMemory<String> memory = new StateMemory<String>(3, "");
 		assertEquals("", memory.getState(0));

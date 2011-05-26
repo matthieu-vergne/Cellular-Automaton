@@ -1,10 +1,14 @@
 package org.cellularautomaton.space;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.state.AbstractStateFactory;
@@ -12,7 +16,7 @@ import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 
-public class SpaceBuilderTest extends TestCase {
+public class SpaceBuilderTest {
 
 	@Test
 	public void testIsolatedSpace1D() {
@@ -1389,6 +1393,7 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals(new Coords(2, 2, 2), cell222.getCoords());
 	}
 
+	@Test
 	public void testSpaceStates() {
 		// generate space
 		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
@@ -1416,6 +1421,7 @@ public class SpaceBuilderTest extends TestCase {
 		assertEquals("2", cell2.getCurrentState());
 	}
 
+	@Test
 	public void testFinalisation() {
 		// generate space
 		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
