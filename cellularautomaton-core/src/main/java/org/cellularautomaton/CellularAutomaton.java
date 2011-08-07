@@ -35,6 +35,7 @@ public class CellularAutomaton<StateType> {
 	/**
 	 * Activate/deactivate the dependency optimization.
 	 */
+	// TODO review the optimization modeling (boolean + overriding ?)
 	private boolean isDependencyConsidered = false;
 
 	/**
@@ -81,14 +82,21 @@ public class CellularAutomaton<StateType> {
 	}
 
 	/**
-	 * This method allows to know the cells which need to be calculated at the
-	 * next step. If a cell see its state modified during the current step, this
-	 * method is called to know all the cells which depend on it. When this
-	 * method is called, <b>all the cells</b> have their new state (the step is
-	 * finished).<br/>
+	 * If the dependency check is activated, this method is used to know the
+	 * cells which need to be calculated at the next step. If a cell see its
+	 * state modified during the current step, this method is called to know all
+	 * the cells which depend on it. When this method is called, <b>all the
+	 * cells</b> already have their new state (the step is finished).<br/>
 	 * <br/>
-	 * The default implementation return all the cells of the space. This method
-	 * may be overridden to optimize the process.
+	 * The default implementation generate an {@link IllegalStateException}.
+	 * This method must be overridden considering the conception of the
+	 * automaton. A basic example is to return the direct neighbors :<br/>
+	 * 
+	 * <pre>
+	 * protected Collection&lt;...&gt; getCellsDependingTo(ICell&lt;...&gt; cell) {
+	 * 	return cell.getAllCellsAround();
+	 * }
+	 * </pre>
 	 * 
 	 * @param cell
 	 *            the cell to consider the dependencies with
@@ -96,7 +104,7 @@ public class CellularAutomaton<StateType> {
 	 */
 	protected Collection<ICell<StateType>> getCellsDependingTo(
 			ICell<StateType> cell) {
-		return getSpace().getAllCells();
+		throw new IllegalStateException("This method must be overriden");
 	}
 
 	/**
@@ -126,7 +134,11 @@ public class CellularAutomaton<StateType> {
 	}
 
 	/**
+	 * Activate or deactivate the dependency optimization.
+	 * 
 	 * @param isDependencyConsidered
+	 *            the state of tha activation
+	 * @see #isDependencyConsidered()
 	 */
 	public void setDependencyConsidered(boolean isDependencyConsidered) {
 		this.isDependencyConsidered = isDependencyConsidered;
@@ -140,6 +152,7 @@ public class CellularAutomaton<StateType> {
 	 * always calculated, it is strongly recommended to deactivate it.
 	 * 
 	 * @return true of the optimization is activated, false otherwise
+	 * @see #getCellsDependingTo(ICell)
 	 */
 	public boolean isDependencyConsidered() {
 		return isDependencyConsidered;

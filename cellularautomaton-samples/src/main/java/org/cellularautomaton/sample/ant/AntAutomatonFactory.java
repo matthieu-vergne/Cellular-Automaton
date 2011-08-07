@@ -122,6 +122,7 @@ public class AntAutomatonFactory {
 				return cell.getAllCellsAround();
 			}
 		};
+		automaton.setDependencyConsidered(true);
 
 		return automaton;
 	}
