@@ -33,6 +33,11 @@ public class CellularAutomaton<StateType> {
 	private final Collection<ICell<StateType>> cellsToCalculate = new HashSet<ICell<StateType>>();
 
 	/**
+	 * Activate/deactivate the dependency optimization.
+	 */
+	private boolean isDependencyConsidered = false;
+
+	/**
 	 * Create an automaton on a specific space of cells.
 	 * 
 	 * @param cellSpace
@@ -66,10 +71,12 @@ public class CellularAutomaton<StateType> {
 			}
 		}
 
-		// check the next cells to calculate
-		cellsToCalculate.clear();
-		for (ICell<StateType> cell : modifiedCells) {
-			cellsToCalculate.addAll(getCellsDependingTo(cell));
+		if (isDependencyConsidered()) {
+			// check the next cells to calculate
+			cellsToCalculate.clear();
+			for (ICell<StateType> cell : modifiedCells) {
+				cellsToCalculate.addAll(getCellsDependingTo(cell));
+			}
 		}
 	}
 
@@ -116,6 +123,26 @@ public class CellularAutomaton<StateType> {
 	 */
 	public Collection<ICell<StateType>> getCellsToCalculate() {
 		return cellsToCalculate;
+	}
+
+	/**
+	 * @param isDependencyConsidered
+	 */
+	public void setDependencyConsidered(boolean isDependencyConsidered) {
+		this.isDependencyConsidered = isDependencyConsidered;
+	}
+
+	/**
+	 * Tell if the dependencies are considered. These dependencies allow to
+	 * reduce the next cells to be calculated. This optimization can be quite
+	 * efficient for spaces where only a small amount of cells (compared to the
+	 * total) is calculated on each step. For a space where all the cells are
+	 * always calculated, it is strongly recommended to deactivate it.
+	 * 
+	 * @return true of the optimization is activated, false otherwise
+	 */
+	public boolean isDependencyConsidered() {
+		return isDependencyConsidered;
 	}
 
 }
