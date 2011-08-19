@@ -25,7 +25,9 @@ public abstract class ICellTest {
 	@Test
 	public void testCellState() {
 		ICell<Integer> cell = createCell();
-		cell.setMemory(3, 0);
+		int memorySize = 3;
+		cell.setMemory(memorySize, 0);
+		assertEquals(memorySize, cell.getMemorySize());
 		assertEquals(Integer.valueOf(0), cell.getCurrentState());
 		assertEquals(Integer.valueOf(0), cell.getState(0));
 		assertEquals(Integer.valueOf(0), cell.getState(1));

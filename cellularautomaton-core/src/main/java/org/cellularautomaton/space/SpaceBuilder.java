@@ -232,6 +232,10 @@ public class SpaceBuilder<StateType> {
 	 * @return this builder
 	 */
 	public SpaceBuilder<StateType> finalizeSpace() {
+		if (space == null) {
+			throw new IllegalStateException("No space has been created yet.");
+		}
+		
 		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
 				.hasNext();) {
 			ICell<StateType> cell = iterator.next();

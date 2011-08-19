@@ -105,6 +105,13 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	public void setMemory(int memorySize, StateType initialState) {
 		previousStates = new StateMemory<StateType>(memorySize, initialState);
 	}
+	
+	/**
+	 * Give the size of the memory of the cell.
+	 */
+	public int getMemorySize() {
+		return previousStates.getMemorySize();
+	}
 
 	/**
 	 * This method is similar to {@link #getState(int)} with the argument 0.

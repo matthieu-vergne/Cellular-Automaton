@@ -31,6 +31,12 @@ public interface ICell<StateType> {
 
 	/**
 	 * 
+	 * @return the size of the memory of the cell
+	 */
+	public int getMemorySize();
+
+	/**
+	 * 
 	 * @param state
 	 *            the state to apply to the cell
 	 */

@@ -1451,4 +1451,5 @@ public class SpaceBuilderTest {
 		builder.getSpaceOfCell();
 		assertTrue(builder.isSpaceFinalized());
 	}
+
 }
