@@ -96,9 +96,10 @@ public class AntAutomatonFactory {
 			}
 
 			@Override
-			public AntState getStateFor(ICell<AntState> cell) {
-				return cell.getCoords().equals(new Coords(30, 30)) ? AntState.ANT_WHITE_UP
-						: cell.getCurrentState();
+			public void customize(ICell<AntState> cell) {
+				if (cell.getCoords().equals(new Coords(30, 30))) {
+					cell.setCurrentState(AntState.ANT_WHITE_UP);
+				}
 			}
 		};
 
@@ -111,7 +112,7 @@ public class AntAutomatonFactory {
 
 		return automaton;
 	}
-	
+
 	public static CellularAutomaton<AntState> createOptimizedAutomaton() {
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
 				createAutomaton().getSpace()) {

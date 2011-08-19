@@ -20,10 +20,9 @@ public class CellularAutomatonTest {
 			return Arrays.asList(new String[] { "" });
 		}
 
-		@Override
-		public String getStateFor(ICell<String> cell) {
-			return "" + cell.getCoords().get(0);
-		}
+		public void customize(org.cellularautomaton.cell.ICell<String> cell) {
+			cell.setCurrentState("" + cell.getCoords().get(0));
+		};
 	};
 
 	IStateFactory<String> stateFactory2D = new AbstractStateFactory<String>() {
@@ -31,10 +30,9 @@ public class CellularAutomatonTest {
 			return Arrays.asList(new String[] { "" });
 		}
 
-		@Override
-		public String getStateFor(ICell<String> cell) {
-			return "" + cell.getCoords().get(1) + cell.getCoords().get(0);
-		}
+		public void customize(org.cellularautomaton.cell.ICell<String> cell) {
+			cell.setCurrentState("" + cell.getCoords().get(1) + cell.getCoords().get(0));
+		};
 	};
 
 	@Test

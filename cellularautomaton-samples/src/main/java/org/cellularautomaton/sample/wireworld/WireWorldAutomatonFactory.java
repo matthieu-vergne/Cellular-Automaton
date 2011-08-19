@@ -92,15 +92,13 @@ public class WireWorldAutomatonFactory {
 					.asList(new Coords[] { new Coords(13, 3), new Coords(13, 8) });
 
 			@Override
-			public WireWorldState getStateFor(ICell<WireWorldState> cell) {
+			public void customize(ICell<WireWorldState> cell) {
 				if (headCoords.contains(cell.getCoords())) {
-					return WireWorldState.HEAD;
+					cell.setCurrentState(WireWorldState.HEAD);
 				} else if (queueCoords.contains(cell.getCoords())) {
-					return WireWorldState.QUEUE;
+					cell.setCurrentState(WireWorldState.QUEUE);
 				} else if (metalCoords.contains(cell.getCoords())) {
-					return WireWorldState.METAL;
-				} else {
-					return cell.getCurrentState();
+					cell.setCurrentState(WireWorldState.METAL);
 				}
 			}
 		};

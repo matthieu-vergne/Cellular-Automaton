@@ -28,17 +28,17 @@ public abstract class AbstractStateFactory<StateType> implements
 	 * 
 	 * @see #getPossibleStates()
 	 */
+	@Override
 	public StateType getDefaultState() {
 		return getPossibleStates().get(0);
 	}
 
 	/**
-	 * This implementation gives the default state.
-	 * 
-	 * @see #getDefaultState()
+	 * This implementation use the deprecated method {@link #getStateFor(ICell)}
+	 * for a compatibility reason.
 	 */
-	public StateType getStateFor(ICell<StateType> cell) {
-		return getDefaultState();
+	@Override
+	public void customize(ICell<StateType> cell) {
 	}
 
 	/**
@@ -46,6 +46,7 @@ public abstract class AbstractStateFactory<StateType> implements
 	 * the tests). It must be modified or overridden if the tests fails for some
 	 * test cases or if it does not give good results for particular cases.
 	 */
+	@Override
 	public StateType getRandomState() {
 		List<StateType> states = getPossibleStates();
 		int size = states.size();

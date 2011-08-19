@@ -28,13 +28,12 @@ public interface IStateFactory<StateType> {
 	public StateType getDefaultState();
 
 	/**
-	 * This method must give a state for a specific cell.
+	 * This method must allow to customize a cell.
 	 * 
 	 * @param cell
-	 *            the cell to consider
-	 * @return the state to give to the cell
+	 *            the cell to customize
 	 */
-	public StateType getStateFor(ICell<StateType> cell);
+	public void customize(ICell<StateType> cell);
 
 	/**
 	 * This method must give a randomized state.

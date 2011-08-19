@@ -239,8 +239,7 @@ public class SpaceBuilder<StateType> {
 		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
 				.hasNext();) {
 			ICell<StateType> cell = iterator.next();
-			StateType state = stateFactory.getStateFor(cell);
-			cell.setCurrentState(state);
+			stateFactory.customize(cell);
 		}
 		isSpaceFinalized = true;
 

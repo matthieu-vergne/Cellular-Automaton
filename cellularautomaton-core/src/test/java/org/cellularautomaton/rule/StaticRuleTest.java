@@ -40,8 +40,8 @@ public class StaticRuleTest extends IRuleTest<Integer> {
 		}
 
 		@Override
-		public Integer getStateFor(ICell<Integer> cell) {
-			return getRandomState();
+		public void customize(ICell<Integer> cell) {
+			cell.setCurrentState(getRandomState());
 		}
 	}
 

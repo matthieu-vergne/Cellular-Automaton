@@ -1402,8 +1402,8 @@ public class SpaceBuilderTest {
 			}
 
 			@Override
-			public String getStateFor(ICell<String> cell) {
-				return "" + cell.getCoords().get(0);
+			public void customize(ICell<String> cell) {
+				cell.setCurrentState("" + cell.getCoords().get(0));
 			}
 		};
 

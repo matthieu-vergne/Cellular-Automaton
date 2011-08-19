@@ -53,9 +53,10 @@ public class GOLAutomatonFactory {
 							new Coords(3, 2), });
 
 			@Override
-			public GameOfLifeState getStateFor(ICell<GameOfLifeState> cell) {
-				return aliveCoords.contains(cell.getCoords()) ? GameOfLifeState.ALIVE
-						: cell.getCurrentState();
+			public void customize(ICell<GameOfLifeState> cell) {
+				if (aliveCoords.contains(cell.getCoords())) {
+					cell.setCurrentState(GameOfLifeState.ALIVE);
+				}
 			}
 		};
 
