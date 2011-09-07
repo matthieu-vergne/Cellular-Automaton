@@ -186,6 +186,19 @@ public class CellularAutomaton<StateType> {
 	}
 
 	/**
+	 * Remove an optimization. Nothing happen if the automaton does not know the
+	 * optimization.
+	 * 
+	 * @param optimization
+	 *            the optimization to remove
+	 */
+	public void removeOptimization(Optimization<StateType> optimization) {
+		if (optimizations.remove(optimization)) {
+			optimization.setAutomaton(null);
+		}
+	}
+
+	/**
 	 * 
 	 * @return True if the calculation has been done and we are waiting for
 	 *         applying, false otherwise
