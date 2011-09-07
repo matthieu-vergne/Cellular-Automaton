@@ -27,7 +27,7 @@ public class SpaceBuilder<StateType> {
 	/**
 	 * The factory used to create the space of cells.
 	 */
-	private final CellFactory<StateType> cellFactory;
+	private CellFactory<StateType> cellFactory;
 	/**
 	 * The lengths of each dimension.
 	 */
@@ -51,6 +51,7 @@ public class SpaceBuilder<StateType> {
 	 * Create a new space builder with :<br/>
 	 * <ul>
 	 * <li>no state factory (given manually)</li>
+	 * <li>a basic cell factory (creating generic cells)</li>
 	 * <li>a memory size of 1</li>
 	 * <li>a static rule</li>
 	 * </ul>
@@ -119,7 +120,7 @@ public class SpaceBuilder<StateType> {
 		}
 
 		if (space.isEmpty()) {
-			space.setOrigin(cellFactory.createCell());
+			space.setOrigin(getCellFactory().createCell());
 		}
 
 		dimensionLengths.add(length);
@@ -172,7 +173,7 @@ public class SpaceBuilder<StateType> {
 			// creation of the next layer of cells
 			Collection<ICell<StateType>> added = new HashSet<ICell<StateType>>();
 			for (ICell<StateType> cellBefore : startCells) {
-				ICell<StateType> cellAfter = cellFactory.createCell();
+				ICell<StateType> cellAfter = getCellFactory().createCell();
 
 				if (rank == 1) {
 					cellBefore.setDimensions(actualDimension + 1);
@@ -272,7 +273,7 @@ public class SpaceBuilder<StateType> {
 	 * @return this builder
 	 */
 	public SpaceBuilder<StateType> setMemorySize(int memorySize) {
-		cellFactory.setMemorySize(memorySize);
+		getCellFactory().setMemorySize(memorySize);
 		return this;
 	}
 
@@ -281,7 +282,7 @@ public class SpaceBuilder<StateType> {
 	 * @return the memory size of the created cells
 	 */
 	public int getMemorySize() {
-		return cellFactory.getMemorySize();
+		return getCellFactory().getMemorySize();
 	}
 
 	/**
@@ -291,7 +292,7 @@ public class SpaceBuilder<StateType> {
 	 * @return this builder
 	 */
 	public SpaceBuilder<StateType> setRule(IRule<StateType> rule) {
-		cellFactory.setRule(rule);
+		getCellFactory().setRule(rule);
 		return this;
 	}
 
@@ -300,7 +301,7 @@ public class SpaceBuilder<StateType> {
 	 * @return the rule given to the created cells
 	 */
 	public IRule<StateType> getRule() {
-		return cellFactory.getRule();
+		return getCellFactory().getRule();
 	}
 
 	/**
@@ -322,7 +323,7 @@ public class SpaceBuilder<StateType> {
 	public SpaceBuilder<StateType> setStateFactory(
 			IStateFactory<StateType> stateFactory) {
 		this.stateFactory = stateFactory;
-		cellFactory.setInitialState(stateFactory.getDefaultState());
+		getCellFactory().setInitialState(stateFactory.getDefaultState());
 		return this;
 	}
 
@@ -332,6 +333,23 @@ public class SpaceBuilder<StateType> {
 	 */
 	public IStateFactory<StateType> getStateFactory() {
 		return stateFactory;
+	}
+
+	/**
+	 * 
+	 * @return the cell factory used to fill the space
+	 */
+	public CellFactory<StateType> getCellFactory() {
+		return cellFactory;
+	}
+
+	/**
+	 * 
+	 * @param cellFactory
+	 *            the cell factory used to fill the space
+	 */
+	public void setCellFactory(CellFactory<StateType> cellFactory) {
+		this.cellFactory = cellFactory;
 	}
 
 }
