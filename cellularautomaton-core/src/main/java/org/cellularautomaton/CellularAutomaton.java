@@ -4,6 +4,15 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.optimization.CellsSelectionOptimization;
+import org.cellularautomaton.optimization.GenericOptimization;
+import org.cellularautomaton.optimization.Optimization;
+import org.cellularautomaton.optimization.OptimizationStep;
+import org.cellularautomaton.optimization.OptimizationType;
+import org.cellularautomaton.optimization.PostApplyingOptimization;
+import org.cellularautomaton.optimization.PostCalculationOptimization;
+import org.cellularautomaton.optimization.PreApplyingOptimization;
+import org.cellularautomaton.optimization.PreCalculationOptimization;
 import org.cellularautomaton.space.ISpace;
 
 /**
@@ -27,16 +36,19 @@ public class CellularAutomaton<StateType> {
 	private final ISpace<StateType> cellSpace;
 
 	/**
-	 * The cells which need to see their new state calculated during the next
-	 * step.
+	 * The cells which have to be managed.
 	 */
-	private final Collection<ICell<StateType>> cellsToCalculate = new HashSet<ICell<StateType>>();
+	private Collection<ICell<StateType>> cellsToManage = new HashSet<ICell<StateType>>();
 
 	/**
-	 * Activate/deactivate the dependency optimization.
+	 * The optimizations to apply.
 	 */
-	// TODO review the optimization modeling (boolean + overriding ?)
-	private boolean isDependencyConsidered = false;
+	private final Collection<Optimization<StateType>> optimizations = new HashSet<Optimization<StateType>>();
+
+	/**
+	 * Tell if the calculation has been done and if we are waiting for applying.
+	 */
+	private boolean isCalculationDone;
 
 	/**
 	 * Create an automaton on a specific space of cells.
@@ -46,65 +58,78 @@ public class CellularAutomaton<StateType> {
 	 */
 	public CellularAutomaton(ISpace<StateType> cellSpace) {
 		this.cellSpace = cellSpace;
-		cellsToCalculate.addAll(cellSpace.getAllCells());
+		cellsToManage.addAll(cellSpace.getAllCells());
 	}
 
 	/**
 	 * Calculate the next state of each cell. After this step, the logical way
 	 * is to apply it with {@link #applyNextStep()}.
 	 */
+	@SuppressWarnings("unchecked")
 	public void calculateNextStep() {
-		for (ICell<StateType> cell : cellsToCalculate) {
+		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PreCalculationOptimization.class);
+
+		for (ICell<StateType> cell : cellsToManage) {
 			cell.calculateNextState();
 		}
+		isCalculationDone = true;
+
+		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PostCalculationOptimization.class);
 	}
 
 	/**
 	 * Apply the previously calculated states of each cell. If some cells have
 	 * not calculated yet, their state does not change.
 	 */
+	@SuppressWarnings("unchecked")
 	public void applyNextStep() {
-		Collection<ICell<StateType>> modifiedCells = new HashSet<ICell<StateType>>();
-		for (ICell<StateType> cell : cellsToCalculate) {
-			if (cell.isNextStateDifferent()) {
-				cell.applyNextState();
-				modifiedCells.add(cell);
-			}
-		}
+		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PreApplyingOptimization.class);
 
-		if (isDependencyConsidered()) {
-			// check the next cells to calculate
-			cellsToCalculate.clear();
-			for (ICell<StateType> cell : modifiedCells) {
-				cellsToCalculate.addAll(getCellsDependingTo(cell));
+		for (ICell<StateType> cell : cellsToManage) {
+			cell.applyNextState();
+		}
+		isCalculationDone = false;
+
+		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PostApplyingOptimization.class);
+	}
+
+	/**
+	 * Apply the the optimizations of a specific step.
+	 * 
+	 * @param step
+	 */
+	private void applyOptimizations(
+			Class<? extends OptimizationStep<StateType>> step) {
+		for (Optimization<StateType> optimization : getOptimizationsOf(step)) {
+			if (optimization instanceof CellsSelectionOptimization) {
+				cellsToManage = ((CellsSelectionOptimization<StateType>) optimization)
+						.getCellsToManage();
+			}
+			if (optimization instanceof GenericOptimization) {
+				((GenericOptimization<StateType>) optimization).execute();
 			}
 		}
 	}
 
 	/**
-	 * If the dependency check is activated, this method is used to know the
-	 * cells which need to be calculated at the next step. If a cell see its
-	 * state modified during the current step, this method is called to know all
-	 * the cells which depend on it. When this method is called, <b>all the
-	 * cells</b> already have their new state (the step is finished).<br/>
-	 * <br/>
-	 * The default implementation generate an {@link IllegalStateException}.
-	 * This method must be overridden considering the conception of the
-	 * automaton. A basic example is to return the direct neighbors :<br/>
+	 * This method is a simple getter for the optimizations, except that you can
+	 * give a filter to get only specific optimizations. You can also give null
+	 * to get all the optimizations.
 	 * 
-	 * <pre>
-	 * protected Collection&lt;...&gt; getCellsDependingTo(ICell&lt;...&gt; cell) {
-	 * 	return cell.getAllCellsAround();
-	 * }
-	 * </pre>
-	 * 
-	 * @param cell
-	 *            the cell to consider the dependencies with
-	 * @return the cells which depends of the cell given in argument
+	 * @param filter
+	 *            the class of the wanted optimizations (generally a child of
+	 *            {@link OptimizationStep} or {@link OptimizationType})
+	 * @return the optimizations corresponding to the given class
 	 */
-	protected Collection<ICell<StateType>> getCellsDependingTo(
-			ICell<StateType> cell) {
-		throw new IllegalStateException("This method must be overriden");
+	public Collection<Optimization<StateType>> getOptimizationsOf(
+			Class<? extends Optimization<StateType>> filter) {
+		Collection<Optimization<StateType>> optimizations = new HashSet<Optimization<StateType>>();
+		for (Optimization<StateType> optimization : this.optimizations) {
+			if (filter == null || filter.isInstance(optimization)) {
+				optimizations.add(optimization);
+			}
+		}
+		return optimizations;
 	}
 
 	/**
@@ -125,37 +150,56 @@ public class CellularAutomaton<StateType> {
 	}
 
 	/**
+	 * The cells which are managed by the automaton are basically all the cells
+	 * of the space. It is also possible to have another set of cells, for
+	 * example if some optimizations are used to restrain the cells to
+	 * calculate.
 	 * 
-	 * @return the cells which need to see their new state calculated during the
-	 *         next step
+	 * @return the cells which have to be managed
 	 */
-	public Collection<ICell<StateType>> getCellsToCalculate() {
-		return cellsToCalculate;
+	public Collection<ICell<StateType>> getCellsToManage() {
+		return cellsToManage;
 	}
 
 	/**
-	 * Activate or deactivate the dependency optimization.
+	 * Add an optimization to the automaton.
 	 * 
-	 * @param isDependencyConsidered
-	 *            the state of tha activation
-	 * @see #isDependencyConsidered()
+	 * @param optimization
+	 *            the optimization to add
 	 */
-	public void setDependencyConsidered(boolean isDependencyConsidered) {
-		this.isDependencyConsidered = isDependencyConsidered;
+	public void addOptimization(Optimization<StateType> optimization) {
+		if (!(optimization instanceof OptimizationStep)) {
+			throw new IllegalArgumentException(
+					"No step has been given for the optimization "
+							+ optimization);
+		} else if (!(optimization instanceof OptimizationType)) {
+			throw new IllegalArgumentException(
+					"No type has been given for the optimization "
+							+ optimization);
+		} else if (optimization.getAutomaton() != null) {
+			throw new IllegalArgumentException(
+					"Another automaton use the optimization " + optimization);
+		} else {
+			optimization.setAutomaton(this);
+			optimizations.add(optimization);
+		}
 	}
 
 	/**
-	 * Tell if the dependencies are considered. These dependencies allow to
-	 * reduce the next cells to be calculated. This optimization can be quite
-	 * efficient for spaces where only a small amount of cells (compared to the
-	 * total) is calculated on each step. For a space where all the cells are
-	 * always calculated, it is strongly recommended to deactivate it.
 	 * 
-	 * @return true of the optimization is activated, false otherwise
-	 * @see #getCellsDependingTo(ICell)
+	 * @return True if the calculation has been done and we are waiting for
+	 *         applying, false otherwise
 	 */
-	public boolean isDependencyConsidered() {
-		return isDependencyConsidered;
+	public boolean isReadyForApplying() {
+		return isCalculationDone;
+	}
+
+	/**
+	 * 
+	 * @return True if we are at the beginning of a new step, false otherwise
+	 */
+	public boolean isReadyForCalculation() {
+		return !isCalculationDone;
 	}
 
 }
