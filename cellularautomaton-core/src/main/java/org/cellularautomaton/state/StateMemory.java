@@ -41,10 +41,10 @@ public class StateMemory<StateType> {
 	 *            state
 	 */
 	public void pushNewState(StateType state) {
-		assert state != null;
-
-		states.remove(0);
-		states.add(state);
+		synchronized (states) {
+			states.remove(0);
+			states.add(state);
+		}
 	}
 
 	/**
@@ -53,10 +53,9 @@ public class StateMemory<StateType> {
 	 * @return the asked memorized state
 	 */
 	public StateType getState(int age) {
-		int size = getMemorySize();
-		assert age >= 0 && age < size : "the age must be in [0;" + (size - 1) + "]";
-
-		return states.get(size - age - 1);
+		synchronized (states) {
+			return states.get(getMemorySize() - age - 1);
+		}
 	}
 
 	/**
@@ -64,7 +63,9 @@ public class StateMemory<StateType> {
 	 * @return the size of the memory
 	 */
 	public int getMemorySize() {
-		return states.size();
+		synchronized (states) {
+			return states.size();
+		}
 	}
 
 	/**
@@ -74,6 +75,8 @@ public class StateMemory<StateType> {
 	 *            not pushed so the previous state is not kept in memory
 	 */
 	public void forceCurrentState(StateType state) {
-		states.set(states.size() - 1, state);
+		synchronized (states) {
+			states.set(states.size() - 1, state);
+		}
 	}
 }
