@@ -1,4 +1,4 @@
-package org.cellularautomaton.sample.ant;
+package org.cellularautomaton.sample.langtonant;
 
 public enum AntState {
 	BLACK,

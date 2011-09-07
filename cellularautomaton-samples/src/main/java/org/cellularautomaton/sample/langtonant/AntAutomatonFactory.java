@@ -1,10 +1,7 @@
-package org.cellularautomaton.sample.ant;
-
-import java.util.Collection;
+package org.cellularautomaton.sample.langtonant;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.optimization.CalculateOnlyEvolvingZonesOptimization;
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.space.SpaceBuilder;
 import org.cellularautomaton.state.EnumStateFactory;
@@ -110,18 +107,4 @@ public class AntAutomatonFactory {
 		return automaton;
 	}
 
-	public static CellularAutomaton<AntState> createOptimizedAutomaton() {
-		CellularAutomaton<AntState> automaton = createAutomaton();
-		automaton
-				.addOptimization(new CalculateOnlyEvolvingZonesOptimization<AntState>() {
-					@Override
-					protected Collection<ICell<AntState>> getCellsDependingTo(
-							ICell<AntState> cell) {
-						// heuristic optimization
-						return cell.getAllCellsAround();
-					}
-				});
-
-		return automaton;
-	}
 }

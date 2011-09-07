@@ -1,4 +1,4 @@
-package org.cellularautomaton.sample.ant;
+package org.cellularautomaton.sample.langtonantoptimized;
 
 public class Ant extends AntFrame {
 
