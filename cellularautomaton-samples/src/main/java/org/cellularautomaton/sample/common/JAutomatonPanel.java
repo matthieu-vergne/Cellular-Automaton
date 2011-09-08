@@ -13,6 +13,7 @@ import org.cellularautomaton.util.Coords;
 
 public class JAutomatonPanel<T> extends JPanel {
 	public static final int CELL_DEFAULT_SIZE = 10;
+	public final int WINDOW_MAX_SIZE = 500;
 	private final int height;
 	private final int width;
 	/**
@@ -65,7 +66,9 @@ public class JAutomatonPanel<T> extends JPanel {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(Math.min(width * CELL_DEFAULT_SIZE, 500),
-				Math.min(height * CELL_DEFAULT_SIZE, 500));
+		return new Dimension(Math.max(width,
+				Math.min(width * CELL_DEFAULT_SIZE, WINDOW_MAX_SIZE)),
+				Math.max(height,
+						Math.min(height * CELL_DEFAULT_SIZE, WINDOW_MAX_SIZE)));
 	}
 }
