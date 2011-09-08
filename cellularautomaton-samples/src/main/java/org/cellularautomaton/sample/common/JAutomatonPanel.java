@@ -3,11 +3,13 @@ package org.cellularautomaton.sample.common;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.Iterator;
 
 import javax.swing.JPanel;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.util.Coords;
 
 public class JAutomatonPanel<T> extends JPanel {
 	public static final int CELL_DEFAULT_SIZE = 10;
@@ -45,18 +47,19 @@ public class JAutomatonPanel<T> extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
-		super.paint(g);
-		ICell<? extends T> origin = automaton.getSpace().getOrigin();
+		g.clearRect(0, 0, getWidth(), getHeight());
 		double xRate = (double) getWidth() / width;
 		double yRate = (double) getHeight() / height;
-		for (int y = height - 1; y >= 0; y--) {
-			for (int x = 0; x < width; x++) {
-				T state = origin.getRelativeCell(x, y).getCurrentState();
-				g.setColor(renderer.getColor(state));
-				g.fillRect((int) Math.ceil(x * xRate),
-						(int) Math.ceil(y * yRate), (int) Math.ceil(xRate),
-						(int) Math.ceil(yRate));
-			}
+		Iterator<?> iterator = automaton.getSpace().iterator();
+		while (iterator.hasNext()) {
+			@SuppressWarnings("unchecked")
+			ICell<? extends T> cell = (ICell<? extends T>) iterator.next();
+			T state = cell.getCurrentState();
+			Coords coords = cell.getCoords();
+			g.setColor(renderer.getColor(state));
+			g.fillRect((int) Math.ceil(coords.get(0) * xRate),
+					(int) Math.ceil(coords.get(1) * yRate),
+					(int) Math.ceil(xRate), (int) Math.ceil(yRate));
 		}
 	}
 
