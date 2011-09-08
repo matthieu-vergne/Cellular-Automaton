@@ -10,9 +10,9 @@ import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
 
 public class JAutomatonPanel<T> extends JPanel {
-	private static final int CELL_SIZE = 10;
-	private int height;
-	private int width;
+	public static final int CELL_DEFAULT_SIZE = 10;
+	private final int height;
+	private final int width;
 	/**
 	 * 
 	 */
@@ -33,29 +33,36 @@ public class JAutomatonPanel<T> extends JPanel {
 			CellularRenderer<? super T> renderer) {
 		this.automaton = automaton;
 		this.renderer = renderer;
-		this.width = 0;
-		this.height = 0;
+		int width = 0;
+		int height = 0;
 		for (ICell<?> cell : automaton.getSpace().getAllCells()) {
-			this.width = Math.max(this.width, cell.getCoords().get(0));
-			this.height = Math.max(this.height, cell.getCoords().get(1));
+			width = Math.max(width, cell.getCoords().get(0));
+			height = Math.max(height, cell.getCoords().get(1));
 		}
+		this.width = width;
+		this.height = height;
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		ICell<? extends T> origin = automaton.getSpace().getOrigin();
+		double xRate = (double) getWidth() / width;
+		double yRate = (double) getHeight() / height;
 		for (int y = height - 1; y >= 0; y--) {
 			for (int x = 0; x < width; x++) {
 				T state = origin.getRelativeCell(x, y).getCurrentState();
 				g.setColor(renderer.getColor(state));
-				g.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+				g.fillRect((int) Math.ceil(x * xRate),
+						(int) Math.ceil(y * yRate), (int) Math.ceil(xRate),
+						(int) Math.ceil(yRate));
 			}
 		}
 	}
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(width * CELL_SIZE, height * CELL_SIZE);
+		return new Dimension(Math.min(width * CELL_DEFAULT_SIZE, 500),
+				Math.min(height * CELL_DEFAULT_SIZE, 500));
 	}
 }
