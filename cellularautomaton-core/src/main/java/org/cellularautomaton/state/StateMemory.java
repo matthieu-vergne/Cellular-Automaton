@@ -1,6 +1,8 @@
 package org.cellularautomaton.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A state memory is the memory of a cell. It keeps the previous states of the
@@ -18,7 +20,8 @@ public class StateMemory<StateType> {
 	/**
 	 * The states memorized.
 	 */
-	private final ArrayList<StateType> states = new ArrayList<StateType>();
+	private final List<StateType> states = Collections
+			.synchronizedList(new ArrayList<StateType>());
 
 	/**
 	 * 
@@ -41,10 +44,10 @@ public class StateMemory<StateType> {
 	 *            state
 	 */
 	public void pushNewState(StateType state) {
-		assert state != null;
-
-		states.remove(0);
-		states.add(state);
+		synchronized (states) {
+			states.remove(0);
+			states.add(state);
+		}
 	}
 
 	/**
@@ -53,10 +56,7 @@ public class StateMemory<StateType> {
 	 * @return the asked memorized state
 	 */
 	public StateType getState(int age) {
-		int size = getMemorySize();
-		assert age >= 0 && age < size : "the age must be in [0;" + (size - 1) + "]";
-
-		return states.get(size - age - 1);
+		return states.get(getMemorySize() - age - 1);
 	}
 
 	/**

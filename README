@@ -1,0 +1,7 @@
+This project try to implement a generic framework to easily manage cellular automata. Descriptions of such automata can be found on Wikipedia : 
+http://en.wikipedia.org/wiki/Cellular_automaton
+
+The base of the framework (manage automata) is already done. Now we try to add optimizations, samples and other peripherical improvements. Of course 
+this project is not in an open-source just because of fashion : if anybody want to add specific improvements, he/she is welcome ! {^_^}
+
+If you have some ideas but do not want or cannot develop it by yourself, you can also create an issue. All the issues will be treated {^_°}.
