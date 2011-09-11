@@ -76,6 +76,7 @@ public class CoordsTest {
 	@Test
 	public void testToString() {
 		assertEquals("()", new Coords().toString());
+		assertEquals("(0)", new Coords(0).toString());
 		assertEquals("(1, 2, 3)", new Coords(1, 2, 3).toString());
 	}
 

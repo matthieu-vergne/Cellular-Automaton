@@ -56,7 +56,11 @@ public class SpaceBuilder<StateType> {
 	 * </ul>
 	 */
 	public SpaceBuilder() {
-		cellFactory = new CellFactory<StateType>();
+		cellFactory = new CellFactory<StateType>() {
+			public StateType getInitialState() {
+				return stateFactory.getDefaultState();
+			};
+		};
 		dimensionLengths = new ArrayList<Integer>();
 		isSpaceFinalized = false;
 	}
@@ -325,7 +329,6 @@ public class SpaceBuilder<StateType> {
 	public SpaceBuilder<StateType> setStateFactory(
 			IStateFactory<StateType> stateFactory) {
 		this.stateFactory = stateFactory;
-		cellFactory.setInitialState(stateFactory.getDefaultState());
 		return this;
 	}
 

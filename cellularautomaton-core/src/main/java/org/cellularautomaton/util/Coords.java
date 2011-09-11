@@ -111,7 +111,7 @@ public class Coords implements Comparable<Coords> {
 	}
 
 	/**
-	 * Display the coordinates.
+	 * Display the coordinates Ci in the form (C0,...,Cn).
 	 */
 	@Override
 	public String toString() {
