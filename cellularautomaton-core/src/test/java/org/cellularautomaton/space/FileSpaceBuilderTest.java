@@ -114,7 +114,7 @@ public class FileSpaceBuilderTest {
 		builder.createSpaceFromFile(file);
 		ISpace<Character> space2 = builder.getSpaceOfCell();
 
-		// TODO checks similarity between spaces
+		// checks similarity between spaces
 		Collection<ICell<Character>> cells1 = space1.getAllCells();
 		Collection<ICell<Character>> cells2 = space2.getAllCells();
 		assertEquals(cells1.size(), cells2.size());
