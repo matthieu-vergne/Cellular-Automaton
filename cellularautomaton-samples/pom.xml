@@ -7,10 +7,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.cellularautomaton</groupId>
 	<artifactId>cellularautomaton-samples</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
 	<name>Cellular Automaton</name>
 	<description>Cellular automaton engine.</description>
 	<inceptionYear>2011</inceptionYear>
