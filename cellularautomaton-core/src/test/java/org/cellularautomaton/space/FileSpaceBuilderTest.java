@@ -1,10 +1,6 @@
 package org.cellularautomaton.space;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.cellularautomaton.CellularAutomaton;
@@ -111,14 +108,34 @@ public class FileSpaceBuilderTest {
 		// generate description space
 		FileSpaceBuilder builder = new FileSpaceBuilder();
 		builder.createSpaceFromString(description);
-		ISpace<Character> spaceString = builder.getSpaceOfCell();
+		ISpace<Character> space1 = builder.getSpaceOfCell();
 
 		// generate file space
 		builder.createSpaceFromFile(file);
-		ISpace<Character> spaceFile = builder.getSpaceOfCell();
+		ISpace<Character> space2 = builder.getSpaceOfCell();
 
-		// TODO checks similarity
-		fail("todo");
+		// TODO checks similarity between spaces
+		Collection<ICell<Character>> cells1 = space1.getAllCells();
+		Collection<ICell<Character>> cells2 = space2.getAllCells();
+		assertEquals(cells1.size(), cells2.size());
+		for (ICell<Character> c1 : cells1) {
+			boolean found = false;
+			for (ICell<Character> c2 : cells2) {
+				if (c1.getCoords().equals(c2.getCoords())
+						&& c1.getCurrentState().equals(c2.getCurrentState())
+						&& c1.getMemorySize() == c2.getMemorySize()) {
+					found = true;
+					break;
+				}
+			}
+			assertTrue(c1 + " has not been found", found);
+		}
+
+		ICell<Character> c1 = space1.getOrigin();
+		ICell<Character> c2 = space2.getOrigin();
+		assertEquals(c1.getCoords(), c2.getCoords());
+		assertEquals(c1.getCurrentState(), c2.getCurrentState());
+		assertEquals(c1.getMemorySize(), c2.getMemorySize());
 
 		// delete the config file
 		file.delete();
