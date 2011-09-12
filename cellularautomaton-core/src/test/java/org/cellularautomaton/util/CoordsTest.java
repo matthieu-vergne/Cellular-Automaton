@@ -21,6 +21,12 @@ public class CoordsTest {
 		assertEquals(1, coords.get(0));
 		assertEquals(2, coords.get(1));
 		assertEquals(3, coords.get(2));
+
+		coords = new Coords("(1, 2, 3)");
+		assertEquals(3, coords.getDimensions());
+		assertEquals(1, coords.get(0));
+		assertEquals(2, coords.get(1));
+		assertEquals(3, coords.get(2));
 	}
 
 	@Test

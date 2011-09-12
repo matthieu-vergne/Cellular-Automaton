@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.DynamicRule;
 import org.cellularautomaton.rule.DynamicRule.RulePart;
+import org.cellularautomaton.space.expression.Expression;
+import org.cellularautomaton.space.expression.ExpressionHelper;
 import org.cellularautomaton.state.DynamicStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.util.Coords;
@@ -463,108 +463,32 @@ public class FileSpaceBuilder {
 		return cellsDescription;
 	}
 
-	private void addRule(String line) {
-		// FIXME replace regex by tree to manage parentheses
-		String[] split = line.split(":");
-		final String regexCell = "\\([+-]?\\d+(,[+-]?\\d+)*\\)";
-		String regexTemp = "";
-		for (Character state : builder.getStateFactory().getPossibleStates()) {
-			regexTemp += "|" + Pattern.quote(state.toString());
-		}
-		regexTemp = "(" + regexTemp.substring(1) + ")";
-		final String regexValue = regexTemp;
-		final String regexCellValue = String.format("(%s)?=%s", regexCell,
-				regexValue);
-		final String regexCondition = String.format("%s([&|]%s)*",
-				regexCellValue, regexCellValue);
+	private void addRule(String rulePart) {
+		String[] split = rulePart.split(":");
+		List<Character> possibleStates = builder.getStateFactory()
+				.getPossibleStates();
 
 		// get the condition
-		String condition = split[0];
-		condition = condition.replaceAll("\\s", "");
-		if (!condition.matches(regexCondition)) {
-			throw new BadFileContentException(condition
-					+ " is not a well-written condition.");
-		}
-		final String script = condition;
+		final Expression expression = ExpressionHelper.parseRulePart(split[0],
+				possibleStates);
 
 		// get the state
-		final String value = split[1].trim();
-		if (!value.matches("^" + regexValue + "$")) {
-			throw new BadFileContentException(value + " is not a known state.");
+		String value = split[1].trim();
+		if (value.length() > 1) {
+			throw new BadFileContentException(
+					"Several values are defined for the rule : " + rulePart);
 		}
 		final Character assignedState = value.charAt(0);
+		if (!possibleStates.contains(assignedState)) {
+			throw new BadFileContentException(value + " is not a known state.");
+		}
 
 		// complete rule
 		rule.addPart(new RulePart<Character>() {
 			@Override
 			public boolean isVerifiedBy(ICell<Character> cell) {
-				String localRelativeCoords = cell.getCoords().toString()
-						.replaceAll("\\d+", "0");
-				String condition = script.replaceAll("([^)]|^)=", "$1"
-						+ localRelativeCoords + "=");
-
-				// replace cell's coords by cell's values
-				logger.info("=====STARTING=====");
-				logger.info(condition);
-				Matcher matcher = Pattern.compile(regexCell).matcher(condition);
-				while (matcher.find()) {
-					String relativeCoords = matcher.group();
-					String[] split2 = relativeCoords.substring(1,
-							relativeCoords.length() - 1).split(",");
-					int[] coords = new int[split2.length];
-					for (int i = 0; i < coords.length; i++) {
-						coords[i] = Integer.parseInt(split2[i].replace("+", ""));
-					}
-					Character state = cell.getRelativeCell(coords)
-							.getCurrentState();
-					condition = condition.replaceAll(
-							Pattern.quote(relativeCoords), "" + state);
-					logger.info(condition);
-				}
-
-				// replace comparisons by boolean
-				final String regexValueValue = regexValue + "=" + regexValue;
-				matcher = Pattern.compile(regexValueValue).matcher(condition);
-				while (matcher.find()) {
-					String expression = matcher.group();
-					String[] split2 = expression.split("=");
-					boolean verified = split2[0].equals(split2[1]);
-					condition = condition.replaceAll(expression, "" + verified);
-					logger.info(condition);
-				}
-
-				// reduce expression
-				final String regexBoolean = "(true|false)";
-				final String regexAnd = String.format("%s&%s", regexBoolean,
-						regexBoolean);
-				final String regexOr = String.format("%s\\|%s", regexBoolean,
-						regexBoolean);
-				while (!condition.matches(regexBoolean)) {
-					condition = condition.replaceAll("\\(true\\)", "true");
-					condition = condition.replaceAll("\\(false\\)", "false");
-
-					if (condition.matches(".*" + regexAnd + ".*")) {
-						condition = condition.replaceAll("true&true", "true");
-						condition = condition.replaceAll("true&false", "false");
-						condition = condition.replaceAll("false&true", "false");
-						condition = condition
-								.replaceAll("false&false", "false");
-					} else if (condition.matches(".*" + regexOr + ".*")) {
-						condition = condition.replaceAll("true\\|true", "true");
-						condition = condition
-								.replaceAll("true\\|false", "true");
-						condition = condition
-								.replaceAll("false\\|true", "true");
-						condition = condition.replaceAll("false\\|false",
-								"false");
-					}
-
-					logger.info(condition);
-				}
-
-				boolean result = Boolean.parseBoolean(condition);
-				logger.info("=====END(" + result + ")=====");
-				return result;
+				ExpressionHelper.setExpressionForOriginCell(expression, cell);
+				return expression.evaluate();
 			}
 
 			@Override
@@ -625,4 +549,5 @@ public class FileSpaceBuilder {
 	public void setLogLevel(Level level) {
 		logger.setLevel(level);
 	}
+
 }

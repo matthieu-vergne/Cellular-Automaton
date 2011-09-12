@@ -9,6 +9,7 @@ import java.util.Arrays;
  * 
  */
 public class Coords implements Comparable<Coords> {
+	
 	/**
 	 * The coordinates themselves.
 	 */
@@ -30,6 +31,31 @@ public class Coords implements Comparable<Coords> {
 	public Coords(int... coords) {
 		this();
 		setAll(coords);
+	}
+
+	/**
+	 * Create a new coordinates regarding the given string. This string must
+	 * have the same format than {@link #toString()}.
+	 * 
+	 * @param string
+	 *            the string representing the coordinates
+	 */
+	public Coords(final String string) {
+		String buffer = string.replaceAll("\\s", "");
+		final String regexDim = "[+-]?\\d+";
+		final String regexCoords = String.format("\\(%s(,%s)*\\)", regexDim, regexDim);
+		if (!buffer.matches(regexCoords)) {
+			throw new IllegalArgumentException(
+					"The coords string is not well-written : " + string);
+		}
+		else {
+			String[] split = buffer.substring(1, buffer.length()-1).split(",");
+			int[] coords = new int[split.length];
+			for (int i = 0; i < split.length; i++) {
+				coords[i] = Integer.parseInt(split[i].replace("+", ""));
+			}
+			setAll(coords);
+		}
 	}
 
 	/**
@@ -111,7 +137,7 @@ public class Coords implements Comparable<Coords> {
 	}
 
 	/**
-	 * Display the coordinates Ci in the form (C0,...,Cn).
+	 * Display the coordinates Ci in the form (C0, ..., Cn).
 	 */
 	@Override
 	public String toString() {
