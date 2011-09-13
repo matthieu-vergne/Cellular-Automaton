@@ -13,7 +13,6 @@ public abstract class ComposedExpressionTest {
 			
 			@Override
 			public boolean evaluate() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		};
