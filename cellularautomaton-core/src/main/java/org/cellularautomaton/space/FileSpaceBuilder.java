@@ -172,14 +172,43 @@ public class FileSpaceBuilder {
 	}
 
 	class Executor {
+		class Candidate {
+			public Separator separator = null;
+			public int matrixLength = 0;
+			public boolean isFollowingX = false;
+		}
+
+		private final Comparator<Candidate> CANDIDATE_COMPARATOR = new Comparator<Candidate>() {
+			public int compare(Candidate c1, Candidate c2) {
+				Integer v1 = Integer.valueOf(c1.separator.dimension);
+				Integer v2 = Integer.valueOf(c2.separator.dimension);
+				return v2.compareTo(v1);
+			};
+		};
+
 		public boolean isFollowingX = true;
 		public int xStart;
 		public int yStart;
 		public int xLength;
 		public int yLength;
-		public int stepLength = 0;
+		public int matrixLength = 0;
 		public Marker[][] description;
 		public int separatorLength;
+
+		public int getLengthOfTheGoodAxis() {
+			return isFollowingX ? xLength : yLength;
+		}
+
+		private int getStartOfTheGoodAxis() {
+			return isFollowingX ? xStart : yStart;
+		}
+
+		private int[] getCoordsFollowingTheGoodAxis(int delta) {
+			int[] coords = new int[] { xStart, yStart };
+			int index = isFollowingX ? 0 : 1;
+			coords[index] += delta;
+			return coords;
+		}
 
 		public Object[] executeFinalCase() {
 			if (yLength == 1) {
@@ -190,50 +219,13 @@ public class FileSpaceBuilder {
 				throw new IllegalStateException(
 						"The final case cannot be executed if xLength and yLength are both > 1.");
 			}
-			Character[] array = new Character[getLength()];
-			for (int i = 0; i < getLength(); i++) {
+			Character[] array = new Character[getLengthOfTheGoodAxis()];
+			for (int i = 0; i < getLengthOfTheGoodAxis(); i++) {
 				int[] coords = getCoordsFollowingTheGoodAxis(i);
 				Marker marker = description[coords[0]][coords[1]];
 				array[i] = marker.character;
 			}
 			return array;
-		}
-
-		private Object[] translateSubmatrix() {
-			List<Object[]> subtranslations = new ArrayList<Object[]>();
-			for (int i = 0; i < getLength(); i += stepLength + separatorLength) {
-				int[] coords = getCoordsFollowingTheGoodAxis(i);
-				int lengthX = xLength;
-				int lengthY = yLength;
-				if (isFollowingX) {
-					lengthX = stepLength;
-				} else {
-					lengthY = stepLength;
-				}
-				subtranslations.add(recursiveArrayBuilding(description,
-						coords[0], coords[1], lengthX, lengthY));
-			}
-			return subtranslations.toArray(new Object[subtranslations.size()]);
-		}
-
-		private int[] getCoordsFollowingTheGoodAxis(int i) {
-			int[] coords = new int[] { xStart, yStart };
-			if (isFollowingX) {
-				coords[0] += i;
-			} else {
-				coords[1] += i;
-			}
-			return coords;
-		}
-
-		public int getLength() {
-			return isFollowingX ? xLength : yLength;
-		}
-
-		class Candidate {
-			public Separator separator = null;
-			public int stepLength = 0;
-			public boolean isFollowingX = false;
 		}
 
 		public Object[] executeIntermediaryCase() {
@@ -244,25 +236,22 @@ public class FileSpaceBuilder {
 			isFollowingX = false;
 			lookForSeparatorsFollowingTheGoodAxis(candidates);
 
+			// if there is not, add the biggest implicit separator (first
+			// dimensions)
 			if (candidates.isEmpty()) {
-				// add the biggest implicit separator (first dimensions)
 				Candidate implicitCandidate = new Candidate();
 				candidates.add(implicitCandidate);
 				implicitCandidate.isFollowingX = height > 1;
-				implicitCandidate.stepLength = 1;
+				implicitCandidate.matrixLength = 1;
 			}
-
-			// sort the separators
-			Collections.sort(candidates, new Comparator<Candidate>() {
-				public int compare(Candidate c1, Candidate c2) {
-					return -Integer.valueOf(c1.separator.dimension).compareTo(
-							Integer.valueOf(c2.separator.dimension));
-				};
-			});
+			// otherwise, sort the separators
+			else {
+				Collections.sort(candidates, CANDIDATE_COMPARATOR);
+			}
 
 			// take the data of the best candidate
 			Candidate bestCandidate = candidates.get(0);
-			stepLength = bestCandidate.stepLength;
+			matrixLength = bestCandidate.matrixLength;
 			isFollowingX = bestCandidate.isFollowingX;
 			separatorLength = bestCandidate.separator == null ? 0 : 1;
 
@@ -272,18 +261,35 @@ public class FileSpaceBuilder {
 
 		private void lookForSeparatorsFollowingTheGoodAxis(
 				final List<Candidate> candidates) {
-			for (int i = 0; i < getLength(); i++) {
+			for (int i = 0; i < getLengthOfTheGoodAxis(); i++) {
 				int[] coords = getCoordsFollowingTheGoodAxis(i);
 				Marker marker = description[coords[0]][coords[1]];
 				if (marker instanceof Separator) {
-					int start = isFollowingX ? xStart : yStart;
 					Candidate candidate = new Candidate();
 					candidate.separator = (Separator) marker;
 					candidate.isFollowingX = isFollowingX;
-					candidate.stepLength = i - start;
+					candidate.matrixLength = i - getStartOfTheGoodAxis();
 					candidates.add(candidate);
 				}
 			}
+		}
+
+		private Object[] translateSubmatrix() {
+			List<Object[]> subtranslations = new ArrayList<Object[]>();
+			int step = matrixLength + separatorLength;
+			for (int i = 0; i < getLengthOfTheGoodAxis(); i += step) {
+				int[] coords = getCoordsFollowingTheGoodAxis(i);
+				int lengthX = xLength;
+				int lengthY = yLength;
+				if (isFollowingX) {
+					lengthX = matrixLength;
+				} else {
+					lengthY = matrixLength;
+				}
+				subtranslations.add(recursiveArrayBuilding(description,
+						coords[0], coords[1], lengthX, lengthY));
+			}
+			return subtranslations.toArray(new Object[subtranslations.size()]);
 		}
 
 	}
