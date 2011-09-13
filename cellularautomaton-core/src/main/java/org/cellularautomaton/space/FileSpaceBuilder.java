@@ -172,6 +172,7 @@ public class FileSpaceBuilder {
 	private Object[] recursiveArrayBuilding(Marker[][] description, int xStart,
 			int yStart, int xLength, int yLength) {
 		Object[] array;
+		// TODO factorize
 		// final case : row
 		if (xLength == 1) {
 			array = new Character[yLength];
@@ -191,6 +192,7 @@ public class FileSpaceBuilder {
 			// look for the biggest dimension in the managed matrix
 			Separator reference = null;
 			int length = 0;
+			int separatorLength = 1;
 			boolean horizontalCut = false;
 			for (int x = xStart; x < xStart + xLength; x++) {
 				Marker marker = description[x][yStart];
@@ -213,17 +215,18 @@ public class FileSpaceBuilder {
 			if (reference == null) {
 				horizontalCut = height > 1;
 				length = 1;
+				separatorLength = 0;
 			}
 
 			// translate the submatrix
 			List<Object[]> subtranslations = new ArrayList<Object[]>();
 			if (horizontalCut) {
-				for (int x = xStart; x < xStart + xLength; x += length) {
+				for (int x = xStart; x < xStart + xLength; x += length + separatorLength) {
 					subtranslations.add(recursiveArrayBuilding(description, x,
 							yStart, length, yLength));
 				}
 			} else {
-				for (int y = yStart; y < yStart + yLength; y += length + 1) {
+				for (int y = yStart; y < yStart + yLength; y += length + separatorLength) {
 					subtranslations.add(recursiveArrayBuilding(description,
 							xStart, y, xLength, length));
 				}
@@ -240,6 +243,7 @@ public class FileSpaceBuilder {
 
 	private void checkDimensionsAreConstantKnowingTheyAreRegular(
 			Marker[][] description) {
+		// TODO factorize
 		// vertical check
 		Collection<Separator> checked = new HashSet<Separator>();
 		for (int x = 0; x < height; x++) {
@@ -255,11 +259,11 @@ public class FileSpaceBuilder {
 							&& ((m = description[x2][0]) instanceof Cell || ((Separator) m).dimension < separator.dimension)) {
 						x2++;
 					}
-					if (x2 - x1 != length) {
+					if (x2 - x1 - 1 != length) {
 						throw new BadFileContentException(
 								"the horizontal separator "
 										+ separator.character
-										+ " is does not give a constant dimension ("
+										+ " does not give a constant dimension ("
 										+ length + " & " + (x2 - x1) + ").");
 					}
 					x1 = x2;
@@ -314,7 +318,7 @@ public class FileSpaceBuilder {
 
 					if (!consistent) {
 						consistent = true;
-						for (int y2 = 0; y2 < height; y2++) {
+						for (int y2 = 0; y2 < width; y2++) {
 							Marker marker2 = description[x][y2];
 							if (marker2 instanceof Cell
 									|| ((Separator) marker).dimension > ((Separator) marker2).dimension) {
@@ -533,13 +537,14 @@ public class FileSpaceBuilder {
 
 	private static class Marker {
 		public Character character;
-	}
 
-	private static class Cell extends Marker {
 		@Override
 		public String toString() {
 			return character.toString();
 		}
+	}
+
+	private static class Cell extends Marker {
 	}
 
 	private static class Separator extends Marker {

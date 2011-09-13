@@ -100,11 +100,19 @@ public class SpaceBuilder<StateType> {
 	}
 
 	/**
+	 * <p>
 	 * This method allows to add a dimension and to fill it with cells. The
 	 * length of the dimension indicate the number of cells on this dimension.
 	 * The coordinates of these cells go from 0 to <code>length - 1</code> on
 	 * the new dimension. When no more dimensions (and cells) are needed, you
 	 * can finalize and get the space.
+	 * </p>
+	 * <p>
+	 * As creating a new dimension with <code>length = 1</code> implies
+	 * (theoretically) to just add a coordinate which will stay constant (no
+	 * cell adding), there is no meaning to create such a dimension. Because of
+	 * that, this case is not managed, so an exception is thrown if it occurs.
+	 * </p>
 	 * 
 	 * @param length
 	 *            the number of cells to put in this dimension
@@ -114,10 +122,20 @@ public class SpaceBuilder<StateType> {
 	 * @return this builder
 	 * @throws IllegalStateException
 	 *             if the space is already finalized
+	 * @throws IllegalArgumentException
+	 *             if length < 2 (no meaning to create a new dimension)
 	 * @see #finalizeSpace()
 	 * @see #getSpaceOfCell()
 	 */
 	public SpaceBuilder<StateType> addDimension(int length, boolean cyclic) {
+		if (length < 2) {
+			throw new IllegalArgumentException(
+					"The given length is "
+							+ length
+							+ " for the new dimension "
+							+ dimensionLengths.size()
+							+ ", there is no meaning creating a new dimension for a length < 2.");
+		}
 		if (isSpaceFinalized()) {
 			throw new IllegalStateException("the space is already finalized");
 		}
@@ -239,7 +257,7 @@ public class SpaceBuilder<StateType> {
 		if (space == null) {
 			throw new IllegalStateException("No space has been created yet.");
 		}
-		
+
 		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
 				.hasNext();) {
 			ICell<StateType> cell = iterator.next();

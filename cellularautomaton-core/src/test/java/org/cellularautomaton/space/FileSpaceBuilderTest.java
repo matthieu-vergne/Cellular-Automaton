@@ -18,9 +18,7 @@ import org.junit.Test;
 
 // TODO test 4D
 // TODO test 5D
-// TODO test composed rule (several cells)
-//TODO test complex rule (parentheses)
-//TODO test composed rule in non cyclic space
+// TODO test composed rule in non cyclic space
 public class FileSpaceBuilderTest {
 	@Test
 	public void testStates() throws IOException {
@@ -346,7 +344,7 @@ public class FileSpaceBuilderTest {
 	}
 
 	@Test
-	public void testCyclicSpace3D() throws IOException {
+	public void testCyclicSpace3DHorizontal() throws IOException {
 		// create description
 		String description;
 		{
@@ -361,6 +359,32 @@ public class FileSpaceBuilderTest {
 			description = sw.getBuffer().toString();
 		}
 
+		testCyclicSpace3D(description);
+	}
+
+	@Test
+	public void testCyclicSpace3DVertical() throws IOException {
+		// create description
+		String description;
+		{
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			pw.println("[config]");
+			pw.println("states=X-");
+			pw.println("[cells]");
+			pw.println("--");
+			pw.println("-X");
+			pw.println("++");
+			pw.println("--");
+			pw.println("--");
+			pw.close();
+			description = sw.getBuffer().toString();
+		}
+
+		testCyclicSpace3D(description);
+	}
+
+	private void testCyclicSpace3D(String description) {
 		// generate space
 		FileSpaceBuilder builder = new FileSpaceBuilder();
 		builder.createSpaceFromString(description);
