@@ -321,58 +321,40 @@ public class FileSpaceBuilder {
 
 	private void checkDimensionsAreConstantKnowingTheyAreRegular(
 			Marker[][] description) {
-		// TODO factorize
-		// vertical check
-		Collection<Separator> checked = new HashSet<Separator>();
-		for (int x = 0; x < height; x++) {
-			Marker marker = description[x][0];
-			if (marker instanceof Separator && !checked.contains(marker)) {
-				Separator separator = (Separator) marker;
-				int length = x;
-				int x1 = x;
-				while (x1 < height) {
-					int x2 = x1 + 1;
-					Marker m = null;
-					while (x2 < height
-							&& ((m = description[x2][0]) instanceof Cell || ((Separator) m).dimension < separator.dimension)) {
-						x2++;
-					}
-					if (x2 - x1 - 1 != length) {
-						throw new BadFileContentException(
-								"the horizontal separator "
-										+ separator.character
-										+ " does not give a constant dimension ("
-										+ length + " & " + (x2 - x1) + ").");
-					}
-					x1 = x2;
-				}
-				checked.add(separator);
-			}
-		}
+		checkOneDirectionDimensionsAreConstantKnowingTheyAreRegular(
+				description, true);
+		checkOneDirectionDimensionsAreConstantKnowingTheyAreRegular(
+				description, false);
+	}
 
-		// horizontal check
-		checked.clear();
-		for (int y = 0; y < width; y++) {
-			Marker marker = description[0][y];
+	private void checkOneDirectionDimensionsAreConstantKnowingTheyAreRegular(
+			Marker[][] description, boolean isFollowingX) {
+		int length = isFollowingX ? height : width;
+		Collection<Separator> checked = new HashSet<Separator>();
+		for (int i = 0; i < length; i++) {
+			int[] coords = new int[] { 0, 0 };
+			coords[isFollowingX ? 0 : 1] = i;
+			Marker marker = description[coords[0]][coords[1]];
 			if (marker instanceof Separator && !checked.contains(marker)) {
 				Separator separator = (Separator) marker;
-				int length = y;
-				int y1 = y;
-				while (y1 < width) {
-					int y2 = y1 + 1;
+				int i1 = i;
+				while (i1 < length) {
+					int i2 = i1 + 1;
 					Marker m = null;
-					while (y2 < width
-							&& ((m = description[0][y2]) instanceof Cell || ((Separator) m).dimension < separator.dimension)) {
-						y2++;
+					int[] coords2 = new int[] { 0, 0 };
+					coords2[isFollowingX ? 0 : 1] = i2;
+					while (i2 < length
+							&& ((m = description[coords2[0]][coords2[1]]) instanceof Cell || ((Separator) m).dimension < separator.dimension)) {
+						i2++;
 					}
-					if (y2 - y1 - 1 != length) {
-						throw new BadFileContentException(
-								"the vertical separator "
-										+ separator.character
-										+ " does not give a constant dimension ("
-										+ length + " & " + (y2 - y1) + ").");
+					if (i2 - i1 - 1 != i) {
+						String sense = isFollowingX ? "horizontal" : "vertical";
+						throw new BadFileContentException("the " + sense
+								+ " separator " + separator.character
+								+ " does not give a constant dimension (" + i
+								+ " & " + (i2 - i1) + ").");
 					}
-					y1 = y2;
+					i1 = i2;
 				}
 				checked.add(separator);
 			}
