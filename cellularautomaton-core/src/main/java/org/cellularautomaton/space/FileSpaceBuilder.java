@@ -331,8 +331,9 @@ public class FileSpaceBuilder {
 			Marker[][] description, boolean isFollowingX) {
 		int length = isFollowingX ? height : width;
 		Collection<Separator> checked = new HashSet<Separator>();
+		int[] coords = new int[] { 0, 0 };
+		int[] coords2 = new int[] { 0, 0 };
 		for (int i = 0; i < length; i++) {
-			int[] coords = new int[] { 0, 0 };
 			coords[isFollowingX ? 0 : 1] = i;
 			Marker marker = description[coords[0]][coords[1]];
 			if (marker instanceof Separator && !checked.contains(marker)) {
@@ -341,7 +342,6 @@ public class FileSpaceBuilder {
 				while (i1 < length) {
 					int i2 = i1 + 1;
 					Marker m = null;
-					int[] coords2 = new int[] { 0, 0 };
 					coords2[isFollowingX ? 0 : 1] = i2;
 					while (i2 < length
 							&& ((m = description[coords2[0]][coords2[1]]) instanceof Cell || ((Separator) m).dimension < separator.dimension)) {
@@ -366,29 +366,10 @@ public class FileSpaceBuilder {
 			for (int y = 0; y < width; y++) {
 				Marker marker = description[x][y];
 				if (marker instanceof Separator) {
-					boolean consistent = true;
-					for (int x2 = 0; x2 < height; x2++) {
-						Marker marker2 = description[x2][y];
-						if (marker2 instanceof Cell
-								|| ((Separator) marker).dimension > ((Separator) marker2).dimension) {
-							consistent = false;
-							break;
-						}
-					}
-
-					if (!consistent) {
-						consistent = true;
-						for (int y2 = 0; y2 < width; y2++) {
-							Marker marker2 = description[x][y2];
-							if (marker2 instanceof Cell
-									|| ((Separator) marker).dimension > ((Separator) marker2).dimension) {
-								consistent = false;
-								break;
-							}
-						}
-					}
-
-					if (!consistent) {
+					Separator separator = (Separator) marker;
+					if (!isSeparatorConsistent(description, separator, y, true)
+							&& !isSeparatorConsistent(description, separator,
+									x, false)) {
 						throw new BadFileContentException(
 								"the character "
 										+ marker.character
@@ -401,6 +382,21 @@ public class FileSpaceBuilder {
 				}
 			}
 		}
+	}
+
+	private boolean isSeparatorConsistent(Marker[][] description,
+			Separator separator, int index, boolean isFollowingX) {
+		int length = isFollowingX ? height : width;
+		int[] coords = new int[] { index, index };
+		for (int i = 0; i < length; i++) {
+			coords[isFollowingX ? 0 : 1] = i;
+			Marker marker2 = description[coords[0]][coords[1]];
+			if (marker2 instanceof Cell
+					|| separator.dimension > ((Separator) marker2).dimension) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void preciseSeparators(Marker[][] description) {
