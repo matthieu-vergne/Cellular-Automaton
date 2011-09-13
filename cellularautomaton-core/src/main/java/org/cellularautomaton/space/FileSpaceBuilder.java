@@ -9,6 +9,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -169,69 +171,139 @@ public class FileSpaceBuilder {
 		return recursiveArrayBuilding(description, 0, 0, height, width);
 	}
 
+	class Executor {
+		public boolean isFollowingX = true;
+		public int xStart;
+		public int yStart;
+		public int xLength;
+		public int yLength;
+		public int stepLength = 0;
+		public Marker[][] description;
+		public int separatorLength;
+
+		public Object[] executeFinalCase() {
+			if (yLength == 1) {
+				isFollowingX = true;
+			} else if (xLength == 1) {
+				isFollowingX = false;
+			} else {
+				throw new IllegalStateException(
+						"The final case cannot be executed if xLength and yLength are both > 1.");
+			}
+			Character[] array = new Character[getLength()];
+			for (int i = 0; i < getLength(); i++) {
+				int[] coords = getCoordsFollowingTheGoodAxis(i);
+				Marker marker = description[coords[0]][coords[1]];
+				array[i] = marker.character;
+			}
+			return array;
+		}
+
+		private Object[] translateSubmatrix() {
+			List<Object[]> subtranslations = new ArrayList<Object[]>();
+			for (int i = 0; i < getLength(); i += stepLength + separatorLength) {
+				int[] coords = getCoordsFollowingTheGoodAxis(i);
+				int lengthX = xLength;
+				int lengthY = yLength;
+				if (isFollowingX) {
+					lengthX = stepLength;
+				} else {
+					lengthY = stepLength;
+				}
+				subtranslations.add(recursiveArrayBuilding(description,
+						coords[0], coords[1], lengthX, lengthY));
+			}
+			return subtranslations.toArray(new Object[subtranslations.size()]);
+		}
+
+		private int[] getCoordsFollowingTheGoodAxis(int i) {
+			int[] coords = new int[] { xStart, yStart };
+			if (isFollowingX) {
+				coords[0] += i;
+			} else {
+				coords[1] += i;
+			}
+			return coords;
+		}
+
+		public int getLength() {
+			return isFollowingX ? xLength : yLength;
+		}
+
+		class Candidate {
+			public Separator separator = null;
+			public int stepLength = 0;
+			public boolean isFollowingX = false;
+		}
+
+		public Object[] executeIntermediaryCase() {
+			// look for the available explicit separators
+			final List<Candidate> candidates = new ArrayList<Candidate>();
+			isFollowingX = true;
+			lookForSeparatorsFollowingTheGoodAxis(candidates);
+			isFollowingX = false;
+			lookForSeparatorsFollowingTheGoodAxis(candidates);
+
+			if (candidates.isEmpty()) {
+				// add the biggest implicit separator (first dimensions)
+				Candidate implicitCandidate = new Candidate();
+				candidates.add(implicitCandidate);
+				implicitCandidate.isFollowingX = height > 1;
+				implicitCandidate.stepLength = 1;
+			}
+
+			// sort the separators
+			Collections.sort(candidates, new Comparator<Candidate>() {
+				public int compare(Candidate c1, Candidate c2) {
+					return -Integer.valueOf(c1.separator.dimension).compareTo(
+							Integer.valueOf(c2.separator.dimension));
+				};
+			});
+
+			// take the data of the best candidate
+			Candidate bestCandidate = candidates.get(0);
+			stepLength = bestCandidate.stepLength;
+			isFollowingX = bestCandidate.isFollowingX;
+			separatorLength = bestCandidate.separator == null ? 0 : 1;
+
+			// execute the translation
+			return translateSubmatrix();
+		}
+
+		private void lookForSeparatorsFollowingTheGoodAxis(
+				final List<Candidate> candidates) {
+			for (int i = 0; i < getLength(); i++) {
+				int[] coords = getCoordsFollowingTheGoodAxis(i);
+				Marker marker = description[coords[0]][coords[1]];
+				if (marker instanceof Separator) {
+					int start = isFollowingX ? xStart : yStart;
+					Candidate candidate = new Candidate();
+					candidate.separator = (Separator) marker;
+					candidate.isFollowingX = isFollowingX;
+					candidate.stepLength = i - start;
+					candidates.add(candidate);
+				}
+			}
+		}
+
+	}
+
 	private Object[] recursiveArrayBuilding(Marker[][] description, int xStart,
 			int yStart, int xLength, int yLength) {
 		Object[] array;
-		// TODO factorize
-		// final case : row
-		if (xLength == 1) {
-			array = new Character[yLength];
-			for (int y = 0; y < yLength; y++) {
-				array[y] = description[xStart][yStart + y].character;
-			}
+		Executor executor = new Executor();
+		executor.description = description;
+		executor.xStart = xStart;
+		executor.yStart = yStart;
+		executor.xLength = xLength;
+		executor.yLength = yLength;
+		// final case : row or column (1D)
+		if (xLength == 1 || yLength == 1) {
+			array = executor.executeFinalCase();
 		}
-		// final case : column
-		else if (yLength == 1) {
-			array = new Character[xLength];
-			for (int x = 0; x < xLength; x++) {
-				array[x] = description[xStart + x][yStart].character;
-			}
-		}
-		// intermediary case
+		// intermediary case : matrix (2D)
 		else {
-			// look for the biggest dimension in the managed matrix
-			Separator reference = null;
-			int length = 0;
-			int separatorLength = 1;
-			boolean horizontalCut = false;
-			for (int x = xStart; x < xStart + xLength; x++) {
-				Marker marker = description[x][yStart];
-				if (marker instanceof Separator
-						&& (reference == null || ((Separator) marker).dimension > reference.dimension)) {
-					reference = (Separator) marker;
-					horizontalCut = true;
-					length = x - xStart;
-				}
-			}
-			for (int y = yStart; y < yStart + yLength; y++) {
-				Marker marker = description[xStart][y];
-				if (marker instanceof Separator
-						&& (reference == null || ((Separator) marker).dimension > reference.dimension)) {
-					reference = (Separator) marker;
-					horizontalCut = false;
-					length = y - yStart;
-				}
-			}
-			if (reference == null) {
-				horizontalCut = height > 1;
-				length = 1;
-				separatorLength = 0;
-			}
-
-			// translate the submatrix
-			List<Object[]> subtranslations = new ArrayList<Object[]>();
-			if (horizontalCut) {
-				for (int x = xStart; x < xStart + xLength; x += length + separatorLength) {
-					subtranslations.add(recursiveArrayBuilding(description, x,
-							yStart, length, yLength));
-				}
-			} else {
-				for (int y = yStart; y < yStart + yLength; y += length + separatorLength) {
-					subtranslations.add(recursiveArrayBuilding(description,
-							xStart, y, xLength, length));
-				}
-			}
-			array = subtranslations.toArray(new Object[subtranslations.size()]);
+			array = executor.executeIntermediaryCase();
 		}
 		return array;
 	}
