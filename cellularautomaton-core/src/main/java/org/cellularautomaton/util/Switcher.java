@@ -30,31 +30,53 @@ public class Switcher<Component> {
 	/**
 	 * Add a component to this switcher. This component is added at the end of
 	 * the list of the switcher, so it will be placed just after the last added
-	 * element.
+	 * element. There is no unicity check, so you can add several time the same
+	 * component.
 	 * 
 	 * @param component
 	 *            the component to manage
 	 */
-	public void addComponent(Component component) {
+	public void add(Component component) {
 		components.add(component);
 	}
 
 	/**
-	 * Remove a component registered to this switcher. If the component is not
-	 * registered, nothing happen.
+	 * Remove the next given component registered to this switcher. If the
+	 * component is not registered, nothing happen.
 	 * 
 	 * @param component
 	 *            the component to remove
 	 */
-	public void removeComponent(Component component) {
-		components.remove(component);
+	public void remove(Component component) {
+		if (components.contains(component)) {
+			int lastIndex = index;
+			while (!get().equals(component)) {
+				switchComponent();
+			}
+			components.remove(index);
+			if (index < lastIndex) {
+				lastIndex--;
+			}
+			index = lastIndex;
+			index --;
+			switchComponent();
+		}
+	}
+
+	/**
+	 * 
+	 * @return true it no component is registered in this switcher, false
+	 *         otherwise.
+	 */
+	public boolean isEmpty() {
+		return components.isEmpty();
 	}
 
 	/**
 	 * 
 	 * @return the currently managed component
 	 */
-	public Component getComponent() {
+	public Component get() {
 		return components.get(index);
 	}
 
@@ -62,27 +84,32 @@ public class Switcher<Component> {
 	 * Pass to the next component to manage.
 	 */
 	public void switchComponent() {
-		index++;
-		index %= components.size();
+		if (components.isEmpty()) {
+			index = 0;
+		}
+		else {
+			index++;
+			index %= components.size();
+		}
 	}
 
 	/**
 	 * This method is a convenient way to use the switcher like the iterator. It
 	 * is equivalent to use {@link #switchComponent()} followed by
-	 * {@link #getComponent()}.
+	 * {@link #get()}.
 	 * 
 	 * @return the next component of the switcher
 	 */
 	public Component next() {
 		switchComponent();
-		return getComponent();
+		return get();
 	}
 
 	/**
 	 * 
 	 * @return all the components registered to this switcher
 	 */
-	public List<Component> getAllComponents() {
+	public List<Component> getAll() {
 		return new ArrayList<Component>(components);
 	}
 }
