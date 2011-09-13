@@ -27,6 +27,7 @@ import org.cellularautomaton.space.expression.ExpressionHelper;
 import org.cellularautomaton.state.DynamicStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.util.Coords;
+import org.cellularautomaton.util.Switcher;
 
 /**
  * A file space builder allows to create a space from a description file.
@@ -331,10 +332,8 @@ public class FileSpaceBuilder {
 			Marker[][] description, boolean isFollowingX) {
 		int length = isFollowingX ? height : width;
 		Collection<Separator> checked = new HashSet<Separator>();
-		int[] coords = new int[] { 0, 0 };
-		int[] coords2 = new int[] { 0, 0 };
 		for (int i = 0; i < length; i++) {
-			coords[isFollowingX ? 0 : 1] = i;
+			int[] coords = getCoords(isFollowingX, 0, i);
 			Marker marker = description[coords[0]][coords[1]];
 			if (marker instanceof Separator && !checked.contains(marker)) {
 				Separator separator = (Separator) marker;
@@ -342,7 +341,7 @@ public class FileSpaceBuilder {
 				while (i1 < length) {
 					int i2 = i1 + 1;
 					Marker m = null;
-					coords2[isFollowingX ? 0 : 1] = i2;
+					int[] coords2 = getCoords(isFollowingX, 0, i2);
 					while (i2 < length
 							&& ((m = description[coords2[0]][coords2[1]]) instanceof Cell || ((Separator) m).dimension < separator.dimension)) {
 						i2++;
@@ -359,6 +358,12 @@ public class FileSpaceBuilder {
 				checked.add(separator);
 			}
 		}
+	}
+
+	private int[] getCoords(boolean isFollowingX, int staticValue, int dynamicValue) {
+		int[] coords = new int[] { staticValue, staticValue };
+		coords[isFollowingX ? 0 : 1] = dynamicValue;
+		return coords;
 	}
 
 	private void checkDimensionsAreRegular(Marker[][] description) {
@@ -387,9 +392,8 @@ public class FileSpaceBuilder {
 	private boolean isSeparatorConsistent(Marker[][] description,
 			Separator separator, int index, boolean isFollowingX) {
 		int length = isFollowingX ? height : width;
-		int[] coords = new int[] { index, index };
 		for (int i = 0; i < length; i++) {
-			coords[isFollowingX ? 0 : 1] = i;
+			int[] coords = getCoords(isFollowingX, index, i);
 			Marker marker2 = description[coords[0]][coords[1]];
 			if (marker2 instanceof Cell
 					|| separator.dimension > ((Separator) marker2).dimension) {
@@ -400,61 +404,28 @@ public class FileSpaceBuilder {
 	}
 
 	private void preciseSeparators(Marker[][] description) {
-		// get horizontal separators
-		final Map<Character, Separator> horizontalSeparators = new LinkedHashMap<Character, Separator>();
-		if (width > 1 && description[0][1] instanceof Cell) {
-			horizontalSeparators.put(null, new Separator());
-		}
-		for (int y = 0; y < width; y++) {
-			Marker marker = description[0][y];
-			Character character = marker.character;
-			if (marker instanceof Separator
-					&& !horizontalSeparators.containsKey(character)) {
-				Separator separator = new Separator();
-				separator.character = character;
-				horizontalSeparators.put(character, separator);
-			}
-		}
-
-		// get vertical separators
-		final Map<Character, Separator> verticalSeparators = new LinkedHashMap<Character, Separator>();
-		if (height > 1 && description[1][0] instanceof Cell) {
-			verticalSeparators.put(null, new Separator());
-		}
-		for (int x = 0; x < height; x++) {
-			Marker marker = description[x][0];
-			Character character = marker.character;
-			if (marker instanceof Separator
-					&& !verticalSeparators.containsKey(character)) {
-				Separator separator = new Separator();
-				separator.character = character;
-				verticalSeparators.put(character, separator);
-			}
-		}
+		Map<Character, Separator> verticalSeparators = getSeparators(description, true);
+		Map<Character, Separator> horizontalSeparators = getSeparators(description, false);
 
 		// initialize dimensions
 		int dimension = 0;
-		Iterator<Character> horizontalIterator = horizontalSeparators.keySet()
-				.iterator();
-		Iterator<Character> verticalIterator = verticalSeparators.keySet()
-				.iterator();
-		Map<Character, Separator> map = horizontalSeparators;
-		Iterator<Character> iterator = horizontalIterator;
-		while (iterator.hasNext()) {
-			map.get(iterator.next()).dimension = dimension;
+		Switcher<Map<Character, Separator>> mapSwitcher = new Switcher<Map<Character,Separator>>();
+		mapSwitcher.add(horizontalSeparators);
+		mapSwitcher.add(verticalSeparators);
+		Switcher<Iterator<Character>> iteratorSwitcher = new Switcher<Iterator<Character>>();
+		iteratorSwitcher.add(horizontalSeparators.keySet()
+				.iterator());
+		iteratorSwitcher.add(verticalSeparators.keySet()
+				.iterator());
+		while (!iteratorSwitcher.isEmpty() &&  iteratorSwitcher.get().hasNext()) {
+			mapSwitcher.get().get(iteratorSwitcher.get().next()).dimension = dimension;
 			dimension++;
-			map = map == horizontalSeparators ? verticalSeparators
-					: horizontalSeparators;
-			iterator = iterator == horizontalIterator ? verticalIterator
-					: horizontalIterator;
-		}
-		map = map == horizontalSeparators ? verticalSeparators
-				: horizontalSeparators;
-		iterator = iterator == horizontalIterator ? verticalIterator
-				: horizontalIterator;
-		while (iterator.hasNext()) {
-			map.get(iterator.next()).dimension = dimension;
-			dimension++;
+			mapSwitcher.switchComponent();
+			iteratorSwitcher.switchComponent();
+			if (!iteratorSwitcher.get().hasNext()) {
+				iteratorSwitcher.remove(iteratorSwitcher.get());
+				mapSwitcher.remove(mapSwitcher.get());
+			}
 		}
 
 		// precise description
@@ -469,6 +440,27 @@ public class FileSpaceBuilder {
 				}
 			}
 		}
+	}
+
+	private Map<Character, Separator> getSeparators(Marker[][] description, boolean isFollowingX) {
+		Map<Character, Separator> separators = new LinkedHashMap<Character, Separator>();
+		int length = isFollowingX ? height : width ;
+		int[] coords = getCoords(isFollowingX, 0, 1);
+		if (length > 1 && description[coords[0]][coords[1]] instanceof Cell) {
+			separators.put(null, new Separator());
+		}
+		for (int i = 0; i < length; i++) {
+			int[] coords2 = getCoords(isFollowingX, 0, i);
+			Marker marker = description[coords2[0]][coords2[1]];
+			Character character = marker.character;
+			if (marker instanceof Separator
+					&& !separators.containsKey(character)) {
+				Separator separator = new Separator();
+				separator.character = character;
+				separators.put(character, separator);
+			}
+		}
+		return separators;
 	}
 
 	private Marker[][] translateDescriptionInMatrix(String stringDescription) {
