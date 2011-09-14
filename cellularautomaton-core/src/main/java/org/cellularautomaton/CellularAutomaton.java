@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.optimization.AutoRemoveOptimization;
 import org.cellularautomaton.optimization.CellsSelectionOptimization;
 import org.cellularautomaton.optimization.GenericOptimization;
 import org.cellularautomaton.optimization.Optimization;
@@ -107,6 +108,11 @@ public class CellularAutomaton<StateType> {
 			}
 			if (optimization instanceof GenericOptimization) {
 				((GenericOptimization<StateType>) optimization).execute();
+			}
+			if (optimization instanceof AutoRemoveOptimization) {
+				if (((AutoRemoveOptimization<StateType>) optimization).removeNow()) {
+					optimizations.remove(optimization);
+				}
 			}
 		}
 	}
