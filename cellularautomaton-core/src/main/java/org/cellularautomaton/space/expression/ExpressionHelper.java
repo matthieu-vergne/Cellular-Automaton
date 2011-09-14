@@ -12,8 +12,8 @@ import org.cellularautomaton.util.Coords;
 
 public class ExpressionHelper {
 
-	private final static String regexCell = "(\\([+-]?\\d+(,[+-]?\\d+)*\\))";
-	private final static String regexRef = "(%\\d+%)";
+	private final static String regexCell = "(\\([+-]?[0-9]+(,[+-]?[0-9]+)*\\))";
+	private final static String regexRef = "(%[0-9]+%)";
 	private static String regexValue;
 	private static String regexCellValue;
 	private static String regexExpression;

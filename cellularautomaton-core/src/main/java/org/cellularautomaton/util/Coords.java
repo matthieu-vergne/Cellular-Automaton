@@ -42,7 +42,7 @@ public class Coords implements Comparable<Coords> {
 	 */
 	public Coords(final String string) {
 		String buffer = string.replaceAll("\\s", "");
-		final String regexDim = "[+-]?\\d+";
+		final String regexDim = "[+-]?[0-9]+";
 		final String regexCoords = String.format("\\(%s(,%s)*\\)", regexDim, regexDim);
 		if (!buffer.matches(regexCoords)) {
 			throw new IllegalArgumentException(
