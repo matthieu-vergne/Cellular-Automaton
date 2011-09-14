@@ -172,7 +172,7 @@ public class FileSpaceBuilder {
 		return recursiveArrayBuilding(description, 0, 0, height, width);
 	}
 
-	class Executor {
+	class Translator {
 		class Candidate {
 			public Separator separator = null;
 			public int matrixLength = 0;
@@ -294,7 +294,7 @@ public class FileSpaceBuilder {
 	private Object[] recursiveArrayBuilding(Marker[][] description, int xStart,
 			int yStart, int xLength, int yLength) {
 		Object[] array;
-		Executor executor = new Executor();
+		Translator executor = new Translator();
 		executor.description = description;
 		executor.xStart = xStart;
 		executor.yStart = yStart;
