@@ -18,6 +18,7 @@ import org.junit.Test;
 
 // TODO test 5D
 // TODO test composed rule in non cyclic space
+// TODO improve the "cell=value" parts to manage set of cells
 public class FileSpaceBuilderTest {
 	@Test
 	public void testStates() throws IOException {
