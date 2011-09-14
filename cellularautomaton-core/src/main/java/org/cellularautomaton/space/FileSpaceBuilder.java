@@ -154,7 +154,7 @@ public class FileSpaceBuilder {
 	protected void customizeCell(ICell<Character> cell) {
 		Coords coords = cell.getCoords();
 		Object reference = characterSpace;
-		for (int dimension = coords.getDimensions() - 1; dimension >= 0; dimension--) {
+		for (int dimension = 0; dimension < coords.getDimensions(); dimension++) {
 			int coord = coords.get(dimension);
 			reference = ((Object[]) reference)[coord];
 		}

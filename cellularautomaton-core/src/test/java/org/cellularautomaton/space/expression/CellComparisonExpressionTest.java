@@ -2,6 +2,9 @@ package org.cellularautomaton.space.expression;
 
 import static org.junit.Assert.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.space.FileSpaceBuilder;
 import org.cellularautomaton.util.Coords;
@@ -10,28 +13,60 @@ import org.junit.Test;
 public class CellComparisonExpressionTest {
 
 	@Test
-	public void testComparison() {
+	public void testSimpleComparison() {
 		String description = "[config]\n" + "states=X-\n" + "[cells]\n"
 				+ "X-\n" + "-X\n";
 
 		FileSpaceBuilder builder = new FileSpaceBuilder();
 		builder.createSpaceFromString(description);
 		ICell<Character> cell00 = builder.getSpaceOfCell().getOrigin();
-		ICell<Character> cell01 = cell00.getNextCellOnDimension(1);
 
 		CellComparisonExpression expression = new CellComparisonExpression();
-		expression.setReference('X');
-		expression.setTarget(new Coords(0, 0));
+		expression.addConstraint('X', 1);
+		expression.addTarget(new Coords(0, 0));
 		expression.setOrigin(cell00);
 		assertTrue(expression.evaluate());
 
-		expression.setReference('-');
+		expression.addConstraint('-', 1);
 		assertFalse(expression.evaluate());
 
-		expression.setTarget(new Coords(0, 1));
+		expression.addTarget(new Coords(0, 1));
+		assertTrue(expression.evaluate());
+	}
+
+	@Test
+	public void testComplexComparison() {
+		StringWriter out = new StringWriter();
+		PrintWriter writer = new PrintWriter(out);
+		writer.println("[config]");
+		writer.println("states=X-");
+		writer.println("[cells]");
+		writer.println("X-");
+		writer.println("-X");
+		writer.close();
+		String description = out.toString();
+
+		FileSpaceBuilder builder = new FileSpaceBuilder();
+		builder.createSpaceFromString(description);
+		ICell<Character> cell00 = builder.getSpaceOfCell().getOrigin();
+		
+		CellComparisonExpression expression = new CellComparisonExpression();
+		expression.setOrigin(cell00);
+		expression.addTarget(new Coords(0, 0));
+		expression.addTarget(new Coords(0, 1));
+		expression.addTarget(new Coords(1, 0));
 		assertTrue(expression.evaluate());
 
-		expression.setOrigin(cell01);
+		expression.addConstraint('X', 1);
+		assertTrue(expression.evaluate());
+
+		expression.addConstraint('-', 1);
+		assertFalse(expression.evaluate());
+
+		expression.addConstraint('-', 1);
+		assertTrue(expression.evaluate());
+
+		expression.addConstraint('X', 1);
 		assertFalse(expression.evaluate());
 	}
 

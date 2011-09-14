@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class ExpressionHelperTest {
 
-	private static final String RULE = "(0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & ( =A | =B )";
+	private static final String COMPLEX_RULE = "(0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & ( (0,0)=A | (0,0)=B )";
 	private static final Collection<Character> STATES = Collections
 			.unmodifiableCollection(Arrays.asList(new Character[] { 'A', 'B',
 					'C' }));
@@ -41,9 +41,86 @@ public class ExpressionHelperTest {
 	};
 
 	@Test
-	public void testParseRulePart() {
-		// (0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & ( =A | =B )
-		Expression expression = ExpressionHelper.parseRulePart(RULE, STATES);
+	public void testParseRuleSimpleCell() {
+		Expression expression = ExpressionHelper.parseRulePart("(+1,-1)=A",
+				STATES);
+		assertTrue(expression instanceof CellComparisonExpression);
+
+		CellComparisonExpression e = (CellComparisonExpression) expression;
+		assertEquals(1, e.getConstraints().keySet().size());
+		assertTrue(e.getConstraints().keySet().contains('A'));
+		assertEquals(1, e.getTargets().size());
+		assertTrue(e.getTargets().contains(new Coords(1, -1)));
+	}
+
+	@Test
+	public void testParseRuleOr() {
+		Expression expression = ExpressionHelper.parseRulePart(
+				"(-1,-1)=A | (+1,+1)=B", STATES);
+		assertTrue(expression instanceof OrExpression);
+
+		OrExpression e = (OrExpression) expression;
+		assertEquals(2, e.getExpressions().size());
+
+		Iterator<Expression> iterator = e.getExpressions().iterator();
+		assertTrue(iterator.next() instanceof CellComparisonExpression);
+		assertTrue(iterator.next() instanceof CellComparisonExpression);
+
+		iterator = e.getExpressions().iterator();
+		CellComparisonExpression a = (CellComparisonExpression) iterator.next();
+		CellComparisonExpression b = (CellComparisonExpression) iterator.next();
+		if (b.getConstraints().keySet().contains('A')) {
+			CellComparisonExpression temp = a;
+			a = b;
+			b = temp;
+		}
+		assertEquals(1, a.getConstraints().keySet().size());
+		assertTrue(a.getConstraints().keySet().contains('A'));
+		assertEquals(1, a.getTargets().size());
+		assertTrue(a.getTargets().contains(new Coords(-1, -1)));
+
+		assertEquals(1, b.getConstraints().keySet().size());
+		assertTrue(b.getConstraints().keySet().contains('B'));
+		assertEquals(1, b.getTargets().size());
+		assertTrue(b.getTargets().contains(new Coords(1, 1)));
+	}
+
+	@Test
+	public void testParseRuleAnd() {
+		Expression expression = ExpressionHelper.parseRulePart(
+				"(-1,-1)=A & (+1,+1)=B", STATES);
+		assertTrue(expression instanceof AndExpression);
+
+		AndExpression e = (AndExpression) expression;
+		assertEquals(2, e.getExpressions().size());
+
+		Iterator<Expression> iterator = e.getExpressions().iterator();
+		assertTrue(iterator.next() instanceof CellComparisonExpression);
+		assertTrue(iterator.next() instanceof CellComparisonExpression);
+
+		iterator = e.getExpressions().iterator();
+		CellComparisonExpression a = (CellComparisonExpression) iterator.next();
+		CellComparisonExpression b = (CellComparisonExpression) iterator.next();
+		if (b.getConstraints().keySet().contains('A')) {
+			CellComparisonExpression temp = a;
+			a = b;
+			b = temp;
+		}
+		assertEquals(1, a.getConstraints().keySet().size());
+		assertTrue(a.getConstraints().keySet().contains('A'));
+		assertEquals(1, a.getTargets().size());
+		assertTrue(a.getTargets().contains(new Coords(-1, -1)));
+
+		assertEquals(1, b.getConstraints().keySet().size());
+		assertTrue(b.getConstraints().keySet().contains('B'));
+		assertEquals(1, b.getTargets().size());
+		assertTrue(b.getTargets().contains(new Coords(1, 1)));
+	}
+
+	@Test
+	public void testParseRuleComplex() {
+		// (0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & ( (0,0)=A | (0,0)=B )
+		Expression expression = ExpressionHelper.parseRulePart(COMPLEX_RULE, STATES);
 		assertTrue(expression instanceof OrExpression);
 
 		// X | Y | Z
@@ -111,52 +188,110 @@ public class ExpressionHelperTest {
 		// (0,0)=A & (0,1)=A | cell & cell | cell & (|)
 		CellComparisonExpression x1 = (CellComparisonExpression) e4;
 		CellComparisonExpression x2 = (CellComparisonExpression) e5;
-		if (x1.getReference().equals('A')
-				&& x1.getTarget().equals(new Coords(0, 0))) {
-			assertEquals('A', (char) x2.getReference());
-			assertEquals(new Coords(0, 1), x2.getTarget());
-		} else if (x1.getReference().equals('A')
-				&& x1.getTarget().equals(new Coords(0, 1))) {
-			assertEquals('A', (char) x2.getReference());
-			assertEquals(new Coords(0, 0), x2.getTarget());
-		} else if (x1.getReference().equals('B')
-				&& x1.getTarget().equals(new Coords(0, 0))) {
-			assertEquals('B', (char) x2.getReference());
-			assertEquals(new Coords(0, -1), x2.getTarget());
-		} else if (x1.getReference().equals('B')
-				&& x1.getTarget().equals(new Coords(0, -1))) {
-			assertEquals('B', (char) x2.getReference());
-			assertEquals(new Coords(0, 0), x2.getTarget());
+		if (x1.getConstraints().keySet().contains('A')
+				&& x1.getTargets().contains(new Coords(0, 0))) {
+			assertEquals(1, x1.getConstraints().keySet().size());
+			assertTrue(x1.getConstraints().keySet().contains('A'));
+			assertEquals(1, x1.getTargets().size());
+			assertTrue(x1.getTargets().contains(new Coords(0, 0)));
+
+			assertEquals(1, x2.getConstraints().keySet().size());
+			assertTrue(x2.getConstraints().keySet().contains('A'));
+			assertEquals(1, x2.getTargets().size());
+			assertTrue(x2.getTargets().contains(new Coords(0, 1)));
+		} else if (x1.getConstraints().keySet().contains('A')
+				&& x1.getTargets().contains(new Coords(0, 1))) {
+			assertEquals(1, x1.getConstraints().keySet().size());
+			assertTrue(x1.getConstraints().keySet().contains('A'));
+			assertEquals(1, x1.getTargets().size());
+			assertTrue(x1.getTargets().contains(new Coords(0, 1)));
+
+			assertEquals(1, x2.getConstraints().keySet().size());
+			assertTrue(x2.getConstraints().keySet().contains('A'));
+			assertEquals(1, x2.getTargets().size());
+			assertTrue(x2.getTargets().contains(new Coords(0, 0)));
+		} else if (x1.getConstraints().keySet().contains('B')
+				&& x1.getTargets().contains(new Coords(0, 0))) {
+			assertEquals(1, x1.getConstraints().keySet().size());
+			assertTrue(x1.getConstraints().keySet().contains('B'));
+			assertEquals(1, x1.getTargets().size());
+			assertTrue(x1.getTargets().contains(new Coords(0, 0)));
+
+			assertEquals(1, x2.getConstraints().keySet().size());
+			assertTrue(x2.getConstraints().keySet().contains('B'));
+			assertEquals(1, x2.getTargets().size());
+			assertTrue(x2.getTargets().contains(new Coords(0, -1)));
+		} else if (x1.getConstraints().keySet().contains('B')
+				&& x1.getTargets().contains(new Coords(0, -1))) {
+			assertEquals(1, x2.getConstraints().keySet().size());
+			assertTrue(x2.getConstraints().keySet().contains('B'));
+			assertEquals(1, x2.getTargets().size());
+			assertTrue(x2.getTargets().contains(new Coords(0, 0)));
+
+			assertEquals(1, x1.getConstraints().keySet().size());
+			assertTrue(x1.getConstraints().keySet().contains('B'));
+			assertEquals(1, x1.getTargets().size());
+			assertTrue(x1.getTargets().contains(new Coords(0, -1)));
 		}
 
 		// check Y1 + Y2
 		// (0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | cell & (|)
 		CellComparisonExpression y1 = (CellComparisonExpression) e6;
 		CellComparisonExpression y2 = (CellComparisonExpression) e7;
-		if (y1.getReference().equals('A')
-				&& y1.getTarget().equals(new Coords(0, 0))) {
-			assertEquals('A', (char) y2.getReference());
-			assertEquals(new Coords(0, 1), y2.getTarget());
-		} else if (y1.getReference().equals('A')
-				&& y1.getTarget().equals(new Coords(0, 1))) {
-			assertEquals('A', (char) y2.getReference());
-			assertEquals(new Coords(0, 0), y2.getTarget());
-		} else if (y1.getReference().equals('B')
-				&& y1.getTarget().equals(new Coords(0, 0))) {
-			assertEquals('B', (char) y2.getReference());
-			assertEquals(new Coords(0, -1), y2.getTarget());
-		} else if (y1.getReference().equals('B')
-				&& y1.getTarget().equals(new Coords(0, -1))) {
-			assertEquals('B', (char) y2.getReference());
-			assertEquals(new Coords(0, 0), y2.getTarget());
+		if (y1.getConstraints().keySet().contains('A')
+				&& y1.getTargets().contains(new Coords(0, 0))) {
+			assertEquals(1, y1.getConstraints().keySet().size());
+			assertTrue(y1.getConstraints().keySet().contains('A'));
+			assertEquals(1, y1.getTargets().size());
+			assertTrue(y1.getTargets().contains(new Coords(0, 0)));
+
+			assertEquals(1, y2.getConstraints().keySet().size());
+			assertTrue(y2.getConstraints().keySet().contains('A'));
+			assertEquals(1, y2.getTargets().size());
+			assertTrue(y2.getTargets().contains(new Coords(0, 1)));
+		} else if (y1.getConstraints().keySet().contains('A')
+				&& y1.getTargets().contains(new Coords(0, 1))) {
+			assertEquals(1, y1.getConstraints().keySet().size());
+			assertTrue(y1.getConstraints().keySet().contains('A'));
+			assertEquals(1, y1.getTargets().size());
+			assertTrue(y1.getTargets().contains(new Coords(0, 1)));
+
+			assertEquals(1, y2.getConstraints().keySet().size());
+			assertTrue(y2.getConstraints().keySet().contains('A'));
+			assertEquals(1, y2.getTargets().size());
+			assertTrue(y2.getTargets().contains(new Coords(0, 0)));
+		} else if (y1.getConstraints().keySet().contains('B')
+				&& y1.getTargets().contains(new Coords(0, 0))) {
+			assertEquals(1, y1.getConstraints().keySet().size());
+			assertTrue(y1.getConstraints().keySet().contains('B'));
+			assertEquals(1, y1.getTargets().size());
+			assertTrue(y1.getTargets().contains(new Coords(0, 0)));
+
+			assertEquals(1, y2.getConstraints().keySet().size());
+			assertTrue(y2.getConstraints().keySet().contains('B'));
+			assertEquals(1, y2.getTargets().size());
+			assertTrue(y2.getTargets().contains(new Coords(0, -1)));
+		} else if (y1.getConstraints().keySet().contains('B')
+				&& y1.getTargets().contains(new Coords(0, -1))) {
+			assertEquals(1, y1.getConstraints().keySet().size());
+			assertTrue(y1.getConstraints().keySet().contains('B'));
+			assertEquals(1, y1.getTargets().size());
+			assertTrue(y1.getTargets().contains(new Coords(0, -1)));
+
+			assertEquals(1, y2.getConstraints().keySet().size());
+			assertTrue(y2.getConstraints().keySet().contains('B'));
+			assertEquals(1, y2.getTargets().size());
+			assertTrue(y2.getTargets().contains(new Coords(0, 0)));
 		}
 
 		// check Z1
 		// (0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & (|)
 		CellComparisonExpression z1 = (CellComparisonExpression) (e8 instanceof CellComparisonExpression ? e8
 				: e9);
-		assertEquals('C', (char) z1.getReference());
-		assertEquals(new Coords(-1, 1), z1.getTarget());
+		assertEquals(1, z1.getConstraints().keySet().size());
+		assertTrue(z1.getConstraints().keySet().contains('C'));
+		assertEquals(1, z1.getTargets().size());
+		assertTrue(z1.getTargets().contains(new Coords(-1, 1)));
 
 		// Z2 = Z2A | Z2B
 		// (0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & ( ? | ? )
@@ -172,23 +307,33 @@ public class ExpressionHelperTest {
 		assertTrue(e11 instanceof CellComparisonExpression);
 
 		// check Z2A + Z2B
-		// (0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & ( =A | =B )
+		// (0,0)=A & (0,1)=A | (0,0)=B & (0,-1)=B | (-1,+1)=C & ( (0,0)=A | (0,0)=B )
 		CellComparisonExpression z2a = (CellComparisonExpression) e10;
 		CellComparisonExpression z2b = (CellComparisonExpression) e11;
-		assertEquals(CellComparisonExpression.ORIGIN, z2a.getTarget());
-		assertEquals(CellComparisonExpression.ORIGIN, z2b.getTarget());
-		if (z2a.getReference().equals('A')) {
-			assertEquals('B', (char) z2b.getReference());
-		} else if (z2a.getReference().equals('B')) {
-			assertEquals('A', (char) z2b.getReference());
+		assertEquals(1, z2a.getTargets().size());
+		assertTrue(z2a.getTargets().contains(new Coords(0, 0)));
+		assertEquals(1, z2b.getTargets().size());
+		assertTrue(z2b.getTargets().contains(new Coords(0, 0)));
+		if (z2a.getConstraints().keySet().contains('A')) {
+			assertEquals(1, z2a.getConstraints().keySet().size());
+			assertTrue(z2a.getConstraints().keySet().contains('A'));
+
+			assertEquals(1, z2b.getConstraints().keySet().size());
+			assertTrue(z2b.getConstraints().keySet().contains('B'));
+		} else if (z2a.getConstraints().keySet().contains('B')) {
+			assertEquals(1, z2a.getConstraints().keySet().size());
+			assertTrue(z2a.getConstraints().keySet().contains('B'));
+
+			assertEquals(1, z2b.getConstraints().keySet().size());
+			assertTrue(z2b.getConstraints().keySet().contains('A'));
 		} else {
-			fail("expected A or B but was " + z2a.getReference());
+			fail("expected one of A or B but was " + z2a.getConstraints());
 		}
 	}
 
 	@Test
 	public void testSetExpressionForOriginCell() {
-		Expression expression = ExpressionHelper.parseRulePart(RULE, STATES);
+		Expression expression = ExpressionHelper.parseRulePart(COMPLEX_RULE, STATES);
 		ICell<Character> origin = new GenericCell<Character>();
 		ExpressionHelper.setExpressionForOriginCell(expression, origin);
 
@@ -207,7 +352,7 @@ public class ExpressionHelperTest {
 				}
 			}
 		}
-		
+
 		for (CellComparisonExpression subexpression : cellExpressions) {
 			assertEquals(origin, subexpression.getOrigin());
 		}

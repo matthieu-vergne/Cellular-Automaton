@@ -1,46 +1,65 @@
 package org.cellularautomaton.space.expression;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.util.Coords;
 
 public class CellComparisonExpression implements Expression {
-	public static final Coords ORIGIN = new Coords();
-
-	private Character reference;
-	private Coords target;
+	private final Map<Character, Integer> constraints = new HashMap<Character, Integer>();
+	private final List<Coords> targets = new ArrayList<Coords>();
 	private ICell<Character> origin;
 
 	@Override
 	public boolean evaluate() {
-		if (getReference() == null) {
+		if (getConstraints() == null) {
 			throw new IllegalStateException("The reference is missing.");
 		} else if (getOrigin() == null) {
 			throw new IllegalStateException("The origin cell is missing.");
-		} else if (getTarget() == null) {
-			throw new IllegalStateException("The target coords are missing.");
+		} else if (getTargets().isEmpty()) {
+			throw new IllegalStateException("There is no target coords.");
 		} else {
-			ICell<Character> cell = getOrigin();
-			if (getTarget() != ORIGIN) {
-				cell = cell.getRelativeCell(getTarget().getAll());
+			Map<Character, Integer> values = new HashMap<Character, Integer>();
+			for (Coords target : targets) {
+				Character state = getOrigin().getRelativeCell(target.getAll())
+						.getCurrentState();
+				if (!values.containsKey(state)) {
+					values.put(state, 0);
+				}
+				values.put(state, values.get(state) + 1);
 			}
-			return getReference().equals(cell.getCurrentState());
+
+			for (Character state : constraints.keySet()) {
+				if (!values.containsKey(state)
+						|| !values.get(state).equals(constraints.get(state))) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 
-	public Character getReference() {
-		return reference;
+	public Map<Character, Integer> getConstraints() {
+		return constraints;
 	}
 
-	public void setReference(Character reference) {
-		this.reference = reference;
+	public void addConstraint(Character state, Integer count) {
+		if (!constraints.containsKey(state)) {
+			constraints.put(state, 0);
+		}
+		constraints.put(state, constraints.get(state) + count);
 	}
 
-	public Coords getTarget() {
-		return target;
+	public Collection<Coords> getTargets() {
+		return new ArrayList<Coords>(targets);
 	}
 
-	public void setTarget(Coords target) {
-		this.target = target;
+	public void addTarget(Coords target) {
+		targets.add(target);
 	}
 
 	public ICell<Character> getOrigin() {
