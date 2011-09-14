@@ -39,11 +39,11 @@ public class JAutomatonPanel<T> extends JPanel {
 		int width = 0;
 		int height = 0;
 		for (ICell<?> cell : automaton.getSpace().getAllCells()) {
-			width = Math.max(width, cell.getCoords().get(0));
-			height = Math.max(height, cell.getCoords().get(1));
+			width = Math.max(width, cell.getCoords().get(1));
+			height = Math.max(height, cell.getCoords().get(0));
 		}
-		this.width = width;
-		this.height = height;
+		this.width = width + 1;
+		this.height = height + 1;
 	}
 
 	@Override
@@ -58,8 +58,8 @@ public class JAutomatonPanel<T> extends JPanel {
 			T state = cell.getCurrentState();
 			Coords coords = cell.getCoords();
 			g.setColor(renderer.getColor(state));
-			g.fillRect((int) Math.ceil(coords.get(0) * xRate),
-					(int) Math.ceil(coords.get(1) * yRate),
+			g.fillRect((int) Math.ceil(coords.get(1) * xRate),
+					(int) Math.ceil(coords.get(0) * yRate),
 					(int) Math.ceil(xRate), (int) Math.ceil(yRate));
 		}
 	}

@@ -57,39 +57,39 @@ public class WireWorldAutomatonFactory {
 			}
 
 			private final List<Coords> metalCoords = Arrays
-					.asList(new Coords[] { new Coords(0, 2), new Coords(1, 2),
-							new Coords(2, 2), new Coords(3, 2),
-							new Coords(4, 2), new Coords(5, 1),
-							new Coords(5, 3), new Coords(6, 1),
-							new Coords(6, 2), new Coords(6, 3),
-							new Coords(7, 2), new Coords(8, 2),
-							new Coords(9, 2),
+					.asList(new Coords[] { new Coords(2, 0), new Coords(2, 1),
+							new Coords(2, 2), new Coords(2, 3),
+							new Coords(2, 4), new Coords(1, 5),
+							new Coords(3, 5), new Coords(1, 6),
+							new Coords(2, 6), new Coords(3, 6),
+							new Coords(2, 7), new Coords(2, 8),
+							new Coords(2, 9),
 
-							new Coords(0, 7), new Coords(1, 7),
-							new Coords(2, 7), new Coords(3, 7),
-							new Coords(4, 7), new Coords(5, 6),
-							new Coords(5, 7), new Coords(5, 8),
-							new Coords(6, 6), new Coords(6, 8),
-							new Coords(7, 7), new Coords(8, 7),
-							new Coords(9, 7),
+							new Coords(7, 0), new Coords(7, 1),
+							new Coords(7, 2), new Coords(7, 3),
+							new Coords(7, 4), new Coords(6, 5),
+							new Coords(7, 5), new Coords(8, 5),
+							new Coords(6, 6), new Coords(8, 6),
+							new Coords(7, 7), new Coords(7, 8),
+							new Coords(7, 9),
 
-							new Coords(10, 1), new Coords(11, 1),
-							new Coords(12, 1), new Coords(13, 1),
-							new Coords(10, 3), new Coords(11, 3),
-							new Coords(12, 3), new Coords(13, 3),
-							new Coords(14, 2),
+							new Coords(1, 10), new Coords(1, 11),
+							new Coords(1, 12), new Coords(1, 13),
+							new Coords(3, 10), new Coords(3, 11),
+							new Coords(3, 12), new Coords(3, 13),
+							new Coords(2, 14),
 
-							new Coords(10, 6), new Coords(11, 6),
-							new Coords(12, 6), new Coords(13, 6),
-							new Coords(10, 8), new Coords(11, 8),
-							new Coords(12, 8), new Coords(13, 8),
-							new Coords(14, 7), });
+							new Coords(6, 10), new Coords(6, 11),
+							new Coords(6, 12), new Coords(6, 13),
+							new Coords(8, 10), new Coords(8, 11),
+							new Coords(8, 12), new Coords(8, 13),
+							new Coords(7, 14), });
 
 			private final List<Coords> headCoords = Arrays.asList(new Coords[] {
-					new Coords(14, 2), new Coords(14, 7) });
+					new Coords(2, 14), new Coords(7, 14) });
 
 			private final List<Coords> queueCoords = Arrays
-					.asList(new Coords[] { new Coords(13, 3), new Coords(13, 8) });
+					.asList(new Coords[] { new Coords(3, 13), new Coords(8, 13) });
 
 			@Override
 			public void customize(ICell<WireWorldState> cell) {
@@ -105,7 +105,7 @@ public class WireWorldAutomatonFactory {
 
 		SpaceBuilder<WireWorldState> builder = new SpaceBuilder<WireWorldState>();
 		builder.setStateFactory(stateFactory).setRule(rule);
-		builder.createNewSpace().addDimension(20).addDimension(10);
+		builder.createNewSpace().addDimension(10).addDimension(20);
 
 		CellularAutomaton<WireWorldState> automaton = new CellularAutomaton<WireWorldState>(
 				builder.getSpaceOfCell());
