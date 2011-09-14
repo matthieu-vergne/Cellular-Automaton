@@ -69,6 +69,12 @@ public interface ICell<StateType> {
 	public void setRule(IRule<StateType> rule);
 
 	/**
+	 * 
+	 * @return the rule used in order to calculate the next state of the cell
+	 */
+	public IRule<StateType> getRule();
+
+	/**
 	 * This method must calculate the next state of the cell. The current state
 	 * is <b>not changed</b>.
 	 * 

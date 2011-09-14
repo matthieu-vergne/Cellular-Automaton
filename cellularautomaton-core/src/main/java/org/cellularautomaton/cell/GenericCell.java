@@ -283,6 +283,10 @@ public class GenericCell<StateType> implements ICell<StateType> {
 	public void setRule(IRule<StateType> rule) {
 		this.rule = rule;
 	}
+	
+	public IRule<StateType> getRule() {
+		return rule;
+	}
 
 	/**
 	 * This class is a simple container for the cells before/after the current
