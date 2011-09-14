@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.space.FileSpaceBuilder;
+import org.cellularautomaton.space.ScriptSpaceBuilder;
 
 public class WireWorldScriptedAutomatonFactory {
 
@@ -30,7 +30,7 @@ public class WireWorldScriptedAutomatonFactory {
 		out.println("XXXXXXXXXXXXXXX");
 		out.close();
 
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(sw.getBuffer().toString());
 
 		CellularAutomaton<Character> automaton = new CellularAutomaton<Character>(

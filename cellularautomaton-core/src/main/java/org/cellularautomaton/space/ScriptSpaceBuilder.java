@@ -35,7 +35,7 @@ import org.cellularautomaton.util.Switcher;
  * @author Matthieu Vergne (matthieu.vergne@gmail.com)
  * 
  */
-public class FileSpaceBuilder {
+public class ScriptSpaceBuilder {
 	private static enum Mode {
 		CONFIG, RULE, CELLS
 	}
@@ -49,7 +49,7 @@ public class FileSpaceBuilder {
 	private Object[] characterSpace;
 	private final Logger logger = Logger.getAnonymousLogger();
 
-	public FileSpaceBuilder() {
+	public ScriptSpaceBuilder() {
 		logger.setLevel(Level.OFF);
 	}
 

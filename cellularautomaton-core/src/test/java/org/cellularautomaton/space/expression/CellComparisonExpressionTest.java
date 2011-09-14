@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.space.FileSpaceBuilder;
+import org.cellularautomaton.space.ScriptSpaceBuilder;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class CellComparisonExpressionTest {
 		String description = "[config]\n" + "states=X-\n" + "[cells]\n"
 				+ "X-\n" + "-X\n";
 
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 		ICell<Character> cell00 = builder.getSpaceOfCell().getOrigin();
 
@@ -46,7 +46,7 @@ public class CellComparisonExpressionTest {
 		writer.close();
 		String description = out.toString();
 
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 		ICell<Character> cell00 = builder.getSpaceOfCell().getOrigin();
 		

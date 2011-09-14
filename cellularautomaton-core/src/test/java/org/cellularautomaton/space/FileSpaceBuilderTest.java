@@ -36,7 +36,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// check states
@@ -64,7 +64,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -104,7 +104,7 @@ public class FileSpaceBuilderTest {
 		fw.close();
 
 		// generate description space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 		ISpace<Character> space1 = builder.getSpaceOfCell();
 
@@ -155,7 +155,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -225,7 +225,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -361,7 +361,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -492,7 +492,7 @@ public class FileSpaceBuilderTest {
 
 	private void testCyclicSpace3D(String description) {
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -687,7 +687,7 @@ public class FileSpaceBuilderTest {
 
 	private void testCyclicSpace4D(String description) {
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -960,7 +960,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -1005,7 +1005,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
@@ -1070,7 +1070,7 @@ public class FileSpaceBuilderTest {
 		}
 
 		// generate space
-		FileSpaceBuilder builder = new FileSpaceBuilder();
+		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(description);
 
 		// get cells
