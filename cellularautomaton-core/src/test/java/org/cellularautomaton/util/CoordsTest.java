@@ -175,4 +175,16 @@ public class CoordsTest {
 		assertFalse(c5a.equals(c4b));
 		assertTrue(c5a.equals(c5b));
 	}
+	
+	@Test
+	public void testDimensions() {
+		Coords coords = new Coords(1, 2, 3);
+		
+		coords.setDimensions(4);
+		assertEquals(new Coords(1, 2, 3, 0), coords);
+		
+		coords.setDimensions(3);
+		assertEquals(new Coords(1, 2, 3), coords);
+	}
+	
 }
