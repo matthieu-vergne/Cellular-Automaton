@@ -27,7 +27,7 @@ public class SpaceBuilder<StateType> {
 	/**
 	 * The factory used to create the space of cells.
 	 */
-	private final CellFactory<StateType> cellFactory;
+	private CellFactory<StateType> cellFactory;
 	/**
 	 * The lengths of each dimension.
 	 */
@@ -51,16 +51,13 @@ public class SpaceBuilder<StateType> {
 	 * Create a new space builder with :<br/>
 	 * <ul>
 	 * <li>no state factory (given manually)</li>
+	 * <li>a basic cell factory (creating generic cells)</li>
 	 * <li>a memory size of 1</li>
 	 * <li>a static rule</li>
 	 * </ul>
 	 */
 	public SpaceBuilder() {
-		cellFactory = new CellFactory<StateType>() {
-			public StateType getInitialState() {
-				return stateFactory.getDefaultState();
-			};
-		};
+		cellFactory = new CellFactory<StateType>();
 		dimensionLengths = new ArrayList<Integer>();
 		isSpaceFinalized = false;
 	}
@@ -257,7 +254,7 @@ public class SpaceBuilder<StateType> {
 		if (space == null) {
 			throw new IllegalStateException("No space has been created yet.");
 		}
-
+		
 		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
 				.hasNext();) {
 			ICell<StateType> cell = iterator.next();
@@ -347,6 +344,7 @@ public class SpaceBuilder<StateType> {
 	public SpaceBuilder<StateType> setStateFactory(
 			IStateFactory<StateType> stateFactory) {
 		this.stateFactory = stateFactory;
+		cellFactory.setInitialState(stateFactory.getDefaultState());
 		return this;
 	}
 
@@ -356,6 +354,23 @@ public class SpaceBuilder<StateType> {
 	 */
 	public IStateFactory<StateType> getStateFactory() {
 		return stateFactory;
+	}
+
+	/**
+	 * 
+	 * @return the cell factory used to fill the space
+	 */
+	public CellFactory<StateType> getCellFactory() {
+		return cellFactory;
+	}
+
+	/**
+	 * 
+	 * @param cellFactory
+	 *            the cell factory used to fill the space
+	 */
+	public void setCellFactory(CellFactory<StateType> cellFactory) {
+		this.cellFactory = cellFactory;
 	}
 
 }

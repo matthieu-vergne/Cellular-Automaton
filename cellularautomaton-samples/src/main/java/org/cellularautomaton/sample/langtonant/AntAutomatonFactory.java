@@ -1,6 +1,4 @@
-package org.cellularautomaton.sample.ant;
-
-import java.util.Collection;
+package org.cellularautomaton.sample.langtonant;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
@@ -86,12 +84,9 @@ public class AntAutomatonFactory {
 				return AntState.class;
 			}
 
-			/**
-			 * The most used state of the ant automaton is
-			 * {@link AntState#BLACK }.
-			 */
 			@Override
 			public AntState getDefaultState() {
+				// The most used state of the ant automaton is black.
 				return AntState.BLACK;
 			}
 
@@ -105,7 +100,7 @@ public class AntAutomatonFactory {
 
 		SpaceBuilder<AntState> builder = new SpaceBuilder<AntState>();
 		builder.setStateFactory(stateFactory).setRule(rule);
-		builder.createNewSpace().addDimension(60).addDimension(60);
+		builder.createNewSpace().addDimension(100).addDimension(100);
 
 		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
 				builder.getSpaceOfCell());
@@ -113,18 +108,4 @@ public class AntAutomatonFactory {
 		return automaton;
 	}
 
-	public static CellularAutomaton<AntState> createOptimizedAutomaton() {
-		CellularAutomaton<AntState> automaton = new CellularAutomaton<AntState>(
-				createAutomaton().getSpace()) {
-			@Override
-			protected Collection<ICell<AntState>> getCellsDependingTo(
-					ICell<AntState> cell) {
-				// heuristic optimization
-				return cell.getAllCellsAround();
-			}
-		};
-		automaton.setDependencyConsidered(true);
-
-		return automaton;
-	}
 }
