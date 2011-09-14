@@ -3,6 +3,8 @@ package org.cellularautomaton.sample.common;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
@@ -21,6 +23,7 @@ public class JAutomatonPanel<T> extends JPanel {
 	 */
 	private static final long serialVersionUID = -4839521220659722820L;
 	private CellularAutomaton<? extends T> automaton;
+	private boolean fullRendering = true;
 
 	public CellularAutomaton<? extends T> getAutomaton() {
 		return automaton;
@@ -44,24 +47,62 @@ public class JAutomatonPanel<T> extends JPanel {
 		}
 		this.width = width + 1;
 		this.height = height + 1;
+
+		addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				askFullRendering();
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				askFullRendering();
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// do nothing
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// do nothing
+			}
+		});
 	}
 
 	@Override
 	public void paint(Graphics g) {
-		g.clearRect(0, 0, getWidth(), getHeight());
 		double xRate = (double) getWidth() / width;
 		double yRate = (double) getHeight() / height;
-		Iterator<?> iterator = automaton.getSpace().iterator();
+		Iterator<?> iterator;
+		// TODO allow to activate this optimization
+		if (fullRendering) {
+			g.clearRect(0, 0, getWidth(), getHeight());
+			iterator = automaton.getSpace().iterator();
+		} else {
+			iterator = automaton.getCellsToManage().iterator();
+		}
+		int xLength = (int) Math.ceil(xRate);
+		int yLength = (int) Math.ceil(yRate);
 		while (iterator.hasNext()) {
 			@SuppressWarnings("unchecked")
 			ICell<? extends T> cell = (ICell<? extends T>) iterator.next();
 			T state = cell.getCurrentState();
 			Coords coords = cell.getCoords();
 			g.setColor(renderer.getColor(state));
-			g.fillRect((int) Math.ceil(coords.get(1) * xRate),
-					(int) Math.ceil(coords.get(0) * yRate),
-					(int) Math.ceil(xRate), (int) Math.ceil(yRate));
+			int x = coords.get(1);
+			int y = coords.get(0);
+			if (xRate != 1) {
+				x = (int) Math.ceil(x * xRate);
+			}
+			if (yRate != 1) {
+				y = (int) Math.ceil(y * yRate);
+			}
+			g.fillRect(x, y, xLength, yLength);
 		}
+		fullRendering = false;
 	}
 
 	@Override
@@ -71,4 +112,9 @@ public class JAutomatonPanel<T> extends JPanel {
 				Math.max(height,
 						Math.min(height * CELL_DEFAULT_SIZE, WINDOW_MAX_SIZE)));
 	}
+
+	public void askFullRendering() {
+		fullRendering = true;
+	}
+
 }

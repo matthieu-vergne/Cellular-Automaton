@@ -10,8 +10,8 @@ import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.util.Coords;
 
 public class CellComparisonExpression implements Expression {
-	private final Map<Character, Integer> constraints = new HashMap<Character, Integer>();
-	private final List<Coords> targets = new ArrayList<Coords>();
+	private final Map<Character, Integer> constraints = new HashMap<Character, Integer>(1);
+	private final List<Coords> targets = new ArrayList<Coords>(1);
 	private ICell<Character> origin;
 
 	@Override
@@ -55,7 +55,7 @@ public class CellComparisonExpression implements Expression {
 	}
 
 	public Collection<Coords> getTargets() {
-		return new ArrayList<Coords>(targets);
+		return targets;
 	}
 
 	public void addTarget(Coords target) {

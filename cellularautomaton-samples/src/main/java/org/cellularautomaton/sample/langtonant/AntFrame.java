@@ -37,6 +37,6 @@ public class AntFrame extends JAutomatonFrame<AntState> {
 	}
 
 	public AntFrame(CellularAutomaton<AntState> automaton) {
-		super("Langston Ant", automaton, new AntRenderer(), 0);
+		super("Langton Ant", automaton, new AntRenderer(), 1);
 	}
 }

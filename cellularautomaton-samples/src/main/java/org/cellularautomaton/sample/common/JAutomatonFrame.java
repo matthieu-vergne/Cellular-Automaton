@@ -1,5 +1,7 @@
 package org.cellularautomaton.sample.common;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
@@ -18,16 +20,28 @@ public class JAutomatonFrame<T> extends JFrame {
 			CellularRenderer<? super T> renderer, int stepTime) {
 		super(title);
 
-		JAutomatonPanel<T> jautomaton = new JAutomatonPanel<T>(automaton,
+		final JAutomatonPanel<T> jautomaton = new JAutomatonPanel<T>(automaton,
 				renderer);
 		getContentPane().add(jautomaton);
 
 		Executors.newSingleThreadExecutor().execute(
 				new RefreshAutomatonRunnable(jautomaton, stepTime));
-
 		pack();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+
+		addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// do nothing
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				jautomaton.askFullRendering();
+			}
+		});
 	}
 
 	private class RefreshAutomatonRunnable implements Runnable {

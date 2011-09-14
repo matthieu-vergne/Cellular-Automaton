@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public abstract class ComposedExpression implements Expression {
-	private final Collection<Expression> expressions = new HashSet<Expression>();
+	private final Collection<Expression> expressions = new HashSet<Expression>(2);
 
 	public Collection<Expression> getExpressions() {
 		return expressions;
