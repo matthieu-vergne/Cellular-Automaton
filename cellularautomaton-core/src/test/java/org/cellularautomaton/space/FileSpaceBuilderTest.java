@@ -17,12 +17,11 @@ import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 
 // TODO test 5D
-// TODO test composed rule in non cyclic space
-// TODO improve the "cell=value" parts to manage set of cells
+// TODO test composed rule in non cyclic space (not available cells)
 public class FileSpaceBuilderTest {
 	@Test
 	public void testStates() throws IOException {
-		// create config file
+		// create configuration file
 		String description;
 		{
 			StringWriter sw = new StringWriter();
@@ -929,8 +928,6 @@ public class FileSpaceBuilderTest {
 		assertEquals((Character) '-', cell0101.getCurrentState());
 		assertEquals((Character) '-', cell0110.getCurrentState());
 		assertEquals((Character) '-', cell0111.getCurrentState());
-
-		// TODO
 		assertEquals((Character) 'X', cell1000.getCurrentState());
 		assertEquals((Character) '-', cell1001.getCurrentState());
 		assertEquals((Character) '-', cell1010.getCurrentState());

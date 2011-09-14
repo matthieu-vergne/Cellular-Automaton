@@ -58,7 +58,7 @@ public class ScriptSpaceBuilder {
 	 * file should follow this syntax :<br/>
 	 * 
 	 * <pre>
-	 * TODO describe syntax
+	 * TODO describe syntax + make Javadoc
 	 * </pre>
 	 * 
 	 * @param filePath
