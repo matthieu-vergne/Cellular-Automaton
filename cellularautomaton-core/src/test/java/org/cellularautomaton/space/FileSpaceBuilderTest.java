@@ -16,7 +16,6 @@ import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 
-// TODO test 4D
 // TODO test 5D
 // TODO test composed rule in non cyclic space
 public class FileSpaceBuilderTest {
@@ -217,7 +216,7 @@ public class FileSpaceBuilderTest {
 			pw.println("[config]");
 			pw.println("states=X-");
 			pw.println("[cells]");
-			pw.println("---");
+			pw.println("X--");
 			pw.println("-X-");
 			pw.println("---");
 			pw.close();
@@ -332,7 +331,7 @@ public class FileSpaceBuilderTest {
 		assertEquals(new Coords(2, 2), cell22.getCoords());
 
 		// check initial values
-		assertEquals((Character) '-', cell00.getCurrentState());
+		assertEquals((Character) 'X', cell00.getCurrentState());
 		assertEquals((Character) '-', cell01.getCurrentState());
 		assertEquals((Character) '-', cell02.getCurrentState());
 		assertEquals((Character) '-', cell10.getCurrentState());
@@ -351,9 +350,9 @@ public class FileSpaceBuilderTest {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			pw.println("[config]");
-			pw.println("states=X-");
+			pw.println("states=X-W");
 			pw.println("[cells]");
-			pw.println("--|--");
+			pw.println("--|W-");
 			pw.println("-X|--");
 			pw.close();
 			description = sw.getBuffer().toString();
@@ -370,12 +369,12 @@ public class FileSpaceBuilderTest {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			pw.println("[config]");
-			pw.println("states=X-");
+			pw.println("states=XW-");
 			pw.println("[cells]");
 			pw.println("--");
 			pw.println("-X");
 			pw.println("++");
-			pw.println("--");
+			pw.println("W-");
 			pw.println("--");
 			pw.close();
 			description = sw.getBuffer().toString();
@@ -503,11 +502,336 @@ public class FileSpaceBuilderTest {
 		assertEquals((Character) '-', cell000.getCurrentState());
 		assertEquals((Character) '-', cell001.getCurrentState());
 		assertEquals((Character) '-', cell010.getCurrentState());
-		assertEquals((Character) '-', cell011.getCurrentState());
-		assertEquals((Character) '-', cell100.getCurrentState());
+		assertEquals((Character) 'X', cell011.getCurrentState());
+		assertEquals((Character) 'W', cell100.getCurrentState());
 		assertEquals((Character) '-', cell101.getCurrentState());
-		assertEquals((Character) 'X', cell110.getCurrentState());
+		assertEquals((Character) '-', cell110.getCurrentState());
 		assertEquals((Character) '-', cell111.getCurrentState());
+	}
+
+	@Test
+	public void testCyclicSpace4DHorizontal() throws IOException {
+		// create description
+		String description;
+		{
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			pw.println("[config]");
+			pw.println("states=X-W");
+			pw.println("[cells]");
+			pw.println("--|W-+X-|--");
+			pw.println("-X|--+--|-W");
+			pw.close();
+			description = sw.getBuffer().toString();
+		}
+
+		testCyclicSpace4D(description);
+	}
+
+	@Test
+	public void testCyclicSpace4DBalanced() throws IOException {
+		// create description
+		String description;
+		{
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			pw.println("[config]");
+			pw.println("states=X-W");
+			pw.println("[cells]");
+			pw.println("--|W-");
+			pw.println("-X|--");
+			pw.println("+++++");
+			pw.println("X-|--");
+			pw.println("--|-W");
+			pw.close();
+			description = sw.getBuffer().toString();
+		}
+
+		testCyclicSpace4D(description);
+	}
+
+	@Test
+	public void testCyclicSpace4DVertical() throws IOException {
+		// create description
+		String description;
+		{
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			pw.println("[config]");
+			pw.println("states=XW-");
+			pw.println("[cells]");
+			pw.println("--");
+			pw.println("-X");
+			pw.println("++");
+			pw.println("W-");
+			pw.println("--");
+			pw.println("**");
+			pw.println("X-");
+			pw.println("--");
+			pw.println("++");
+			pw.println("--");
+			pw.println("-W");
+			pw.close();
+			description = sw.getBuffer().toString();
+		}
+
+		testCyclicSpace4D(description);
+	}
+
+	private void testCyclicSpace4D(String description) {
+		// generate space
+		FileSpaceBuilder builder = new FileSpaceBuilder();
+		builder.createSpaceFromString(description);
+
+		// get cells
+		ICell<Character> cell0000 = builder.getSpaceOfCell().getOrigin();
+		ICell<Character> cell0001 = cell0000.getNextCellOnDimension(0);
+		ICell<Character> cell0010 = cell0000.getNextCellOnDimension(1);
+		ICell<Character> cell0011 = cell0010.getNextCellOnDimension(0);
+		ICell<Character> cell0100 = cell0000.getNextCellOnDimension(2);
+		ICell<Character> cell0101 = cell0100.getNextCellOnDimension(0);
+		ICell<Character> cell0110 = cell0100.getNextCellOnDimension(1);
+		ICell<Character> cell0111 = cell0110.getNextCellOnDimension(0);
+		ICell<Character> cell1000 = cell0000.getNextCellOnDimension(3);
+		ICell<Character> cell1001 = cell1000.getNextCellOnDimension(0);
+		ICell<Character> cell1010 = cell1000.getNextCellOnDimension(1);
+		ICell<Character> cell1011 = cell1010.getNextCellOnDimension(0);
+		ICell<Character> cell1100 = cell1000.getNextCellOnDimension(2);
+		ICell<Character> cell1101 = cell1100.getNextCellOnDimension(0);
+		ICell<Character> cell1110 = cell1100.getNextCellOnDimension(1);
+		ICell<Character> cell1111 = cell1110.getNextCellOnDimension(0);
+
+		// check no intruders
+		List<ICell<Character>> list = new ArrayList<ICell<Character>>();
+		list.add(cell0000);
+		list.add(cell0001);
+		list.add(cell0010);
+		list.add(cell0011);
+		list.add(cell0100);
+		list.add(cell0101);
+		list.add(cell0110);
+		list.add(cell0111);
+		list.add(cell1000);
+		list.add(cell1001);
+		list.add(cell1010);
+		list.add(cell1011);
+		list.add(cell1100);
+		list.add(cell1101);
+		list.add(cell1110);
+		list.add(cell1111);
+		assertTrue(list.containsAll(cell0000.getAllCellsAround()));
+		assertTrue(list.containsAll(cell0001.getAllCellsAround()));
+		assertTrue(list.containsAll(cell0010.getAllCellsAround()));
+		assertTrue(list.containsAll(cell0011.getAllCellsAround()));
+		assertTrue(list.containsAll(cell0100.getAllCellsAround()));
+		assertTrue(list.containsAll(cell0101.getAllCellsAround()));
+		assertTrue(list.containsAll(cell0110.getAllCellsAround()));
+		assertTrue(list.containsAll(cell0111.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1000.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1001.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1010.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1011.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1100.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1101.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1110.getAllCellsAround()));
+		assertTrue(list.containsAll(cell1111.getAllCellsAround()));
+		
+		// check cells exclusivity
+		List<ICell<Character>> cells = new ArrayList<ICell<Character>>(list);
+		for (int i = 0; i < list.size(); i++) {
+			ICell<Character> expected = cells.get(i);
+			for (int j = 0; j < list.size(); j++) {
+				ICell<Character> result = cells.get(j);
+				if (i == j) {
+					assertSame(expected, result);
+				} else {
+					assertNotSame(expected, result);
+				}
+			}
+		}
+
+		// check cells links
+		assertEquals(cell0001, cell0000.getPreviousCellOnDimension(0));
+		assertEquals(cell0001, cell0000.getNextCellOnDimension(0));
+		assertEquals(cell0010, cell0000.getPreviousCellOnDimension(1));
+		assertEquals(cell0010, cell0000.getNextCellOnDimension(1));
+		assertEquals(cell0100, cell0000.getPreviousCellOnDimension(2));
+		assertEquals(cell0100, cell0000.getNextCellOnDimension(2));
+		assertEquals(cell1000, cell0000.getPreviousCellOnDimension(3));
+		assertEquals(cell1000, cell0000.getNextCellOnDimension(3));
+
+		assertEquals(cell0000, cell0001.getPreviousCellOnDimension(0));
+		assertEquals(cell0000, cell0001.getNextCellOnDimension(0));
+		assertEquals(cell0011, cell0001.getPreviousCellOnDimension(1));
+		assertEquals(cell0011, cell0001.getNextCellOnDimension(1));
+		assertEquals(cell0101, cell0001.getPreviousCellOnDimension(2));
+		assertEquals(cell0101, cell0001.getNextCellOnDimension(2));
+		assertEquals(cell1001, cell0001.getPreviousCellOnDimension(3));
+		assertEquals(cell1001, cell0001.getNextCellOnDimension(3));
+
+		assertEquals(cell0011, cell0010.getPreviousCellOnDimension(0));
+		assertEquals(cell0011, cell0010.getNextCellOnDimension(0));
+		assertEquals(cell0000, cell0010.getPreviousCellOnDimension(1));
+		assertEquals(cell0000, cell0010.getNextCellOnDimension(1));
+		assertEquals(cell0110, cell0010.getPreviousCellOnDimension(2));
+		assertEquals(cell0110, cell0010.getNextCellOnDimension(2));
+		assertEquals(cell1010, cell0010.getPreviousCellOnDimension(3));
+		assertEquals(cell1010, cell0010.getNextCellOnDimension(3));
+
+		assertEquals(cell0010, cell0011.getPreviousCellOnDimension(0));
+		assertEquals(cell0010, cell0011.getNextCellOnDimension(0));
+		assertEquals(cell0001, cell0011.getPreviousCellOnDimension(1));
+		assertEquals(cell0001, cell0011.getNextCellOnDimension(1));
+		assertEquals(cell0111, cell0011.getPreviousCellOnDimension(2));
+		assertEquals(cell0111, cell0011.getNextCellOnDimension(2));
+		assertEquals(cell1011, cell0011.getPreviousCellOnDimension(3));
+		assertEquals(cell1011, cell0011.getNextCellOnDimension(3));
+
+		assertEquals(cell0101, cell0100.getPreviousCellOnDimension(0));
+		assertEquals(cell0101, cell0100.getNextCellOnDimension(0));
+		assertEquals(cell0110, cell0100.getPreviousCellOnDimension(1));
+		assertEquals(cell0110, cell0100.getNextCellOnDimension(1));
+		assertEquals(cell0000, cell0100.getPreviousCellOnDimension(2));
+		assertEquals(cell0000, cell0100.getNextCellOnDimension(2));
+		assertEquals(cell1100, cell0100.getPreviousCellOnDimension(3));
+		assertEquals(cell1100, cell0100.getNextCellOnDimension(3));
+
+		assertEquals(cell0100, cell0101.getPreviousCellOnDimension(0));
+		assertEquals(cell0100, cell0101.getNextCellOnDimension(0));
+		assertEquals(cell0111, cell0101.getPreviousCellOnDimension(1));
+		assertEquals(cell0111, cell0101.getNextCellOnDimension(1));
+		assertEquals(cell0001, cell0101.getPreviousCellOnDimension(2));
+		assertEquals(cell0001, cell0101.getNextCellOnDimension(2));
+		assertEquals(cell1101, cell0101.getPreviousCellOnDimension(3));
+		assertEquals(cell1101, cell0101.getNextCellOnDimension(3));
+
+		assertEquals(cell0111, cell0110.getPreviousCellOnDimension(0));
+		assertEquals(cell0111, cell0110.getNextCellOnDimension(0));
+		assertEquals(cell0100, cell0110.getPreviousCellOnDimension(1));
+		assertEquals(cell0100, cell0110.getNextCellOnDimension(1));
+		assertEquals(cell0010, cell0110.getPreviousCellOnDimension(2));
+		assertEquals(cell0010, cell0110.getNextCellOnDimension(2));
+		assertEquals(cell1110, cell0110.getPreviousCellOnDimension(3));
+		assertEquals(cell1110, cell0110.getNextCellOnDimension(3));
+
+		assertEquals(cell0110, cell0111.getPreviousCellOnDimension(0));
+		assertEquals(cell0110, cell0111.getNextCellOnDimension(0));
+		assertEquals(cell0101, cell0111.getPreviousCellOnDimension(1));
+		assertEquals(cell0101, cell0111.getNextCellOnDimension(1));
+		assertEquals(cell0011, cell0111.getPreviousCellOnDimension(2));
+		assertEquals(cell0011, cell0111.getNextCellOnDimension(2));
+		assertEquals(cell1111, cell0111.getPreviousCellOnDimension(3));
+		assertEquals(cell1111, cell0111.getNextCellOnDimension(3));
+		
+		assertEquals(cell1001, cell1000.getPreviousCellOnDimension(0));
+		assertEquals(cell1001, cell1000.getNextCellOnDimension(0));
+		assertEquals(cell1010, cell1000.getPreviousCellOnDimension(1));
+		assertEquals(cell1010, cell1000.getNextCellOnDimension(1));
+		assertEquals(cell1100, cell1000.getPreviousCellOnDimension(2));
+		assertEquals(cell1100, cell1000.getNextCellOnDimension(2));
+		assertEquals(cell0000, cell1000.getPreviousCellOnDimension(3));
+		assertEquals(cell0000, cell1000.getNextCellOnDimension(3));
+
+		assertEquals(cell1000, cell1001.getPreviousCellOnDimension(0));
+		assertEquals(cell1000, cell1001.getNextCellOnDimension(0));
+		assertEquals(cell1011, cell1001.getPreviousCellOnDimension(1));
+		assertEquals(cell1011, cell1001.getNextCellOnDimension(1));
+		assertEquals(cell1101, cell1001.getPreviousCellOnDimension(2));
+		assertEquals(cell1101, cell1001.getNextCellOnDimension(2));
+		assertEquals(cell0001, cell1001.getPreviousCellOnDimension(3));
+		assertEquals(cell0001, cell1001.getNextCellOnDimension(3));
+
+		assertEquals(cell1011, cell1010.getPreviousCellOnDimension(0));
+		assertEquals(cell1011, cell1010.getNextCellOnDimension(0));
+		assertEquals(cell1000, cell1010.getPreviousCellOnDimension(1));
+		assertEquals(cell1000, cell1010.getNextCellOnDimension(1));
+		assertEquals(cell1110, cell1010.getPreviousCellOnDimension(2));
+		assertEquals(cell1110, cell1010.getNextCellOnDimension(2));
+		assertEquals(cell0010, cell1010.getPreviousCellOnDimension(3));
+		assertEquals(cell0010, cell1010.getNextCellOnDimension(3));
+
+		assertEquals(cell1010, cell1011.getPreviousCellOnDimension(0));
+		assertEquals(cell1010, cell1011.getNextCellOnDimension(0));
+		assertEquals(cell1001, cell1011.getPreviousCellOnDimension(1));
+		assertEquals(cell1001, cell1011.getNextCellOnDimension(1));
+		assertEquals(cell1111, cell1011.getPreviousCellOnDimension(2));
+		assertEquals(cell1111, cell1011.getNextCellOnDimension(2));
+		assertEquals(cell0011, cell1011.getPreviousCellOnDimension(3));
+		assertEquals(cell0011, cell1011.getNextCellOnDimension(3));
+
+		assertEquals(cell1101, cell1100.getPreviousCellOnDimension(0));
+		assertEquals(cell1101, cell1100.getNextCellOnDimension(0));
+		assertEquals(cell1110, cell1100.getPreviousCellOnDimension(1));
+		assertEquals(cell1110, cell1100.getNextCellOnDimension(1));
+		assertEquals(cell1000, cell1100.getPreviousCellOnDimension(2));
+		assertEquals(cell1000, cell1100.getNextCellOnDimension(2));
+		assertEquals(cell0100, cell1100.getPreviousCellOnDimension(3));
+		assertEquals(cell0100, cell1100.getNextCellOnDimension(3));
+
+		assertEquals(cell1100, cell1101.getPreviousCellOnDimension(0));
+		assertEquals(cell1100, cell1101.getNextCellOnDimension(0));
+		assertEquals(cell1111, cell1101.getPreviousCellOnDimension(1));
+		assertEquals(cell1111, cell1101.getNextCellOnDimension(1));
+		assertEquals(cell1001, cell1101.getPreviousCellOnDimension(2));
+		assertEquals(cell1001, cell1101.getNextCellOnDimension(2));
+		assertEquals(cell0101, cell1101.getPreviousCellOnDimension(3));
+		assertEquals(cell0101, cell1101.getNextCellOnDimension(3));
+
+		assertEquals(cell1111, cell1110.getPreviousCellOnDimension(0));
+		assertEquals(cell1111, cell1110.getNextCellOnDimension(0));
+		assertEquals(cell1100, cell1110.getPreviousCellOnDimension(1));
+		assertEquals(cell1100, cell1110.getNextCellOnDimension(1));
+		assertEquals(cell1010, cell1110.getPreviousCellOnDimension(2));
+		assertEquals(cell1010, cell1110.getNextCellOnDimension(2));
+		assertEquals(cell0110, cell1110.getPreviousCellOnDimension(3));
+		assertEquals(cell0110, cell1110.getNextCellOnDimension(3));
+
+		assertEquals(cell1110, cell1111.getPreviousCellOnDimension(0));
+		assertEquals(cell1110, cell1111.getNextCellOnDimension(0));
+		assertEquals(cell1101, cell1111.getPreviousCellOnDimension(1));
+		assertEquals(cell1101, cell1111.getNextCellOnDimension(1));
+		assertEquals(cell1011, cell1111.getPreviousCellOnDimension(2));
+		assertEquals(cell1011, cell1111.getNextCellOnDimension(2));
+		assertEquals(cell0111, cell1111.getPreviousCellOnDimension(3));
+		assertEquals(cell0111, cell1111.getNextCellOnDimension(3));
+
+		// check coords
+		assertEquals(new Coords(0, 0, 0, 0), cell0000.getCoords());
+		assertEquals(new Coords(1, 0, 0, 0), cell0001.getCoords());
+		assertEquals(new Coords(0, 1, 0, 0), cell0010.getCoords());
+		assertEquals(new Coords(1, 1, 0, 0), cell0011.getCoords());
+		assertEquals(new Coords(0, 0, 1, 0), cell0100.getCoords());
+		assertEquals(new Coords(1, 0, 1, 0), cell0101.getCoords());
+		assertEquals(new Coords(0, 1, 1, 0), cell0110.getCoords());
+		assertEquals(new Coords(1, 1, 1, 0), cell0111.getCoords());
+		assertEquals(new Coords(0, 0, 0, 1), cell1000.getCoords());
+		assertEquals(new Coords(1, 0, 0, 1), cell1001.getCoords());
+		assertEquals(new Coords(0, 1, 0, 1), cell1010.getCoords());
+		assertEquals(new Coords(1, 1, 0, 1), cell1011.getCoords());
+		assertEquals(new Coords(0, 0, 1, 1), cell1100.getCoords());
+		assertEquals(new Coords(1, 0, 1, 1), cell1101.getCoords());
+		assertEquals(new Coords(0, 1, 1, 1), cell1110.getCoords());
+		assertEquals(new Coords(1, 1, 1, 1), cell1111.getCoords());
+
+		// check initial values
+		assertEquals((Character) '-', cell0000.getCurrentState());
+		assertEquals((Character) '-', cell0001.getCurrentState());
+		assertEquals((Character) '-', cell0010.getCurrentState());
+		assertEquals((Character) 'X', cell0011.getCurrentState());
+		assertEquals((Character) 'W', cell0100.getCurrentState());
+		assertEquals((Character) '-', cell0101.getCurrentState());
+		assertEquals((Character) '-', cell0110.getCurrentState());
+		assertEquals((Character) '-', cell0111.getCurrentState());
+		
+		// TODO
+		assertEquals((Character) 'X', cell1000.getCurrentState());
+		assertEquals((Character) '-', cell1001.getCurrentState());
+		assertEquals((Character) '-', cell1010.getCurrentState());
+		assertEquals((Character) '-', cell1011.getCurrentState());
+		assertEquals((Character) '-', cell1100.getCurrentState());
+		assertEquals((Character) '-', cell1101.getCurrentState());
+		assertEquals((Character) '-', cell1110.getCurrentState());
+		assertEquals((Character) 'W', cell1111.getCurrentState());
 	}
 
 	@Test

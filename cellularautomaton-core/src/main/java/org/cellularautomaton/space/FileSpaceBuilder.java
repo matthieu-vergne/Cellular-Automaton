@@ -154,7 +154,7 @@ public class FileSpaceBuilder {
 	protected void customizeCell(ICell<Character> cell) {
 		Coords coords = cell.getCoords();
 		Object reference = characterSpace;
-		for (int dimension = 0; dimension < coords.getDimensions(); dimension++) {
+		for (int dimension = coords.getDimensions() - 1; dimension >= 0; dimension--) {
 			int coord = coords.get(dimension);
 			reference = ((Object[]) reference)[coord];
 		}
@@ -198,10 +198,6 @@ public class FileSpaceBuilder {
 
 		public int getLengthOfTheGoodAxis() {
 			return isFollowingX ? xLength : yLength;
-		}
-
-		private int getStartOfTheGoodAxis() {
-			return isFollowingX ? xStart : yStart;
 		}
 
 		private int[] getCoordsFollowingTheGoodAxis(int delta) {
@@ -269,7 +265,7 @@ public class FileSpaceBuilder {
 					Candidate candidate = new Candidate();
 					candidate.separator = (Separator) marker;
 					candidate.isFollowingX = isFollowingX;
-					candidate.matrixLength = i - getStartOfTheGoodAxis();
+					candidate.matrixLength = i;
 					candidates.add(candidate);
 				}
 			}
@@ -345,6 +341,7 @@ public class FileSpaceBuilder {
 					while (i2 < length
 							&& ((m = description[coords2[0]][coords2[1]]) instanceof Cell || ((Separator) m).dimension < separator.dimension)) {
 						i2++;
+						coords2 = getCoords(isFollowingX, 0, i2);
 					}
 					if (i2 - i1 - 1 != i) {
 						String sense = isFollowingX ? "horizontal" : "vertical";
