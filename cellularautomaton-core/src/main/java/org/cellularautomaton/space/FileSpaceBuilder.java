@@ -100,15 +100,13 @@ public class FileSpaceBuilder {
 		try {
 			width = 0;
 			height = 0;
+			builder = new SpaceBuilder<Character>();
 			rule = new DynamicRule<Character>();
 			stateFactory = new DynamicStateFactory<Character>() {
 				public void customize(ICell<Character> cell) {
 					customizeCell(cell);
 				};
 			};
-			builder = new SpaceBuilder<Character>();
-			builder.setRule(rule);
-			builder.setStateFactory(stateFactory);
 
 			BufferedReader in = new BufferedReader(
 					new StringReader(description));
@@ -138,6 +136,8 @@ public class FileSpaceBuilder {
 
 			characterSpace = translateDescriptionInSpace(cellsDescription);
 
+			builder.setRule(rule);
+			builder.setStateFactory(stateFactory);
 			builder.createNewSpace();
 			Object reference = characterSpace;
 			while (reference instanceof Object[]) {
@@ -357,7 +357,8 @@ public class FileSpaceBuilder {
 		}
 	}
 
-	private int[] getCoords(boolean isFollowingX, int staticValue, int dynamicValue) {
+	private int[] getCoords(boolean isFollowingX, int staticValue,
+			int dynamicValue) {
 		int[] coords = new int[] { staticValue, staticValue };
 		coords[isFollowingX ? 0 : 1] = dynamicValue;
 		return coords;
@@ -401,20 +402,20 @@ public class FileSpaceBuilder {
 	}
 
 	private void preciseSeparators(Marker[][] description) {
-		Map<Character, Separator> verticalSeparators = getSeparators(description, true);
-		Map<Character, Separator> horizontalSeparators = getSeparators(description, false);
+		Map<Character, Separator> verticalSeparators = getSeparators(
+				description, true);
+		Map<Character, Separator> horizontalSeparators = getSeparators(
+				description, false);
 
 		// initialize dimensions
 		int dimension = 0;
-		Switcher<Map<Character, Separator>> mapSwitcher = new Switcher<Map<Character,Separator>>();
+		Switcher<Map<Character, Separator>> mapSwitcher = new Switcher<Map<Character, Separator>>();
 		mapSwitcher.add(horizontalSeparators);
 		mapSwitcher.add(verticalSeparators);
 		Switcher<Iterator<Character>> iteratorSwitcher = new Switcher<Iterator<Character>>();
-		iteratorSwitcher.add(horizontalSeparators.keySet()
-				.iterator());
-		iteratorSwitcher.add(verticalSeparators.keySet()
-				.iterator());
-		while (!iteratorSwitcher.isEmpty() &&  iteratorSwitcher.get().hasNext()) {
+		iteratorSwitcher.add(horizontalSeparators.keySet().iterator());
+		iteratorSwitcher.add(verticalSeparators.keySet().iterator());
+		while (!iteratorSwitcher.isEmpty() && iteratorSwitcher.get().hasNext()) {
 			mapSwitcher.get().get(iteratorSwitcher.get().next()).dimension = dimension;
 			dimension++;
 			mapSwitcher.switchComponent();
@@ -439,9 +440,10 @@ public class FileSpaceBuilder {
 		}
 	}
 
-	private Map<Character, Separator> getSeparators(Marker[][] description, boolean isFollowingX) {
+	private Map<Character, Separator> getSeparators(Marker[][] description,
+			boolean isFollowingX) {
 		Map<Character, Separator> separators = new LinkedHashMap<Character, Separator>();
-		int length = isFollowingX ? height : width ;
+		int length = isFollowingX ? height : width;
 		int[] coords = getCoords(isFollowingX, 0, 1);
 		if (length > 1 && description[coords[0]][coords[1]] instanceof Cell) {
 			separators.put(null, new Separator());
@@ -514,8 +516,7 @@ public class FileSpaceBuilder {
 
 	private void addRule(String rulePart) {
 		String[] split = rulePart.split(":");
-		List<Character> possibleStates = builder.getStateFactory()
-				.getPossibleStates();
+		List<Character> possibleStates = stateFactory.getPossibleStates();
 
 		// get the condition
 		final Expression expression = ExpressionHelper.parseRulePart(split[0],
