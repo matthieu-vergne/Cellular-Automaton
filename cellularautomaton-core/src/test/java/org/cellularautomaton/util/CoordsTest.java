@@ -181,9 +181,11 @@ public class CoordsTest {
 		Coords coords = new Coords(1, 2, 3);
 		
 		coords.setDimensions(4);
+		assertEquals(4, coords.getDimensions());
 		assertEquals(new Coords(1, 2, 3, 0), coords);
 		
 		coords.setDimensions(3);
+		assertEquals(3, coords.getDimensions());
 		assertEquals(new Coords(1, 2, 3), coords);
 	}
 	
