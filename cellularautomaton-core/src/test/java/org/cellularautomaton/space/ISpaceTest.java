@@ -1,7 +1,6 @@
 package org.cellularautomaton.space;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +23,7 @@ public abstract class ISpaceTest<StateType> {
 	@Test
 	public void testGetAllCells() {
 		ISpace<StateType> space = createSpace();
+		assertNotNull(space);
 
 		// get cells
 		ICell<StateType> origin = space.getOrigin();
@@ -55,8 +55,7 @@ public abstract class ISpaceTest<StateType> {
 		intruderAccessible.setPreviousCellOnDimension(0, hostCell);
 		hostCell.setNextCellOnDimension(0, intruderAccessible);
 
-		ICell<StateType> intruderNotAccessible = cellFactory
-				.createCell();
+		ICell<StateType> intruderNotAccessible = cellFactory.createCell();
 		intruderNotAccessible.setNextCellOnDimension(0, hostCell);
 
 		expectedCells.add(intruderAccessible);
@@ -69,6 +68,7 @@ public abstract class ISpaceTest<StateType> {
 	@Test
 	public void testCellsIterator() {
 		ISpace<StateType> space = createSpace();
+		assertNotNull(space);
 
 		// get cells
 		ICell<StateType> origin = space.getOrigin();
@@ -103,13 +103,11 @@ public abstract class ISpaceTest<StateType> {
 					.setDimensions(2);
 			ICell<StateType> hostCell = iterator.next();
 
-			ICell<StateType> intruderAccessible = cellFactory
-					.createCell();
+			ICell<StateType> intruderAccessible = cellFactory.createCell();
 			intruderAccessible.setPreviousCellOnDimension(0, hostCell);
 			hostCell.setNextCellOnDimension(0, intruderAccessible);
 
-			ICell<StateType> intruderNotAccessible = cellFactory
-					.createCell();
+			ICell<StateType> intruderNotAccessible = cellFactory.createCell();
 			intruderNotAccessible.setNextCellOnDimension(0, hostCell);
 
 			Collection<ICell<StateType>> cellsToView = space.getAllCells();
@@ -133,8 +131,8 @@ public abstract class ISpaceTest<StateType> {
 		};
 
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory).setMemorySize(1)
-				.createNewSpace().addDimension(3);
+		builder.setStateFactory(stateFactory).setMemorySize(1).createNewSpace()
+				.addDimension(3);
 
 		// get cells
 		ISpace<String> space = builder.getSpaceOfCell();

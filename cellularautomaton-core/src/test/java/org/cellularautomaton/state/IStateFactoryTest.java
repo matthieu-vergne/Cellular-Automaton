@@ -1,7 +1,6 @@
 package org.cellularautomaton.state;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +19,8 @@ public abstract class IStateFactoryTest<StateType> {
 	@Test
 	public void testDefaultIsInPossibleStates() {
 		IStateFactory<StateType> factory = createFactory();
+		assertNotNull(factory);
+
 		assertTrue(factory.getPossibleStates().contains(
 				factory.getDefaultState()));
 	}
@@ -27,6 +28,8 @@ public abstract class IStateFactoryTest<StateType> {
 	@Test
 	public void testAtLeastTwoPossibleStates() {
 		IStateFactory<StateType> factory = createFactory();
+		assertNotNull(factory);
+
 		HashSet<StateType> states = new HashSet<StateType>(
 				factory.getPossibleStates());
 		assertTrue(states.size() >= 2);
@@ -35,6 +38,7 @@ public abstract class IStateFactoryTest<StateType> {
 	@Test
 	public void testGoodRandomGenerator() {
 		IStateFactory<StateType> factory = createFactory();
+		assertNotNull(factory);
 
 		Map<StateType, Integer> counters = new HashMap<StateType, Integer>();
 		List<StateType> states = factory.getPossibleStates();

@@ -1,6 +1,6 @@
 package org.cellularautomaton.rule;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,14 +13,6 @@ import org.cellularautomaton.state.AbstractStateFactoryTest;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 
-/**
- * This test case uses the generic test defined for the {@link IRule} interface.
- * It can be expanded with more tests but the basic tests must be checked too,
- * that is why it extends the abstract test case {@link IRuleTest}.
- * 
- * @author Matthieu Vergne (matthieu.vergne@gmail.com)
- * 
- */
 public class StaticRuleTest extends IRuleTest<Integer> {
 
 	@Override
@@ -56,6 +48,7 @@ public class StaticRuleTest extends IRuleTest<Integer> {
 	@Test
 	public void testStaticValue() {
 		IRule<Integer> rule = createRule();
+		assertNotNull(rule);
 
 		IStateFactory<Integer> stateFactory = new IntegerStateFactory();
 

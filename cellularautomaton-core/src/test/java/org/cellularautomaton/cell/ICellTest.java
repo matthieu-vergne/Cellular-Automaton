@@ -1,8 +1,9 @@
 package org.cellularautomaton.cell;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.rule.RuleFactory;
@@ -10,21 +11,25 @@ import org.cellularautomaton.util.Coords;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * This test case is a model for all the {@link ICell} implementations. All the
- * implementations of the {@link ICell} interface must have a test class
- * extending this test case.
- * 
- * @author Matthieu Vergne (matthieu.vergne@gmail.com)
- * 
- */
 public abstract class ICellTest {
 
 	public abstract <StateType> ICell<StateType> createCell();
 
 	@Test
+	public void testNotUniqueInstanciation() {
+		Collection<ICell<?>> cells = new HashSet<ICell<?>>();
+		for (int i = 0; i < 100; i++) {
+			ICell<Object> cell = createCell();
+			assertNotNull(cell);
+			assertFalse(cells.contains(cell));
+			cells.add(cell);
+		}
+	}
+
+	@Test
 	public void testCellState() {
 		ICell<Integer> cell = createCell();
+		assertNotNull(cell);
 		int memorySize = 3;
 		cell.setMemory(memorySize, 0);
 		assertEquals(memorySize, cell.getMemorySize());
@@ -32,7 +37,7 @@ public abstract class ICellTest {
 		assertEquals(Integer.valueOf(0), cell.getState(0));
 		assertEquals(Integer.valueOf(0), cell.getState(1));
 		assertEquals(Integer.valueOf(0), cell.getState(2));
-		
+
 		cell.setRule(new IRule<Integer>() {
 			public Integer calculateNextStateOf(ICell<Integer> cell) {
 				return cell.getState(0) + cell.getState(1);
@@ -52,7 +57,7 @@ public abstract class ICellTest {
 		assertEquals(Integer.valueOf(0), cell.getState(2));
 		assertTrue(cell.isNextStateCalculated());
 		assertFalse(cell.isNextStateDifferent());
-		
+
 		cell.applyNextState();
 		assertEquals(Integer.valueOf(1), cell.getCurrentState());
 		assertEquals(Integer.valueOf(1), cell.getState(0));
@@ -109,6 +114,7 @@ public abstract class ICellTest {
 	@Test
 	public void testCellDimensions() {
 		ICell<String> cell = createCell();
+		assertNotNull(cell);
 		cell.setMemory(1, "");
 
 		cell.setDimensions(2);
@@ -127,22 +133,27 @@ public abstract class ICellTest {
 		IRule<String> rule = new RuleFactory<String>().getStaticRuleInstance();
 
 		ICell<String> cell = createCell();
+		assertNotNull(cell);
 		cell.setMemory(1, "middle");
 		cell.setRule(rule);
 		cell.setDimensions(dimensions);
 		ICell<String> neighborTop = createCell();
+		assertNotNull(neighborTop);
 		cell.setMemory(1, "top");
 		neighborTop.setRule(rule);
 		neighborTop.setDimensions(dimensions);
 		ICell<String> neighborBottom = createCell();
+		assertNotNull(neighborBottom);
 		cell.setMemory(1, "bottom");
 		neighborBottom.setRule(rule);
 		neighborBottom.setDimensions(dimensions);
 		ICell<String> neighborLeft = createCell();
+		assertNotNull(neighborLeft);
 		cell.setMemory(1, "left");
 		neighborLeft.setRule(rule);
 		neighborLeft.setDimensions(dimensions);
 		ICell<String> neighborRight = createCell();
+		assertNotNull(neighborRight);
 		cell.setMemory(1, "right");
 		neighborRight.setRule(rule);
 		neighborRight.setDimensions(dimensions);
@@ -186,18 +197,22 @@ public abstract class ICellTest {
 		assertEquals(neighborTop, cell.getNextCellOnDimension(1));
 
 		ICell<String> neighborTopLeft = createCell();
+		assertNotNull(neighborTopLeft);
 		cell.setMemory(1, "top-left");
 		neighborTopLeft.setRule(rule);
 		neighborTopLeft.setDimensions(dimensions);
 		ICell<String> neighborTopRight = createCell();
+		assertNotNull(neighborTopRight);
 		cell.setMemory(1, "top-right");
 		neighborTopRight.setRule(rule);
 		neighborTopRight.setDimensions(dimensions);
 		ICell<String> neighborBottomLeft = createCell();
+		assertNotNull(neighborBottomLeft);
 		cell.setMemory(1, "bottom-left");
 		neighborBottomLeft.setRule(rule);
 		neighborBottomLeft.setDimensions(dimensions);
 		ICell<String> neighborBottomRight = createCell();
+		assertNotNull(neighborBottomRight);
 		cell.setMemory(1, "bottom-right");
 		neighborBottomRight.setRule(rule);
 		neighborBottomRight.setDimensions(dimensions);
@@ -242,6 +257,7 @@ public abstract class ICellTest {
 	@Test
 	public void testCoords() {
 		ICell<String> cell = createCell();
+		assertNotNull(cell);
 		cell.setMemory(1, "");
 		Assert.assertEquals(new Coords(), cell.getCoords());
 

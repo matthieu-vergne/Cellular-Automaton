@@ -23,6 +23,7 @@ public abstract class ComposedExpressionTest {
 	@Test
 	public void testComposition() {
 		ComposedExpression expression = createComposedExpression();
+		assertNotNull(expression);
 		assertEquals(0, expression.getExpressions().size());
 		
 		Expression e1 = createFakeExpression();

@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-// TODO use assertNotNull(...) to check the abstract methods return for all the abstract test classes
 public abstract class OptimizableTest<OwnerType> {
 	public abstract Optimizable<OwnerType> getOptimizable();
 

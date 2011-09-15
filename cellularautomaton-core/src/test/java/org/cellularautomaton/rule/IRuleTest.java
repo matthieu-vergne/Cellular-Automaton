@@ -8,14 +8,6 @@ import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 
-/**
- * This test case is a model for all the {@link IRule} implementations. All the
- * implementations of the {@link IRule} interface must have a test class
- * extending this test case.
- * 
- * @author Matthieu Vergne (matthieu.vergne@gmail.com)
- * 
- */
 public abstract class IRuleTest<StateType> {
 
 	/**
@@ -33,9 +25,11 @@ public abstract class IRuleTest<StateType> {
 	@Test
 	public void testNotNull() {
 		IRule<StateType> rule = createRule();
+		assertNotNull(rule);
 
 		// generate automaton
 		IStateFactory<StateType> stateFactory = getStateFactory();
+		assertNotNull(stateFactory);
 		
 		SpaceBuilder<StateType> builder = new SpaceBuilder<StateType>();
 		builder.setStateFactory(stateFactory).setRule(rule);
