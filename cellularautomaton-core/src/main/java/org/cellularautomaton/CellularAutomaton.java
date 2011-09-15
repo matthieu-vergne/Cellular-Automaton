@@ -7,6 +7,7 @@ import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.optimization.AutoRemoveOptimization;
 import org.cellularautomaton.optimization.CellsSelectionOptimization;
 import org.cellularautomaton.optimization.GenericOptimization;
+import org.cellularautomaton.optimization.Optimizable;
 import org.cellularautomaton.optimization.Optimization;
 import org.cellularautomaton.optimization.OptimizationStep;
 import org.cellularautomaton.optimization.OptimizationType;
@@ -29,7 +30,7 @@ import org.cellularautomaton.space.ISpace;
  *            data for particular uses (just consider all the cells use the same
  *            type).
  */
-public class CellularAutomaton<StateType> {
+public class CellularAutomaton<StateType> implements Optimizable<StateType> {
 
 	/**
 	 * The space of cells this automaton work on.
@@ -95,9 +96,10 @@ public class CellularAutomaton<StateType> {
 	}
 
 	/**
-	 * Apply the the optimizations of a specific step.
+	 * Apply the optimizations of a specific step.
 	 * 
 	 * @param step
+	 *            the current step
 	 */
 	private void applyOptimizations(
 			Class<? extends OptimizationStep<StateType>> step) {
@@ -110,7 +112,8 @@ public class CellularAutomaton<StateType> {
 				((GenericOptimization<StateType>) optimization).execute();
 			}
 			if (optimization instanceof AutoRemoveOptimization) {
-				if (((AutoRemoveOptimization<StateType>) optimization).removeNow()) {
+				if (((AutoRemoveOptimization<StateType>) optimization)
+						.removeNow()) {
 					optimizations.remove(optimization);
 				}
 			}

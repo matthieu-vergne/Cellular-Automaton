@@ -1,4 +1,4 @@
-package org.cellularautomaton.space.expression;
+package org.cellularautomaton.space.builder.expression;
 
 import static org.junit.Assert.*;
 

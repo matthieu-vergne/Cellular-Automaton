@@ -1,4 +1,4 @@
-package org.cellularautomaton.space;
+package org.cellularautomaton.space.builder;
 
 import static org.junit.Assert.*;
 
@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.space.ISpace;
 import org.cellularautomaton.space.builder.ScriptSpaceBuilder;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;

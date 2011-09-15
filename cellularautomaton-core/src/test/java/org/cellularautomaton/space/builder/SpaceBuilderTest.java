@@ -1,4 +1,4 @@
-package org.cellularautomaton.space;
+package org.cellularautomaton.space.builder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
