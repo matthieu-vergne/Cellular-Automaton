@@ -6,7 +6,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.space.ScriptSpaceBuilder;
+import org.cellularautomaton.space.builder.ScriptSpaceBuilder;
+import org.cellularautomaton.space.builder.expression.CellComparisonExpression;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 

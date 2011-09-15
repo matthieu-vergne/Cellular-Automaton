@@ -1,4 +1,4 @@
-package org.cellularautomaton.space.expression;
+package org.cellularautomaton.space.builder.expression;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.space.BadFileContentException;
+import org.cellularautomaton.space.builder.BadFileContentException;
 import org.cellularautomaton.util.Coords;
 
 public class ExpressionHelper {

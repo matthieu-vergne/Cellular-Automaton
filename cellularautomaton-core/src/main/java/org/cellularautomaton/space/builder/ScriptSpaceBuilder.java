@@ -1,4 +1,4 @@
-package org.cellularautomaton.space;
+package org.cellularautomaton.space.builder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,14 +15,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.DynamicRule;
 import org.cellularautomaton.rule.DynamicRule.RulePart;
-import org.cellularautomaton.space.expression.Expression;
-import org.cellularautomaton.space.expression.ExpressionHelper;
+import org.cellularautomaton.space.ISpace;
+import org.cellularautomaton.space.builder.expression.Expression;
+import org.cellularautomaton.space.builder.expression.ExpressionHelper;
 import org.cellularautomaton.state.DynamicStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.util.Coords;
@@ -47,10 +46,9 @@ public class ScriptSpaceBuilder {
 	private int width;
 	private int height;
 	private Object[] characterSpace;
-	private final Logger logger = Logger.getAnonymousLogger();
 
 	public ScriptSpaceBuilder() {
-		logger.setLevel(Level.OFF);
+		// do nothing
 	}
 
 	/**
@@ -145,7 +143,9 @@ public class ScriptSpaceBuilder {
 				builder.addDimension(array.length);
 				reference = array[0];
 			}
+			Logger.getAnonymousLogger().info("Finalizing space...");
 			builder.finalizeSpace();
+			Logger.getAnonymousLogger().info("Space Finalized.");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -492,9 +492,6 @@ public class ScriptSpaceBuilder {
 			}
 		}
 		reader.close();
-		for (int x = 0; x < height; x++) {
-			logger.info(Arrays.deepToString(description[x]));
-		}
 		return description;
 	}
 
@@ -595,10 +592,6 @@ public class ScriptSpaceBuilder {
 
 	private static class Separator extends Marker {
 		public int dimension;
-	}
-
-	public void setLogLevel(Level level) {
-		logger.setLevel(level);
 	}
 
 }

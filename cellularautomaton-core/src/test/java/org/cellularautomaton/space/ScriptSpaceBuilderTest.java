@@ -13,12 +13,13 @@ import java.util.List;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.space.builder.ScriptSpaceBuilder;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 
 // TODO test 5D
 // TODO test composed rule in non cyclic space (not available cells)
-public class FileSpaceBuilderTest {
+public class ScriptSpaceBuilderTest {
 	@Test
 	public void testStates() throws IOException {
 		// create configuration file

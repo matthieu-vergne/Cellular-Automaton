@@ -14,7 +14,7 @@ import org.cellularautomaton.optimization.PreApplyingOptimization;
 import org.cellularautomaton.optimization.PreCalculationOptimization;
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.space.ISpace;
-import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package org.cellularautomaton.space.expression;
+package org.cellularautomaton.space.builder.expression;
 
 import java.util.Iterator;
 

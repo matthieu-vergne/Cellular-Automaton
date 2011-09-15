@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
@@ -19,7 +20,7 @@ import org.cellularautomaton.optimization.AutoRemoveOptimization;
 import org.cellularautomaton.optimization.CalculateOnlyEvolvingZonesOptimization;
 import org.cellularautomaton.optimization.CellsSelectionOptimization;
 import org.cellularautomaton.optimization.PreCalculationOptimization;
-import org.cellularautomaton.space.ScriptSpaceBuilder;
+import org.cellularautomaton.space.builder.ScriptSpaceBuilder;
 
 public class WireClockAutomatonFactory {
 
@@ -65,8 +66,10 @@ public class WireClockAutomatonFactory {
 		ScriptSpaceBuilder builder = new ScriptSpaceBuilder();
 		builder.createSpaceFromString(sw.getBuffer().toString());
 
+		Logger.getAnonymousLogger().info("Creating automaton...");
 		CellularAutomaton<Character> automaton = new CellularAutomaton<Character>(
 				builder.getSpaceOfCell());
+		Logger.getAnonymousLogger().info("Automaton created.");
 		// automaton.addOptimization(new BasicOptimization());
 		automaton.addOptimization(new StartOptimization());
 
@@ -95,21 +98,28 @@ public class WireClockAutomatonFactory {
 			implements PreCalculationOptimization<Character>,
 			CellsSelectionOptimization<Character>,
 			AutoRemoveOptimization<Character> {
+		private boolean mustBeRemoved = false;
 
 		@Override
 		public Collection<ICell<Character>> getCellsToManage() {
-			Collection<ICell<Character>> cellsToManage = new HashSet<ICell<Character>>();
-			for (ICell<Character> cell : getAutomaton().getCellsToManage()) {
-				if (!cell.getCurrentState().equals('X')) {
-					cellsToManage.add(cell);
+			if (!mustBeRemoved) {
+				Collection<ICell<Character>> cellsToManage = new HashSet<ICell<Character>>();
+				for (ICell<Character> cell : getAutomaton().getCellsToManage()) {
+					if (!cell.getCurrentState().equals('X')) {
+						cellsToManage.add(cell);
+					}
 				}
+				mustBeRemoved = true;
+				return cellsToManage;
 			}
-			return cellsToManage;
+			else {
+				return getAutomaton().getCellsToManage();
+			}
 		}
 
 		@Override
 		public boolean removeNow() {
-			return true;
+			return mustBeRemoved;
 		}
 	}
 }

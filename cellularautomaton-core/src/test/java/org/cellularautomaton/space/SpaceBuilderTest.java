@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.util.Coords;

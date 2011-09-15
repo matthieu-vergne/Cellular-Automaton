@@ -1,6 +1,7 @@
 package org.cellularautomaton.space;
 
 import org.cellularautomaton.space.GenericSpaceTest.TestState;
+import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.EnumStateFactory;
 
 public class GenericSpaceTest extends ISpaceTest<TestState> {

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 

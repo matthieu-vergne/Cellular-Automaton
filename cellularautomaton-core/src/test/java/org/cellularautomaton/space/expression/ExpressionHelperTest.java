@@ -12,6 +12,12 @@ import java.util.List;
 
 import org.cellularautomaton.cell.GenericCell;
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.space.builder.expression.AndExpression;
+import org.cellularautomaton.space.builder.expression.CellComparisonExpression;
+import org.cellularautomaton.space.builder.expression.ComposedExpression;
+import org.cellularautomaton.space.builder.expression.Expression;
+import org.cellularautomaton.space.builder.expression.ExpressionHelper;
+import org.cellularautomaton.space.builder.expression.OrExpression;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 

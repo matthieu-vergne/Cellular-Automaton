@@ -6,7 +6,7 @@ import java.util.List;
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.IRule;
-import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.EnumStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.util.Coords;

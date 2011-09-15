@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.space.SpaceBuilder;
+import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.AbstractStateFactoryTest;
 import org.cellularautomaton.state.IStateFactory;

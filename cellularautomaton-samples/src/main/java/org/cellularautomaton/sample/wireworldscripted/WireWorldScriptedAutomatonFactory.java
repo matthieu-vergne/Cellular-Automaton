@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.cellularautomaton.CellularAutomaton;
-import org.cellularautomaton.space.ScriptSpaceBuilder;
+import org.cellularautomaton.space.builder.ScriptSpaceBuilder;
 
 public class WireWorldScriptedAutomatonFactory {
 

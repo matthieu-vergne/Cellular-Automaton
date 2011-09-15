@@ -1,4 +1,4 @@
-package org.cellularautomaton.space;
+package org.cellularautomaton.space.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +8,8 @@ import java.util.Iterator;
 import org.cellularautomaton.cell.CellFactory;
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.IRule;
+import org.cellularautomaton.space.GenericSpace;
+import org.cellularautomaton.space.ISpace;
 import org.cellularautomaton.state.IStateFactory;
 
 /**

@@ -2,6 +2,9 @@ package org.cellularautomaton.space.expression;
 
 import static org.junit.Assert.*;
 
+import org.cellularautomaton.space.builder.expression.ComposedExpression;
+import org.cellularautomaton.space.builder.expression.OrExpression;
+import org.cellularautomaton.space.builder.expression.SwitchExpression;
 import org.junit.Test;
 
 public class OrExpressionTest extends ComposedExpressionTest {
