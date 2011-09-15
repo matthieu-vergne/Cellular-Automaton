@@ -7,11 +7,11 @@ import java.util.List;
 
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.optimization.AbstractOptimization;
-import org.cellularautomaton.optimization.GenericOptimization;
-import org.cellularautomaton.optimization.PostApplyingOptimization;
-import org.cellularautomaton.optimization.PostCalculationOptimization;
-import org.cellularautomaton.optimization.PreApplyingOptimization;
-import org.cellularautomaton.optimization.PreCalculationOptimization;
+import org.cellularautomaton.optimization.Optimizable;
+import org.cellularautomaton.optimization.OptimizableTest;
+import org.cellularautomaton.optimization.Optimization;
+import org.cellularautomaton.optimization.step.OptimizationStep;
+import org.cellularautomaton.optimization.type.OptimizationType;
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.space.ISpace;
 import org.cellularautomaton.space.builder.SpaceBuilder;
@@ -19,7 +19,32 @@ import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.junit.Test;
 
-public class CellularAutomatonTest {
+public class CellularAutomatonTest extends
+		OptimizableTest<CellularAutomaton<String>> {
+
+	@Override
+	public Optimizable<CellularAutomaton<String>> getOptimizable() {
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
+		builder.setStateFactory(new AbstractStateFactory<String>() {
+			@Override
+			public List<String> getPossibleStates() {
+				return Arrays.asList("0");
+			}
+		});
+		builder.createNewSpace().addDimension(2).finalizeSpace();
+		return new CellularAutomaton<String>(builder.getSpaceOfCell());
+	}
+
+	@Override
+	public Optimization<CellularAutomaton<String>> getRandomOptimization() {
+		class Optimization extends
+				AbstractOptimization<CellularAutomaton<String>> implements
+				OptimizationStep<CellularAutomaton<String>>,
+				OptimizationType<CellularAutomaton<String>> {
+
+		}
+		return new Optimization();
+	}
 
 	IStateFactory<String> stateFactory1D = new AbstractStateFactory<String>() {
 		public List<String> getPossibleStates() {
@@ -37,7 +62,8 @@ public class CellularAutomatonTest {
 		}
 
 		public void customize(org.cellularautomaton.cell.ICell<String> cell) {
-			cell.setCurrentState("" + cell.getCoords().get(1) + cell.getCoords().get(0));
+			cell.setCurrentState("" + cell.getCoords().get(1)
+					+ cell.getCoords().get(0));
 		};
 	};
 
@@ -193,9 +219,9 @@ public class CellularAutomatonTest {
 		assertEquals("212223313233010203", cell32.getCurrentState());
 		assertEquals("222320323330020300", cell33.getCurrentState());
 	}
-	
+
 	@Test
-	public void testIsReadyForStep(){
+	public void testIsReadyForStep() {
 		// create space
 		SpaceBuilder<String> builder = new SpaceBuilder<String>();
 		builder.setStateFactory(stateFactory1D).setRule(new IRule<String>() {
@@ -213,98 +239,42 @@ public class CellularAutomatonTest {
 		// test
 		assertTrue(automaton.isReadyForCalculation());
 		assertFalse(automaton.isReadyForApplying());
-		
+
 		automaton.calculateNextStep();
 		assertFalse(automaton.isReadyForCalculation());
 		assertTrue(automaton.isReadyForApplying());
-		
+
 		automaton.applyNextStep();
 		assertTrue(automaton.isReadyForCalculation());
 		assertFalse(automaton.isReadyForApplying());
-		
+
 		automaton.calculateNextStep();
 		assertFalse(automaton.isReadyForCalculation());
 		assertTrue(automaton.isReadyForApplying());
-		
+
 		automaton.applyNextStep();
 		assertTrue(automaton.isReadyForCalculation());
 		assertFalse(automaton.isReadyForApplying());
-		
+
 		automaton.calculateNextStep();
 		assertFalse(automaton.isReadyForCalculation());
 		assertTrue(automaton.isReadyForApplying());
-		
+
 		automaton.applyNextStep();
 		assertTrue(automaton.isReadyForCalculation());
 		assertFalse(automaton.isReadyForApplying());
-		
+
 		automaton.doStep();
 		assertTrue(automaton.isReadyForCalculation());
 		assertFalse(automaton.isReadyForApplying());
-		
+
 		automaton.doStep();
 		assertTrue(automaton.isReadyForCalculation());
 		assertFalse(automaton.isReadyForApplying());
-		
+
 		automaton.doStep();
 		assertTrue(automaton.isReadyForCalculation());
 		assertFalse(automaton.isReadyForApplying());
-	}
-
-	@Test
-	public void testOptimizations() {
-		// create space
-		SpaceBuilder<String> builder = new SpaceBuilder<String>();
-		builder.setStateFactory(stateFactory1D).setRule(new IRule<String>() {
-			public String calculateNextStateOf(ICell<String> cell) {
-				return cell.getRelativeCell(-1).getCurrentState()
-						+ cell.getRelativeCell(+1).getCurrentState();
-			}
-		}).createNewSpace().addDimension(4);
-		ISpace<String> space = builder.getSpaceOfCell();
-
-		// create automaton
-		final CellularAutomaton<String> automaton = new CellularAutomaton<String>(
-				space);
-
-		// create optimizations
-		class PreCalculation extends AbstractOptimization<String> implements
-				PreCalculationOptimization<String>, GenericOptimization<String> {
-			public void execute() {
-				assertTrue(automaton.isReadyForCalculation());
-			}
-		}
-		automaton.addOptimization(new PreCalculation());
-
-		class PostCalculation extends AbstractOptimization<String> implements
-				PostCalculationOptimization<String>,
-				GenericOptimization<String> {
-			public void execute() {
-				assertTrue(automaton.isReadyForApplying());
-			}
-		}
-		automaton.addOptimization(new PostCalculation());
-
-		class PreApplying extends AbstractOptimization<String> implements
-				PreApplyingOptimization<String>, GenericOptimization<String> {
-			public void execute() {
-				assertTrue(automaton.isReadyForApplying());
-			}
-		}
-		automaton.addOptimization(new PreApplying());
-
-		class PostApplying extends AbstractOptimization<String> implements
-				PostApplyingOptimization<String>, GenericOptimization<String> {
-			public void execute() {
-				assertTrue(automaton.isReadyForCalculation());
-			}
-		}
-		automaton.addOptimization(new PostApplying());
-
-		// test
-		automaton.doStep();
-		automaton.doStep();
-		automaton.doStep();
 	}
 
 }

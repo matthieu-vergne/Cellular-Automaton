@@ -4,17 +4,17 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.cellularautomaton.cell.ICell;
-import org.cellularautomaton.optimization.AutoRemoveOptimization;
-import org.cellularautomaton.optimization.CellsSelectionOptimization;
-import org.cellularautomaton.optimization.GenericOptimization;
 import org.cellularautomaton.optimization.Optimizable;
 import org.cellularautomaton.optimization.Optimization;
-import org.cellularautomaton.optimization.OptimizationStep;
-import org.cellularautomaton.optimization.OptimizationType;
-import org.cellularautomaton.optimization.PostApplyingOptimization;
-import org.cellularautomaton.optimization.PostCalculationOptimization;
-import org.cellularautomaton.optimization.PreApplyingOptimization;
-import org.cellularautomaton.optimization.PreCalculationOptimization;
+import org.cellularautomaton.optimization.OptimizationManager;
+import org.cellularautomaton.optimization.OptimizationManager.OptimizationExecutor;
+import org.cellularautomaton.optimization.step.AutomatonPostApplyingOptimization;
+import org.cellularautomaton.optimization.step.AutomatonPostCalculationOptimization;
+import org.cellularautomaton.optimization.step.AutomatonPreApplyingOptimization;
+import org.cellularautomaton.optimization.step.AutomatonPreCalculationOptimization;
+import org.cellularautomaton.optimization.step.OptimizationStep;
+import org.cellularautomaton.optimization.type.AutomatonCellsSelectionOptimization;
+import org.cellularautomaton.optimization.type.OptimizationType;
 import org.cellularautomaton.space.ISpace;
 
 /**
@@ -30,7 +30,8 @@ import org.cellularautomaton.space.ISpace;
  *            data for particular uses (just consider all the cells use the same
  *            type).
  */
-public class CellularAutomaton<StateType> implements Optimizable<StateType> {
+public class CellularAutomaton<StateType> implements
+		Optimizable<CellularAutomaton<StateType>> {
 
 	/**
 	 * The space of cells this automaton work on.
@@ -43,9 +44,9 @@ public class CellularAutomaton<StateType> implements Optimizable<StateType> {
 	private Collection<ICell<StateType>> cellsToManage = new HashSet<ICell<StateType>>();
 
 	/**
-	 * The optimizations to apply.
+	 * The optimizations to use.
 	 */
-	private final Collection<Optimization<StateType>> optimizations = new HashSet<Optimization<StateType>>();
+	private final OptimizationManager<CellularAutomaton<StateType>> optimizations = new OptimizationManager<CellularAutomaton<StateType>>();
 
 	/**
 	 * Tell if the calculation has been done and if we are waiting for applying.
@@ -58,9 +59,24 @@ public class CellularAutomaton<StateType> implements Optimizable<StateType> {
 	 * @param cellSpace
 	 *            the space of cells to work on
 	 */
+	@SuppressWarnings("unchecked")
 	public CellularAutomaton(ISpace<StateType> cellSpace) {
 		this.cellSpace = cellSpace;
 		cellsToManage.addAll(cellSpace.getAllCells());
+		optimizations.setOwner(this);
+		optimizations
+				.setExecutor(
+						(Class<? extends OptimizationType<CellularAutomaton<StateType>>>) AutomatonCellsSelectionOptimization.class,
+						new OptimizationExecutor<CellularAutomaton<StateType>>() {
+
+							@Override
+							public void execute(
+									Optimization<CellularAutomaton<StateType>> optimization) {
+								cellsToManage = ((AutomatonCellsSelectionOptimization<StateType>) optimization)
+										.getCellsToManage();
+							}
+
+						});
 	}
 
 	/**
@@ -69,14 +85,16 @@ public class CellularAutomaton<StateType> implements Optimizable<StateType> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void calculateNextStep() {
-		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PreCalculationOptimization.class);
+		optimizations
+				.execute((Class<? extends OptimizationStep<CellularAutomaton<StateType>>>) AutomatonPreCalculationOptimization.class);
 
 		for (ICell<StateType> cell : cellsToManage) {
 			cell.calculateNextState();
 		}
 		isCalculationDone = true;
 
-		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PostCalculationOptimization.class);
+		optimizations
+				.execute((Class<? extends OptimizationStep<CellularAutomaton<StateType>>>) AutomatonPostCalculationOptimization.class);
 	}
 
 	/**
@@ -85,60 +103,16 @@ public class CellularAutomaton<StateType> implements Optimizable<StateType> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void applyNextStep() {
-		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PreApplyingOptimization.class);
+		optimizations
+				.execute((Class<? extends OptimizationStep<CellularAutomaton<StateType>>>) AutomatonPreApplyingOptimization.class);
 
 		for (ICell<StateType> cell : cellsToManage) {
 			cell.applyNextState();
 		}
 		isCalculationDone = false;
 
-		applyOptimizations((Class<? extends OptimizationStep<StateType>>) PostApplyingOptimization.class);
-	}
-
-	/**
-	 * Apply the optimizations of a specific step.
-	 * 
-	 * @param step
-	 *            the current step
-	 */
-	private void applyOptimizations(
-			Class<? extends OptimizationStep<StateType>> step) {
-		for (Optimization<StateType> optimization : getOptimizationsOf(step)) {
-			if (optimization instanceof CellsSelectionOptimization) {
-				cellsToManage = ((CellsSelectionOptimization<StateType>) optimization)
-						.getCellsToManage();
-			}
-			if (optimization instanceof GenericOptimization) {
-				((GenericOptimization<StateType>) optimization).execute();
-			}
-			if (optimization instanceof AutoRemoveOptimization) {
-				if (((AutoRemoveOptimization<StateType>) optimization)
-						.removeNow()) {
-					optimizations.remove(optimization);
-				}
-			}
-		}
-	}
-
-	/**
-	 * This method is a simple getter for the optimizations, except that you can
-	 * give a filter to get only specific optimizations. You can also give null
-	 * to get all the optimizations.
-	 * 
-	 * @param filter
-	 *            the class of the wanted optimizations (generally a child of
-	 *            {@link OptimizationStep} or {@link OptimizationType})
-	 * @return the optimizations corresponding to the given class
-	 */
-	public Collection<Optimization<StateType>> getOptimizationsOf(
-			Class<? extends Optimization<StateType>> filter) {
-		Collection<Optimization<StateType>> optimizations = new HashSet<Optimization<StateType>>();
-		for (Optimization<StateType> optimization : this.optimizations) {
-			if (filter == null || filter.isInstance(optimization)) {
-				optimizations.add(optimization);
-			}
-		}
-		return optimizations;
+		optimizations
+				.execute((Class<? extends OptimizationStep<CellularAutomaton<StateType>>>) AutomatonPostApplyingOptimization.class);
 	}
 
 	/**
@@ -176,22 +150,8 @@ public class CellularAutomaton<StateType> implements Optimizable<StateType> {
 	 * @param optimization
 	 *            the optimization to add
 	 */
-	public void addOptimization(Optimization<StateType> optimization) {
-		if (!(optimization instanceof OptimizationStep)) {
-			throw new IllegalArgumentException(
-					"No step has been given for the optimization "
-							+ optimization);
-		} else if (!(optimization instanceof OptimizationType)) {
-			throw new IllegalArgumentException(
-					"No type has been given for the optimization "
-							+ optimization);
-		} else if (optimization.getAutomaton() != null) {
-			throw new IllegalArgumentException(
-					"Another automaton use the optimization " + optimization);
-		} else {
-			optimization.setAutomaton(this);
-			optimizations.add(optimization);
-		}
+	public void add(Optimization<CellularAutomaton<StateType>> optimization) {
+		optimizations.add(optimization);
 	}
 
 	/**
@@ -201,10 +161,17 @@ public class CellularAutomaton<StateType> implements Optimizable<StateType> {
 	 * @param optimization
 	 *            the optimization to remove
 	 */
-	public void removeOptimization(Optimization<StateType> optimization) {
-		if (optimizations.remove(optimization)) {
-			optimization.setAutomaton(null);
-		}
+	public void remove(Optimization<CellularAutomaton<StateType>> optimization) {
+		optimizations.remove(optimization);
+	}
+
+	/**
+	 * Check the automaton knows about a given optimization.
+	 */
+	@Override
+	public boolean contains(
+			Optimization<CellularAutomaton<StateType>> optimization) {
+		return optimizations.contains(optimization);
 	}
 
 	/**

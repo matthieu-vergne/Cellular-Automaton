@@ -1,32 +1,33 @@
 package org.cellularautomaton.optimization;
 
 /**
- * This interface has to be implemented by the elements using optimizations.
+ * This interface has to be implemented by the elements using optimizations. A
+ * good way to do is to implement this interface and to use a
+ * {@link OptimizationManager} to manage it.
  * 
  * @author Matthieu Vergne <matthieu.vergne@gmail.com>
  * 
- * @param <StateType>
- *            the type of data used by each cell, it can be {@link Boolean} for
- *            a simple "On/Off" state, a numeral state like {@link Integer} or
- *            {@link Float} for arithmetical states, or any specific type of
- *            data for particular uses (just consider all the cells use the same
- *            type).
+ * @param <OwnerType>
+ *            the type of components the optimization should optimize.
  */
-public interface Optimizable<StateType> {
+public interface Optimizable<OwnerType> {
 	/**
-	 * Add an optimization to the automaton.
 	 * 
 	 * @param optimization
 	 *            the optimization to add
 	 */
-	public void addOptimization(Optimization<StateType> optimization);
+	public void add(Optimization<OwnerType> optimization);
 
 	/**
-	 * Remove an optimization. Nothing happen if the automaton does not know the
-	 * optimization.
-	 * 
 	 * @param optimization
 	 *            the optimization to remove
 	 */
-	public void removeOptimization(Optimization<StateType> optimization);
+	public void remove(Optimization<OwnerType> optimization);
+
+	/**
+	 * @param optimization
+	 *            the optimization to look for
+	 * @return true if the owner know the given optimization, false otherwise
+	 */
+	public boolean contains(Optimization<OwnerType> optimization);
 }

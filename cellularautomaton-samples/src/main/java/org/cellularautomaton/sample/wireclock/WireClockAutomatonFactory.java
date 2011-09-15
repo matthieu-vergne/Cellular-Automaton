@@ -16,10 +16,10 @@ import javax.imageio.ImageIO;
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.optimization.AbstractOptimization;
-import org.cellularautomaton.optimization.AutoRemoveOptimization;
-import org.cellularautomaton.optimization.CalculateOnlyEvolvingZonesOptimization;
-import org.cellularautomaton.optimization.CellsSelectionOptimization;
-import org.cellularautomaton.optimization.PreCalculationOptimization;
+import org.cellularautomaton.optimization.implemented.CalculateOnlyEvolvingZonesOptimization;
+import org.cellularautomaton.optimization.step.AutomatonPreCalculationOptimization;
+import org.cellularautomaton.optimization.type.AutoRemoveOptimization;
+import org.cellularautomaton.optimization.type.AutomatonCellsSelectionOptimization;
 import org.cellularautomaton.space.builder.ScriptSpaceBuilder;
 
 public class WireClockAutomatonFactory {
@@ -71,7 +71,7 @@ public class WireClockAutomatonFactory {
 				builder.getSpaceOfCell());
 		Logger.getAnonymousLogger().info("Automaton created.");
 		// automaton.addOptimization(new BasicOptimization());
-		automaton.addOptimization(new StartOptimization());
+		automaton.add(new StartOptimization());
 
 		return automaton;
 	}
@@ -94,26 +94,26 @@ public class WireClockAutomatonFactory {
 		}
 	}
 
-	static class StartOptimization extends AbstractOptimization<Character>
-			implements PreCalculationOptimization<Character>,
-			CellsSelectionOptimization<Character>,
-			AutoRemoveOptimization<Character> {
+	static class StartOptimization extends
+			AbstractOptimization<CellularAutomaton<Character>> implements
+			AutomatonPreCalculationOptimization<Character>,
+			AutomatonCellsSelectionOptimization<Character>,
+			AutoRemoveOptimization<CellularAutomaton<Character>> {
 		private boolean mustBeRemoved = false;
 
 		@Override
 		public Collection<ICell<Character>> getCellsToManage() {
 			if (!mustBeRemoved) {
 				Collection<ICell<Character>> cellsToManage = new HashSet<ICell<Character>>();
-				for (ICell<Character> cell : getAutomaton().getCellsToManage()) {
+				for (ICell<Character> cell : getOwner().getCellsToManage()) {
 					if (!cell.getCurrentState().equals('X')) {
 						cellsToManage.add(cell);
 					}
 				}
 				mustBeRemoved = true;
 				return cellsToManage;
-			}
-			else {
-				return getAutomaton().getCellsToManage();
+			} else {
+				return getOwner().getCellsToManage();
 			}
 		}
 

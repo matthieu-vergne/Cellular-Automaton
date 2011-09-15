@@ -7,6 +7,9 @@ import java.util.Iterator;
 
 import org.cellularautomaton.cell.CellFactory;
 import org.cellularautomaton.cell.ICell;
+import org.cellularautomaton.optimization.Optimizable;
+import org.cellularautomaton.optimization.Optimization;
+import org.cellularautomaton.optimization.OptimizationManager;
 import org.cellularautomaton.rule.IRule;
 import org.cellularautomaton.space.GenericSpace;
 import org.cellularautomaton.space.ISpace;
@@ -25,7 +28,8 @@ import org.cellularautomaton.state.IStateFactory;
  *            {@link Float} for arithmetical states, or any specific type of
  *            data for particular uses.
  */
-public class SpaceBuilder<StateType> {
+public class SpaceBuilder<StateType> implements
+		Optimizable<SpaceBuilder<StateType>> {
 	/**
 	 * The factory used to create the space of cells.
 	 */
@@ -48,6 +52,10 @@ public class SpaceBuilder<StateType> {
 	 * @see #finalizeSpace()
 	 */
 	private boolean isSpaceFinalized;
+	/**
+	 * The optimizations used by this builder.
+	 */
+	private final OptimizationManager<SpaceBuilder<StateType>> optimizations = new OptimizationManager<SpaceBuilder<StateType>>();
 
 	/**
 	 * Create a new space builder with :<br/>
@@ -61,6 +69,7 @@ public class SpaceBuilder<StateType> {
 	public SpaceBuilder() {
 		cellFactory = new CellFactory<StateType>();
 		dimensionLengths = new ArrayList<Integer>();
+		optimizations.setOwner(this);
 		isSpaceFinalized = false;
 	}
 
@@ -256,7 +265,7 @@ public class SpaceBuilder<StateType> {
 		if (space == null) {
 			throw new IllegalStateException("No space has been created yet.");
 		}
-		
+
 		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
 				.hasNext();) {
 			ICell<StateType> cell = iterator.next();
@@ -375,4 +384,27 @@ public class SpaceBuilder<StateType> {
 		this.cellFactory = cellFactory;
 	}
 
+	/**
+	 * Add an optimization to this builder.
+	 */
+	@Override
+	public void add(Optimization<SpaceBuilder<StateType>> optimization) {
+		optimizations.add(optimization);
+	}
+
+	/**
+	 * Remove an optimization to this builder.
+	 */
+	@Override
+	public void remove(Optimization<SpaceBuilder<StateType>> optimization) {
+		optimizations.remove(optimization);
+	}
+
+	/**
+	 * Check the builder knows about a given optimization.
+	 */
+	@Override
+	public boolean contains(Optimization<SpaceBuilder<StateType>> optimization) {
+		return optimizations.contains(optimization);
+	}
 }

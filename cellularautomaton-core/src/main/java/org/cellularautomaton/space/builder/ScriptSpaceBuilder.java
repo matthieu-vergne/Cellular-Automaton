@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.rule.DynamicRule;
@@ -143,9 +142,7 @@ public class ScriptSpaceBuilder {
 				builder.addDimension(array.length);
 				reference = array[0];
 			}
-			Logger.getAnonymousLogger().info("Finalizing space...");
 			builder.finalizeSpace();
-			Logger.getAnonymousLogger().info("Space Finalized.");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
