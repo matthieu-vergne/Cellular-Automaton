@@ -20,7 +20,7 @@ import org.cellularautomaton.optimization.type.OptimizationType;
  * @author Matthieu Vergne <matthieu.vergne@gmail.com>
  * 
  * @param <OwnerType>
- *            the type of components the optimization should optimize.
+ *            The type of components the optimization should optimize.
  */
 // TODO test at least implemented optimizations
 public interface Optimization<OwnerType> {

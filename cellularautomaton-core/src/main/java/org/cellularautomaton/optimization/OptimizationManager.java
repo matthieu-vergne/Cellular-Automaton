@@ -11,11 +11,24 @@ import org.cellularautomaton.optimization.type.AutoRemoveOptimization;
 import org.cellularautomaton.optimization.type.GenericOptimization;
 import org.cellularautomaton.optimization.type.OptimizationType;
 
+/**
+ * This manager gives a convenient way to manage optimizations.
+ * 
+ * @author Matthieu Vergne <matthieu.vergne@gmail.com>
+ * 
+ * @param <OwnerType>
+ *            The type of components the optimization should optimize.
+ */
 public class OptimizationManager<OwnerType> extends
 		AbstractOptimization<OwnerType> implements Optimizable<OwnerType> {
 	private final Collection<Optimization<OwnerType>> optimizations = new HashSet<Optimization<OwnerType>>();
 	private final Map<Class<? extends OptimizationType<OwnerType>>, OptimizationExecutor<OwnerType>> executors = new HashMap<Class<? extends OptimizationType<OwnerType>>, OptimizationExecutor<OwnerType>>();
 
+	/**
+	 * Create a new manager, already able to execute {@link GenericOptimization}
+	 * . Of course this behavior can be adapted setting a new executor to this
+	 * class.
+	 */
 	@SuppressWarnings("unchecked")
 	public OptimizationManager() {
 		setExecutor(
@@ -64,9 +77,22 @@ public class OptimizationManager<OwnerType> extends
 		return optimizations.contains(optimization);
 	}
 
-	public void setExecutor(Class<? extends OptimizationType<OwnerType>> clazz,
+	/**
+	 * Giving an executor to a specific class of optimizations is a way to tell
+	 * how to execute such optimizations. As the execution of a specific type of
+	 * optimization is dependent of the owner of the optimization, it is logical
+	 * to let this owner decide how to execute it, especially for the coupling
+	 * with internal fields.
+	 * 
+	 * @param type
+	 *            the class identifying the type of optimization
+	 * @param executor
+	 *            the executor describing how to execute this type of
+	 *            optimization
+	 */
+	public void setExecutor(Class<? extends OptimizationType<OwnerType>> type,
 			OptimizationExecutor<OwnerType> executor) {
-		executors.put(clazz, executor);
+		executors.put(type, executor);
 	}
 
 	/**
@@ -81,7 +107,7 @@ public class OptimizationManager<OwnerType> extends
 			// look for exact matching
 			OptimizationExecutor<OwnerType> executor = executors
 					.get(optimization);
-			
+
 			// look for global matching
 			if (executor == null) {
 				HashSet<Class<? extends OptimizationType<OwnerType>>> candidates = new HashSet<Class<? extends OptimizationType<OwnerType>>>();
@@ -111,7 +137,7 @@ public class OptimizationManager<OwnerType> extends
 					executor = executors.get(candidates.iterator().next());
 				}
 			}
-			
+
 			// execution
 			if (executor != null) {
 				executor.execute(optimization);
@@ -155,7 +181,25 @@ public class OptimizationManager<OwnerType> extends
 		return optimizations;
 	}
 
+	/**
+	 * An executor is a way to specify how to execute an optimization. Each
+	 * {@link Optimizable} element can have its own optimizations, or some
+	 * optimizations can be shared but used in different ways. This class has to
+	 * be used by owners of optimizations to tell how to use them.
+	 * 
+	 * @author Matthieu Vergne <matthieu.vergne@gmail.com>
+	 * 
+	 * @param <OwnerType>
+	 *            The type of components the optimization should optimize.
+	 */
 	public static interface OptimizationExecutor<OwnerType> {
+		/**
+		 * This method must implement the way to execute the optimization,
+		 * especially giving the good inputs and using the output (if there is).
+		 * 
+		 * @param optimization
+		 *            the optimization to execute
+		 */
 		public void execute(Optimization<OwnerType> optimization);
 
 	}
