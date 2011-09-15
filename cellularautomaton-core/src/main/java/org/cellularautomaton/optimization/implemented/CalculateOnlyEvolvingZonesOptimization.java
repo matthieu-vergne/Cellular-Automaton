@@ -6,10 +6,9 @@ import java.util.HashSet;
 import org.cellularautomaton.CellularAutomaton;
 import org.cellularautomaton.cell.ICell;
 import org.cellularautomaton.optimization.AbstractOptimization;
-import org.cellularautomaton.optimization.step.AutomatonPreApplyingOptimization;
-import org.cellularautomaton.optimization.step.AutomatonPreCalculationOptimization;
+import org.cellularautomaton.optimization.step.AutomatonPostApplyingOptimization;
+import org.cellularautomaton.optimization.step.AutomatonPostCalculationOptimization;
 import org.cellularautomaton.optimization.type.AutomatonCellsSelectionOptimization;
-import org.cellularautomaton.space.ISpace;
 
 /**
  * <p>
@@ -30,25 +29,28 @@ import org.cellularautomaton.space.ISpace;
  */
 public abstract class CalculateOnlyEvolvingZonesOptimization<StateType> extends
 		AbstractOptimization<CellularAutomaton<StateType>> implements
-		AutomatonPreCalculationOptimization<StateType>,
-		AutomatonPreApplyingOptimization<StateType>,
+		AutomatonPostCalculationOptimization<StateType>,
+		AutomatonPostApplyingOptimization<StateType>,
 		AutomatonCellsSelectionOptimization<StateType> {
 
-	private Collection<ICell<StateType>> cellsToCalculate = null;
-	private Collection<ICell<StateType>> cellsToApply = null;
+	private Collection<ICell<StateType>> cellsToCalculate = new HashSet<ICell<StateType>>();
+	private Collection<ICell<StateType>> cellsToApply = new HashSet<ICell<StateType>>();
+	private boolean isFirstOccurence = true;
 
 	public Collection<ICell<StateType>> getCellsToManage() {
-		if (cellsToCalculate == null) {
-			CellularAutomaton<StateType> owner = getOwner();
-			ISpace<StateType> space = owner.getSpace();
-			cellsToCalculate = space.getAllCells();
+		if (isFirstOccurence) {
+			cellsToCalculate.addAll(getOwner().getSpace().getAllCells());
+			isFirstOccurence = false;
 		}
-		
+
 		if (getOwner().isReadyForCalculation()) {
 			return cellsToCalculate;
 		} else if (getOwner().isReadyForApplying()) {
-			cellsToApply = cellsToCalculate;
-			cellsToCalculate = new HashSet<ICell<StateType>>();
+			Collection<ICell<StateType>> temp = cellsToCalculate;
+			cellsToCalculate = cellsToApply;
+			cellsToApply = temp;
+
+			cellsToCalculate.clear();
 			for (ICell<StateType> cell : cellsToApply) {
 				if (cell.isNextStateDifferent()) {
 					cellsToCalculate.addAll(getCellsDependingTo(cell));

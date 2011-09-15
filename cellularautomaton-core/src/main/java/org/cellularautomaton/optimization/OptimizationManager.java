@@ -74,6 +74,7 @@ public class OptimizationManager<OwnerType> extends
 
 	@Override
 	public boolean contains(Optimization<OwnerType> optimization) {
+		clean();
 		return optimizations.contains(optimization);
 	}
 
@@ -113,7 +114,7 @@ public class OptimizationManager<OwnerType> extends
 				HashSet<Class<? extends OptimizationType<OwnerType>>> candidates = new HashSet<Class<? extends OptimizationType<OwnerType>>>();
 				for (Class<? extends OptimizationType<OwnerType>> type : executors
 						.keySet()) {
-					if (type.isInstance(executor)) {
+					if (type.isInstance(optimization)) {
 						candidates.add(type);
 					}
 				}
@@ -155,7 +156,7 @@ public class OptimizationManager<OwnerType> extends
 			if (optimization instanceof AutoRemoveOptimization
 					&& ((AutoRemoveOptimization<OwnerType>) optimization)
 							.removeNow()) {
-				optimizations.remove(optimization);
+				remove(optimization);
 			}
 		}
 	}
