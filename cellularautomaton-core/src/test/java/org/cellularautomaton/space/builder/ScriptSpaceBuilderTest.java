@@ -18,7 +18,6 @@ import org.cellularautomaton.space.builder.ScriptSpaceBuilder;
 import org.cellularautomaton.util.Coords;
 import org.junit.Test;
 
-// TODO test 5D
 // TODO test composed rule in non cyclic space (not available cells)
 public class ScriptSpaceBuilderTest {
 	@Test

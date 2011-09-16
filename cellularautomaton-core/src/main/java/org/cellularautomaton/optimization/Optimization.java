@@ -22,7 +22,6 @@ import org.cellularautomaton.optimization.type.OptimizationType;
  * @param <OwnerType>
  *            The type of components the optimization should optimize.
  */
-// TODO test at least implemented optimizations
 public interface Optimization<OwnerType> {
 	public void setOwner(OwnerType owner);
 
