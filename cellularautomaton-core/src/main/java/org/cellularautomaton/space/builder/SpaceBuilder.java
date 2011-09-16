@@ -257,7 +257,7 @@ public class SpaceBuilder<StateType> implements
 	 * This method finalize the space creation. Since this method is called, the
 	 * space of cells should not be modified. A complete check is done on the
 	 * space in order to configure the last properties of each cell (like their
-	 * current state).
+	 * current state or set their coordinates as not mutable).
 	 * 
 	 * @return this builder
 	 */
@@ -269,6 +269,7 @@ public class SpaceBuilder<StateType> implements
 		for (Iterator<ICell<StateType>> iterator = space.iterator(); iterator
 				.hasNext();) {
 			ICell<StateType> cell = iterator.next();
+			cell.getCoords().setMutable(false);
 			stateFactory.customize(cell);
 		}
 		isSpaceFinalized = true;

@@ -1,10 +1,6 @@
 package org.cellularautomaton.space.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +13,6 @@ import org.cellularautomaton.optimization.OptimizableTest;
 import org.cellularautomaton.optimization.Optimization;
 import org.cellularautomaton.optimization.step.OptimizationStep;
 import org.cellularautomaton.optimization.type.OptimizationType;
-import org.cellularautomaton.space.builder.SpaceBuilder;
 import org.cellularautomaton.state.AbstractStateFactory;
 import org.cellularautomaton.state.IStateFactory;
 import org.cellularautomaton.util.Coords;
@@ -1441,6 +1436,34 @@ public class SpaceBuilderTest extends OptimizableTest<SpaceBuilder<String>> {
 		assertEquals("0", cell0.getCurrentState());
 		assertEquals("1", cell1.getCurrentState());
 		assertEquals("2", cell2.getCurrentState());
+	}
+
+	@Test
+	public void testCoordsMutability() {
+		// generate space
+		IStateFactory<String> stateFactory = new AbstractStateFactory<String>() {
+			public List<String> getPossibleStates() {
+				return Arrays.asList(new String[] { "0", "1", "2" });
+			}
+
+			@Override
+			public void customize(ICell<String> cell) {
+				cell.setCurrentState("" + cell.getCoords().get(0));
+			}
+		};
+
+		SpaceBuilder<String> builder = new SpaceBuilder<String>();
+		builder.setStateFactory(stateFactory).createNewSpace().addDimension(3);
+
+		// get cells
+		ICell<String> cell0 = builder.getSpaceOfCell().getOrigin();
+		ICell<String> cell1 = cell0.getNextCellOnDimension(0);
+		ICell<String> cell2 = cell1.getNextCellOnDimension(0);
+
+		// check coords mutability
+		assertFalse(cell0.getCoords().isMutable());
+		assertFalse(cell1.getCoords().isMutable());
+		assertFalse(cell2.getCoords().isMutable());
 	}
 
 	@Test

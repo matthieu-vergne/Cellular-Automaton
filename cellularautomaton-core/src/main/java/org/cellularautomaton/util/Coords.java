@@ -1,6 +1,9 @@
 package org.cellularautomaton.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A tool to encapsulate the coordinate methods.
@@ -9,17 +12,21 @@ import java.util.Arrays;
  * 
  */
 public class Coords implements Comparable<Coords> {
-	
+
 	/**
 	 * The coordinates themselves.
 	 */
-	private int[] coords;
+	private List<Integer> coords = new ArrayList<Integer>();
+	/**
+	 * Indicate if the coordinates can be modified.
+	 */
+	private boolean isMutable = true;
 
 	/**
 	 * Create an empty set of coordinates (no dimension)
 	 */
 	public Coords() {
-		coords = new int[0];
+		// nothing to do
 	}
 
 	/**
@@ -43,13 +50,14 @@ public class Coords implements Comparable<Coords> {
 	public Coords(final String string) {
 		String buffer = string.replaceAll("\\s", "");
 		final String regexDim = "[+-]?[0-9]+";
-		final String regexCoords = String.format("\\(%s(,%s)*\\)", regexDim, regexDim);
+		final String regexCoords = String.format("\\(%s(,%s)*\\)", regexDim,
+				regexDim);
 		if (!buffer.matches(regexCoords)) {
 			throw new IllegalArgumentException(
 					"The coords string is not well-written : " + string);
-		}
-		else {
-			String[] split = buffer.substring(1, buffer.length()-1).split(",");
+		} else {
+			String[] split = buffer.substring(1, buffer.length() - 1)
+					.split(",");
 			int[] coords = new int[split.length];
 			for (int i = 0; i < split.length; i++) {
 				coords[i] = Integer.parseInt(split[i].replace("+", ""));
@@ -64,8 +72,11 @@ public class Coords implements Comparable<Coords> {
 	 *            the dimensions of these coordinates
 	 */
 	public void setDimensions(int dimensions) {
-		if (getDimensions() != dimensions) {
-			coords = Arrays.copyOf(coords, dimensions);
+		while (getDimensions() < dimensions) {
+			coords.add(0);
+		}
+		while (getDimensions() > dimensions) {
+			coords.remove(coords.size() - 1);
 		}
 	}
 
@@ -74,7 +85,7 @@ public class Coords implements Comparable<Coords> {
 	 * @return the dimensions of these coordinates
 	 */
 	public int getDimensions() {
-		return coords.length;
+		return coords.size();
 	}
 
 	/**
@@ -85,7 +96,7 @@ public class Coords implements Comparable<Coords> {
 	 *            the value to apply as the coordinate
 	 */
 	public void set(int dimension, int value) {
-		coords[dimension] = value;
+		coords.set(dimension, value);
 	}
 
 	/**
@@ -95,7 +106,7 @@ public class Coords implements Comparable<Coords> {
 	 * @return the value of the coordinate
 	 */
 	public int get(int dimension) {
-		return coords[dimension];
+		return coords.get(dimension);
 	}
 
 	/**
@@ -106,7 +117,10 @@ public class Coords implements Comparable<Coords> {
 	 *            the coordinates to save
 	 */
 	public void setAll(int... coords) {
-		this.coords = Arrays.copyOf(coords, coords.length);
+		this.coords.clear();
+		for (int coord : coords) {
+			this.coords.add(coord);
+		}
 	}
 
 	/**
@@ -114,7 +128,11 @@ public class Coords implements Comparable<Coords> {
 	 * @return the complete coordinates
 	 */
 	public int[] getAll() {
-		return Arrays.copyOf(coords, coords.length);
+		int[] coords = new int[getDimensions()];
+		for (int i = 0; i < getDimensions(); i++) {
+			coords[i] = get(i);
+		}
+		return coords;
 	}
 
 	/**
@@ -141,7 +159,7 @@ public class Coords implements Comparable<Coords> {
 	 */
 	@Override
 	public String toString() {
-		String string = Arrays.toString(coords);
+		String string = Arrays.toString(coords.toArray());
 		return "(" + string.substring(1, string.length() - 1) + ")";
 	}
 
@@ -149,7 +167,7 @@ public class Coords implements Comparable<Coords> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(coords);
+		result = prime * result + Arrays.hashCode(coords.toArray());
 		return result;
 	}
 
@@ -159,6 +177,28 @@ public class Coords implements Comparable<Coords> {
 			return compareTo((Coords) obj) == 0;
 		} else {
 			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @return true if the coordinates can be modified, false otherwise
+	 */
+	public boolean isMutable() {
+		return isMutable;
+	}
+
+	/**
+	 * 
+	 * @param isMutable
+	 *            indicate if the coordinates can be modified
+	 */
+	public void setMutable(boolean isMutable) {
+		this.isMutable = isMutable;
+		if (!isMutable) {
+			coords = Collections.unmodifiableList(coords);
+		} else {
+			coords = new ArrayList<Integer>(coords);
 		}
 	}
 }

@@ -1,8 +1,6 @@
 package org.cellularautomaton.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -175,18 +173,56 @@ public class CoordsTest {
 		assertFalse(c5a.equals(c4b));
 		assertTrue(c5a.equals(c5b));
 	}
-	
+
 	@Test
 	public void testDimensions() {
 		Coords coords = new Coords(1, 2, 3);
-		
+
 		coords.setDimensions(4);
 		assertEquals(4, coords.getDimensions());
 		assertEquals(new Coords(1, 2, 3, 0), coords);
-		
+
 		coords.setDimensions(3);
 		assertEquals(3, coords.getDimensions());
 		assertEquals(new Coords(1, 2, 3), coords);
 	}
-	
+
+	@Test
+	public void testMutable() {
+		Coords coords = new Coords(1, 2, 3);
+		assertTrue(coords.isMutable());
+
+		coords.setMutable(false);
+		assertFalse(coords.isMutable());
+
+		try {
+			coords.set(0, 5);
+			fail("Modifying a coordinate should not be allowed.");
+		} catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			coords.setDimensions(5);
+			fail("Modifying the number of dimensions should not be allowed.");
+		} catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			coords.setAll(0, 1);
+			fail("Modifying all the coordinates should not be allowed.");
+		} catch (UnsupportedOperationException e) {
+		}
+
+		coords.setMutable(true);
+		assertTrue(coords.isMutable());
+
+		coords.set(0, 5);
+		assertEquals(5, coords.get(0));
+
+		coords.setDimensions(5);
+		assertEquals(5, coords.getDimensions());
+
+		coords.setAll(0, 1);
+		assertEquals(new Coords(0, 1), coords);
+	}
 }
