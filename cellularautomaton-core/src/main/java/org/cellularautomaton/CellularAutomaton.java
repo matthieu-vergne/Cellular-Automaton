@@ -17,6 +17,9 @@ import org.cellularautomaton.optimization.type.AutomatonCellsSelectionOptimizati
 import org.cellularautomaton.optimization.type.OptimizationType;
 import org.cellularautomaton.space.ISpace;
 
+import com.amd.aparapi.Kernel;
+import com.amd.aparapi.Range;
+
 /**
  * A cellular automaton is a space of evolving cells. Each cell evolves
  * considering its actual state and the states of other cells.
@@ -52,6 +55,10 @@ public class CellularAutomaton<StateType> implements
 	 * Tell if the calculation has been done and if we are waiting for applying.
 	 */
 	private boolean isCalculationDone;
+	/**
+	 * Tell if the APARAPI library has to be used.
+	 */
+	private boolean useAparapi = true;
 
 	/**
 	 * Create an automaton on a specific space of cells.
@@ -88,8 +95,21 @@ public class CellularAutomaton<StateType> implements
 		optimizations
 				.execute((Class<? extends OptimizationStep<CellularAutomaton<StateType>>>) AutomatonPreCalculationOptimization.class);
 
-		for (ICell<StateType> cell : cellsToManage) {
-			cell.calculateNextState();
+		if (isAparapiUsed()) {
+			final Object[] cells = cellsToManage.toArray();
+			Kernel kernel = new Kernel() {
+				@Override
+				public void run() {
+					int i = getGlobalId();
+					((ICell<StateType>) cells[i]).calculateNextState();
+				}
+			};
+			Range range = Range.create(cells.length);
+			kernel.execute(range);
+		} else {
+			for (ICell<StateType> cell : cellsToManage) {
+				cell.calculateNextState();
+			}
 		}
 		isCalculationDone = true;
 
@@ -189,6 +209,14 @@ public class CellularAutomaton<StateType> implements
 	 */
 	public boolean isReadyForCalculation() {
 		return !isCalculationDone;
+	}
+
+	public boolean isAparapiUsed() {
+		return useAparapi;
+	}
+
+	public void setAparapiUsed(boolean useAparapi) {
+		this.useAparapi = useAparapi;
 	}
 
 }
